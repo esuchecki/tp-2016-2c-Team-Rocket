@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//prueba incluir commons
+#include <commons/log.h>
+
 int main(void) {
 	puts("PROCESO POKEDEX"); /* prints PROCESO POKEDEX */
 	return EXIT_SUCCESS;
