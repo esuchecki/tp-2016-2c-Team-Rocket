@@ -4,7 +4,12 @@ https://github.com/sisoputnfrba/so-commons-library
 (Yo uso la VM de la catedra y lo baje en: /home/utnso/so-commons-library)
 (Clonar repositorio GIT)
 
-2) Instalar la GUI (Hay un leame).
+2) Si se prosigue con el punto 3 y les dicen que les falta ncurses, entonces en la consola escribir:
+sudo apt-get update
+sudo apt-get install ncurses-dev
+repetir el paso3
+
+3) Instalar la GUI (Hay un leame).
 https://github.com/sisoputnfrba/so-nivel-gui-library
 
 (Yo uso la VM de la catedra y lo baje en: /home/utnso/so-nivel-gui-library)
@@ -14,21 +19,19 @@ Nota: Asi tal cual lo baje, no me corrio.
 Cambie el makefile de ./nivel-gui en donde dice COMMONS_NAME por "COMMONS_NAME=commons".
 Idem para ./nivel-gui-test
 
-3) Hacer prueba de la GUI.
+4) Hacer prueba de la GUI.
 
-4) Bueno clonas el repo nuestro de git en eclipse y deberia importarse con todas las configuraciones. 
+5) Bueno clonas el repo nuestro de git en eclipse y deberia importarse con todas las configuraciones. 
 Luego compilar y correr desde la consola con ./PROC_MAPA.
 (Deberia mostrar en pantalla el mapa y no hacer nada, solo funciona la Q para salir).
 
 
-5) En caso de que no compile, les dejo mi config del proyecto:
+6) En caso de que no compile, les dejo mi config del proyecto:
 Van a Proyect -> Properties -> c/C++ Buils -> Settings -> Tool Settings -> GCC C Linker -> Libraries 
 Add (in -l):
 commons
 ncurses
 nivel-gui
 
-Add (in -L)
-/home/utnso/so-nivel-gui-library/nivel-gui
-
 Luego Apply and OK.
+
