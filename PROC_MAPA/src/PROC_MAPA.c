@@ -21,6 +21,7 @@
 #include <curses.h>
 #include <commons/collections/list.h>
 #include <commons/config.h>
+#include <commons/string.h>
 
 
 //------------------------------------------//
@@ -79,6 +80,24 @@ void cargarEntrenador (t_list* items, char simbolo);
  */
 void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
 
+/*
+ * @NAME: metadata_inicializar
+ * @DESC: lee toda la metadata del mapa y la inicializa
+ */
+void metadata_inicializar (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+
+/*
+ * @NAME: metadata_finalizar
+ * @DESC: borra toda la metadata del mapa
+ */
+void metadata_finalizar (t_config *metadataMapa);
+
+/*
+ * @NAME: leerMetadataDelMapa
+ * @DESC: inicializa SOLO la metadata del mapa (IP, Puerto, etc..) ( /Mapas/[name]/metadata )
+ */
+void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+
 
 //------------------------------------------//
 /* ********************************************	*/
@@ -103,16 +122,40 @@ int main(void) {
 	puts("PROCESO MAPA"); /* prints PROCESO MAPA */
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 
+	char nombreMapa[180];
+	char directorioPokeDex[180];
 
-	//char nombreMapa[10] = "Prueba";
-	//strcopy (miNombre, "Prueba");
+	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
+
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	//parametro1
+	strcpy(nombreMapa, "prueba 1");
+	//parametro2
+	strcpy (directorioPokeDex, "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/test_files");
+
+	if ( directorioPokeDex == NULL || (strlen (directorioPokeDex) < 1 ) )
+	{
+		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+	}
+
+	//TODO: idem para el nombreDElMapa
+
+
 
 	t_list* items = list_create();
+	t_config *metadataMapa;
+
+	//ignoro este warning, se inicializa mas adelante.
+	#pragma GCC diagnostic ignored "-Wuninitialized"
+	metadata_inicializar (metadataMapa, nombreMapa, directorioPokeDex);
+
 
 	nivel_gui_inicializar();
-	dibujarMapa (items, "NOMBRE_MAPA");
+	dibujarMapa (items, nombreMapa);
 	borrarMapa (items);
 	nivel_gui_terminar();
+
+	metadata_finalizar (metadataMapa);
 
 
 
@@ -173,6 +216,84 @@ void borrarMapa (t_list* items)
 	BorrarItem(items, 'F');
 	*/
 }
+
+void metadata_inicializar (t_config *metadataMapa, char nombreMapa[180], char directorioPokeDex[180])
+{
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	leerMetadataDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
+
+}
+
+void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[180], char directorioPokeDex[180])
+{
+
+		char directorioMapa[180];
+		strcpy (directorioMapa, directorioPokeDex);
+
+		//TODO: usar alguna v.global o preprocesador para esta config.
+		//TODO: investigar string_from_format
+		strcat (directorioMapa, "/Mapas/");
+		strcat (directorioMapa, nombreMapa);
+		strcat (directorioMapa, "/metadata");
+
+		metadataMapa = config_create(directorioMapa);
+
+		if (metadataMapa == NULL || config_keys_amount(metadataMapa) < 0 )
+		{
+			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		}
+
+		//leo strings e ints
+		if ( config_has_property(metadataMapa, "PORT") )
+		{
+			int puerto;
+			puerto = config_get_int_value(metadataMapa, "PORT");
+			printf ("%d\n", puerto);
+
+			char puertito[50];
+			strcpy (puertito, (config_get_string_value(metadataMapa, "PORT")) );
+			printf ("%s\n", puertito);
+
+		}
+		else
+		{
+			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		}
+
+		//leo un array
+		if ( config_has_property(metadataMapa, "NUMBERS") )
+		{
+			char** numbers = config_get_array_value (metadataMapa, "NUMBERS");
+			if (numbers == NULL)
+			{
+				//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+			}
+
+			int i = 0;
+		    while (numbers[i] != NULL) {
+				printf ("%c\n", (*(numbers[i])));
+			    i++;
+		    }
+
+			string_iterate_lines(numbers, (void*) free);
+            free(numbers);
+            //TODO: parsear el contenido..
+		}
+		else
+		{
+			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		}
+
+
+}
+
+void metadata_finalizar (t_config *metadataMapa)
+{
+	//TODO: borrar todo...
+
+	config_destroy (metadataMapa);
+}
+
 
 void cargarPokeNests (t_list* items)
 {
