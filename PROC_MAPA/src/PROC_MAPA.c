@@ -84,7 +84,7 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
  * @NAME: metadata_inicializar
  * @DESC: lee toda la metadata del mapa y la inicializa
  */
-void metadata_inicializar (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+void inicializarEstructurasDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
 
 /*
  * @NAME: metadata_finalizar
@@ -104,10 +104,10 @@ void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char direct
 //----------- Sector Constantes -------------//
 
 
-#define __pokeNestSeparacionEnX (2)
-#define __pokeNestSeparacionEnY (2)
-#define __entrenadorPosInicialEnX (1)
-#define __entrenadorPosInicialEnY (1)
+#define __pokeNestSeparacionEnX (2)		// el enunciado dice que 2 pokenest deben estar separadas en el eje x, unas posiciones
+#define __pokeNestSeparacionEnY (2)		// idem para el eje y
+#define __entrenadorPosInicialEnX (1) 	// que posicion de la gui inicia el jugador en el eje x
+#define __entrenadorPosInicialEnY (1)	// idem para el eje y
 
 
 //------------------------------------------//
@@ -116,38 +116,56 @@ void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char direct
 
 
 
-int main(void) {
-	//TODO: recibir 2 parametros (nombre y ruta del pokedex)
+int main( int argc, char *argv[] ) {
+	//arg[0] -> nombre del proceso ejecutable
+	//arg[1] -> nombre del mapa
+	//arg[2] -> donde esta ubicada la pokedex
+
+	if ( argc !=3  ) /* debe recibir 3 argumentos */
+	{
+		printf("\tUso incorrecto..\n");
+		printf("\tuso: %s nombreMapa dirPokeDex\n", argv[0]);
+	  	printf("\tejemplo: %s %s %s\n", argv[0], "prueba1", "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/test_files");
+		exit(EXIT_FAILURE);
+	}
 
 	puts("PROCESO MAPA"); /* prints PROCESO MAPA */
+	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
+	#warning("Consultar si el nombre del mapa puede contener espacios")
+	//TODO: consultar si el nombre de un mapa puede contener espacios....? En enunciado dice "Ciudad Paleta"
 
-	char nombreMapa[180];
-	char directorioPokeDex[180];
+	char * nombreMapa = argv[1];
+	char * directorioPokeDex = argv[2];
 
-	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
 
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	//parametro1
-	strcpy(nombreMapa, "prueba 1");
-	//parametro2
-	strcpy (directorioPokeDex, "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/test_files");
 
 	if ( directorioPokeDex == NULL || (strlen (directorioPokeDex) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+		exit(EXIT_FAILURE);
+	}
+	if ( nombreMapa == NULL || (strlen (nombreMapa) < 1 ) )
+	{
+		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+		exit(EXIT_FAILURE);
 	}
 
-	//TODO: idem para el nombreDElMapa
 
 
+
+
+
+
+	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
 
 	t_list* items = list_create();
 	t_config *metadataMapa;
 
 	//ignoro este warning, se inicializa mas adelante.
 	#pragma GCC diagnostic ignored "-Wuninitialized"
-	metadata_inicializar (metadataMapa, nombreMapa, directorioPokeDex);
+	#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+	inicializarEstructurasDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
 
 
 	nivel_gui_inicializar();
@@ -164,7 +182,7 @@ int main(void) {
 }
 
 
-void dibujarMapa (t_list* items, char nombreMapa[])
+void dibujarMapa (t_list* items, char *nombreMapa)
 {
 
 
@@ -217,72 +235,77 @@ void borrarMapa (t_list* items)
 	*/
 }
 
-void metadata_inicializar (t_config *metadataMapa, char nombreMapa[180], char directorioPokeDex[180])
+void inicializarEstructurasDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
 {
 	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
 	leerMetadataDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
 
 }
 
-void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[180], char directorioPokeDex[180])
+void leerMetadataDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
 {
 
-		char directorioMapa[180];
-		strcpy (directorioMapa, directorioPokeDex);
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	char directorioMapa[250];
+	strcpy (directorioMapa, directorioPokeDex);
 
-		//TODO: usar alguna v.global o preprocesador para esta config.
-		//TODO: investigar string_from_format
-		strcat (directorioMapa, "/Mapas/");
-		strcat (directorioMapa, nombreMapa);
-		strcat (directorioMapa, "/metadata");
+	//TODO: usar alguna v.global o preprocesador para esta config.
+	//TODO: investigar string_from_format
+	strcat (directorioMapa, "/Mapas/");
+	strcat (directorioMapa, nombreMapa);
+	strcat (directorioMapa, "/metadata");
 
-		metadataMapa = config_create(directorioMapa);
+	metadataMapa = config_create(directorioMapa);
 
-		if (metadataMapa == NULL || config_keys_amount(metadataMapa) < 0 )
+	if (metadataMapa == NULL || config_keys_amount(metadataMapa) < 0 )
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
+
+	//leo strings e ints
+	if ( config_has_property(metadataMapa, "PORT") )
+	{
+		int puerto;
+		puerto = config_get_int_value(metadataMapa, "PORT");
+		printf ("%d\n", puerto);
+
+		char puertito[50];
+		strcpy (puertito, (config_get_string_value(metadataMapa, "PORT")) );
+		printf ("%s\n", puertito);
+
+	}
+	else
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
+
+	//leo un array
+	if ( config_has_property(metadataMapa, "NUMBERS") )
+	{
+		char** numbers = config_get_array_value (metadataMapa, "NUMBERS");
+		if (numbers == NULL)
 		{
 			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
 		}
 
-		//leo strings e ints
-		if ( config_has_property(metadataMapa, "PORT") )
-		{
-			int puerto;
-			puerto = config_get_int_value(metadataMapa, "PORT");
-			printf ("%d\n", puerto);
+		int i = 0;
+	    while (numbers[i] != NULL)
+	    {
+			printf ("%c\n", (*(numbers[i])));
+			i++;
+	    }
 
-			char puertito[50];
-			strcpy (puertito, (config_get_string_value(metadataMapa, "PORT")) );
-			printf ("%s\n", puertito);
-
-		}
-		else
-		{
-			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		}
-
-		//leo un array
-		if ( config_has_property(metadataMapa, "NUMBERS") )
-		{
-			char** numbers = config_get_array_value (metadataMapa, "NUMBERS");
-			if (numbers == NULL)
-			{
-				//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-			}
-
-			int i = 0;
-		    while (numbers[i] != NULL) {
-				printf ("%c\n", (*(numbers[i])));
-			    i++;
-		    }
-
-			string_iterate_lines(numbers, (void*) free);
-            free(numbers);
-            //TODO: parsear el contenido..
-		}
-		else
-		{
-			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		}
+		string_iterate_lines(numbers, (void*) free);
+		free(numbers);
+        //TODO: parsear el contenido..
+	}
+	else
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
 
 
 }
@@ -325,6 +348,7 @@ void cargarPokeNests (t_list* items)
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
+		exit(EXIT_FAILURE);
 	}
 
 
@@ -345,6 +369,7 @@ void cargarEntrenador (t_list* items, char simbolo)
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -365,6 +390,7 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
+		exit(EXIT_FAILURE);
 	}
 }
 
