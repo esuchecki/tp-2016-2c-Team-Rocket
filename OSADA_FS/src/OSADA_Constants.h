@@ -16,6 +16,11 @@
 #define __tamanioBloque (64) //Bytes
 #define __tamanioTablaArchivos (1024) //Bloques
 #define __tamanioPtroBloque (4) //Bytes
+#define __estructuraHeader (1)
+#define __estructuraBitmap (2)
+#define __estructuraTablaArchivos (3)
+#define __estructuraTablaAsignaciones (4)
+#define __estructuraBloqueDatos (5)
 
 typedef struct {
 	char estado;
