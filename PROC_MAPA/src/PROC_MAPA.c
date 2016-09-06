@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 //agreagado de librerias utn.so
 #include <nivel.h>
@@ -22,6 +23,49 @@
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/string.h>
+
+
+//------------------------------------------//
+/* ********************************************	*/
+//----------- Sector Estructuras -------------//
+
+typedef struct
+{
+	uint16_t tiempoChequeadoDeadlock;
+	char batalla;
+	char algoritmo[5];
+	uint8_t quantum;
+	uint16_t retardo;
+	char ip[20];
+	char puerto[8];
+} t_metadataMapa ;
+
+
+typedef struct
+{
+	uint8_t nivel;
+	char capturadoPorEntrenador;	//'0' para ninguno, simbolo del entrenador para identificar quien lo tiene
+} t_pokemon;
+
+typedef struct
+{
+	char identificador;
+	char tipo[20];
+	uint8_t pos_x;
+	uint8_t pos_y;
+	t_pokemon pokemones;	//a futuro esto deberia ser un array o una lista enrealidad....
+} t_pokeNest;
+
+typedef struct
+{
+     char * nombre;
+     char * directorioPokeDex;
+     t_metadataMapa * metadata;
+     t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
+} t_mapa ;
+
+
+//------------------------------------------//
 
 
 //------------------------------------------//
@@ -84,7 +128,7 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
  * @NAME: metadata_inicializar
  * @DESC: lee toda la metadata del mapa y la inicializa
  */
-void inicializarEstructurasDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+t_mapa * inicializarEstructurasDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
 
 /*
  * @NAME: metadata_finalizar
@@ -96,7 +140,7 @@ void metadata_finalizar (t_config *metadataMapa);
  * @NAME: leerMetadataDelMapa
  * @DESC: inicializa SOLO la metadata del mapa (IP, Puerto, etc..) ( /Mapas/[name]/metadata )
  */
-void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+t_metadataMapa * leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
 
 
 //------------------------------------------//
@@ -111,6 +155,9 @@ void leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char direct
 
 
 //------------------------------------------//
+
+
+
 
 
 
@@ -161,11 +208,12 @@ int main( int argc, char *argv[] ) {
 
 	t_list* items = list_create();
 	t_config *metadataMapa;
+	t_mapa * mapa;
 
 	//ignoro este warning, se inicializa mas adelante.
 	#pragma GCC diagnostic ignored "-Wuninitialized"
 	#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-	inicializarEstructurasDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
+	mapa = inicializarEstructurasDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
 
 
 	nivel_gui_inicializar();
@@ -235,14 +283,22 @@ void borrarMapa (t_list* items)
 	*/
 }
 
-void inicializarEstructurasDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
+t_mapa * inicializarEstructurasDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
 {
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	leerMetadataDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
+	t_mapa * nuevoMapa = malloc(sizeof(t_mapa));	//pedir malloc
+	nuevoMapa->nombre = nombreMapa;
+	nuevoMapa->directorioPokeDex = directorioPokeDex;
 
+	t_metadataMapa * nuevaMetadataMapa;
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	nuevaMetadataMapa = leerMetadataDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
+
+	nuevoMapa->metadata = nuevaMetadataMapa;
+
+	return nuevoMapa;
 }
 
-void leerMetadataDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
+t_metadataMapa * leerMetadataDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
 {
 
 	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
@@ -293,7 +349,7 @@ void leerMetadataDelMapa (t_config *metadataMapa, char *nombreMapa, char *direct
 		int i = 0;
 	    while (numbers[i] != NULL)
 	    {
-			printf ("%c\n", (*(numbers[i])));
+			printf ("%s\n", ((numbers[i])));
 			i++;
 	    }
 
