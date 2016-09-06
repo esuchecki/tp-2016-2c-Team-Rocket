@@ -32,18 +32,18 @@
 typedef struct
 {
 	uint16_t tiempoChequeadoDeadlock;
-	char batalla;
-	char algoritmo[5];
-	uint8_t quantum;
+	char * batalla;
+	char * algoritmo;
+	uint16_t quantum;
 	uint16_t retardo;
-	char ip[20];
-	char puerto[8];
+	char * ip;
+	char * puerto;
 } t_metadataMapa ;
 
 
 typedef struct
 {
-	uint8_t nivel;
+	uint16_t nivel;
 	char capturadoPorEntrenador;	//'0' para ninguno, simbolo del entrenador para identificar quien lo tiene
 } t_pokemon;
 
@@ -51,8 +51,8 @@ typedef struct
 {
 	char identificador;
 	char tipo[20];
-	uint8_t pos_x;
-	uint8_t pos_y;
+	uint16_t pos_x;
+	uint16_t pos_y;
 	t_pokemon pokemones;	//a futuro esto deberia ser un array o una lista enrealidad....
 } t_pokeNest;
 
@@ -77,7 +77,7 @@ typedef struct
  * @NAME: dibujarMapa
  * @DESC: dibuja el mapa, recibe un nombre.
  */
-void dibujarMapa ();
+void dibujarMapa (t_list* items, t_mapa * mapa);
 
 /*
  * @NAME: borrarMapa
@@ -138,10 +138,27 @@ void metadata_finalizar (t_config *metadataMapa);
 
 /*
  * @NAME: leerMetadataDelMapa
+ * @DESC: inicializa todas las estructuras del mapa
+ */
+void leerMetadataDelMapa (t_config *metadataMapa,  t_mapa * nuevoMapa);
+
+/*
+ * @NAME: config_create_for_metadataMapa
  * @DESC: inicializa SOLO la metadata del mapa (IP, Puerto, etc..) ( /Mapas/[name]/metadata )
  */
-t_metadataMapa * leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+t_config *config_create_for_metadataMapa(t_mapa * nuevoMapa);
 
+/*
+ * @NAME: configLeerInt
+ * @DESC: Lee un valor de tipo Int en el archivo de config
+ */
+uint16_t configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50]);
+
+/*
+ * @NAME: configLeerString
+ * @DESC: Lee un valor de tipo String en el archivo de config
+ */
+char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50]);
 
 //------------------------------------------//
 /* ********************************************	*/
@@ -153,6 +170,16 @@ t_metadataMapa * leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[],
 #define __entrenadorPosInicialEnX (1) 	// que posicion de la gui inicia el jugador en el eje x
 #define __entrenadorPosInicialEnY (1)	// idem para el eje y
 
+#define __ubicacionMapas "/Mapas/"
+#define __ubicacionMetadataMapas "/metadata"
+
+#define __nombreEnConfig_Deadlock "TiempoChequeoDeadlock"
+#define __nombreEnConfig_Batalla "Batalla"
+#define __nombreEnConfig_Algoritmo "algoritmo"
+#define __nombreEnConfig_Quantum "quantum"
+#define __nombreEnConfig_Retardo "retardo"
+#define __nombreEnConfig_IP "IP"
+#define __nombreEnConfig_Puerto "Puerto"
 
 //------------------------------------------//
 
@@ -163,11 +190,13 @@ t_metadataMapa * leerMetadataDelMapa (t_config *metadataMapa, char nombreMapa[],
 
 
 
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
+	puts("PROCESO MAPA"); /* prints PROCESO MAPA */
+
 	//arg[0] -> nombre del proceso ejecutable
 	//arg[1] -> nombre del mapa
 	//arg[2] -> donde esta ubicada la pokedex
-
 	if ( argc !=3  ) /* debe recibir 3 argumentos */
 	{
 		printf("\tUso incorrecto..\n");
@@ -176,7 +205,7 @@ int main( int argc, char *argv[] ) {
 		exit(EXIT_FAILURE);
 	}
 
-	puts("PROCESO MAPA"); /* prints PROCESO MAPA */
+
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 	#warning("Consultar si el nombre del mapa puede contener espacios")
@@ -207,7 +236,7 @@ int main( int argc, char *argv[] ) {
 	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
 
 	t_list* items = list_create();
-	t_config *metadataMapa;
+	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
 	t_mapa * mapa;
 
 	//ignoro este warning, se inicializa mas adelante.
@@ -216,8 +245,19 @@ int main( int argc, char *argv[] ) {
 	mapa = inicializarEstructurasDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
 
 
+
+	printf("%d\n", mapa->metadata->tiempoChequeadoDeadlock);
+	printf("%s\n", mapa->metadata->batalla);
+	printf("%s\n", mapa->metadata->algoritmo);
+	printf("%d\n", mapa->metadata->quantum);
+	printf("%d\n", mapa->metadata->retardo);
+	printf("%s\n", mapa->metadata->ip);
+	printf("%s\n", mapa->metadata->puerto);
+
+
+
 	nivel_gui_inicializar();
-	dibujarMapa (items, nombreMapa);
+	dibujarMapa (items, mapa);
 	borrarMapa (items);
 	nivel_gui_terminar();
 
@@ -230,7 +270,7 @@ int main( int argc, char *argv[] ) {
 }
 
 
-void dibujarMapa (t_list* items, char *nombreMapa)
+void dibujarMapa (t_list* items, t_mapa * mapa)
 {
 
 
@@ -247,7 +287,7 @@ void dibujarMapa (t_list* items, char *nombreMapa)
 
 
 
-	nivel_gui_dibujar(items, nombreMapa);
+	nivel_gui_dibujar(items, mapa->nombre);
 
 	while ( 1 ) {
 			int key = getch();
@@ -266,6 +306,7 @@ void dibujarMapa (t_list* items, char *nombreMapa)
 
 }
 
+
 void borrarMapa (t_list* items)
 {
 	//TODO: recorrer listas y borrar.
@@ -283,88 +324,38 @@ void borrarMapa (t_list* items)
 	*/
 }
 
+
 t_mapa * inicializarEstructurasDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
 {
 	t_mapa * nuevoMapa = malloc(sizeof(t_mapa));	//pedir malloc
 	nuevoMapa->nombre = nombreMapa;
 	nuevoMapa->directorioPokeDex = directorioPokeDex;
 
-	t_metadataMapa * nuevaMetadataMapa;
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	nuevaMetadataMapa = leerMetadataDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
 
-	nuevoMapa->metadata = nuevaMetadataMapa;
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	leerMetadataDelMapa (metadataMapa, nuevoMapa);
+
 
 	return nuevoMapa;
 }
 
-t_metadataMapa * leerMetadataDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
+
+void leerMetadataDelMapa (t_config *metadataMapa, t_mapa * nuevoMapa)
 {
+	metadataMapa = config_create_for_metadataMapa(nuevoMapa);
+	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
 
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	char directorioMapa[250];
-	strcpy (directorioMapa, directorioPokeDex);
+	nuevaMetadataMapa->tiempoChequeadoDeadlock = configLeerInt(metadataMapa, __nombreEnConfig_Deadlock);
+	nuevaMetadataMapa->batalla = configLeerString(metadataMapa, __nombreEnConfig_Batalla);
+	nuevaMetadataMapa->algoritmo = configLeerString(metadataMapa, __nombreEnConfig_Algoritmo);
+	nuevaMetadataMapa->quantum = configLeerInt(metadataMapa, __nombreEnConfig_Quantum);
+	nuevaMetadataMapa->retardo = configLeerInt(metadataMapa, __nombreEnConfig_Retardo);
+	nuevaMetadataMapa->ip = configLeerString(metadataMapa, __nombreEnConfig_IP);
+	nuevaMetadataMapa->puerto = configLeerString(metadataMapa, __nombreEnConfig_Puerto);
 
-	//TODO: usar alguna v.global o preprocesador para esta config.
-	//TODO: investigar string_from_format
-	strcat (directorioMapa, "/Mapas/");
-	strcat (directorioMapa, nombreMapa);
-	strcat (directorioMapa, "/metadata");
-
-	metadataMapa = config_create(directorioMapa);
-
-	if (metadataMapa == NULL || config_keys_amount(metadataMapa) < 0 )
-	{
-		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		exit(EXIT_FAILURE);
-	}
-
-	//leo strings e ints
-	if ( config_has_property(metadataMapa, "PORT") )
-	{
-		int puerto;
-		puerto = config_get_int_value(metadataMapa, "PORT");
-		printf ("%d\n", puerto);
-
-		char puertito[50];
-		strcpy (puertito, (config_get_string_value(metadataMapa, "PORT")) );
-		printf ("%s\n", puertito);
-
-	}
-	else
-	{
-		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		exit(EXIT_FAILURE);
-	}
-
-	//leo un array
-	if ( config_has_property(metadataMapa, "NUMBERS") )
-	{
-		char** numbers = config_get_array_value (metadataMapa, "NUMBERS");
-		if (numbers == NULL)
-		{
-			//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		}
-
-		int i = 0;
-	    while (numbers[i] != NULL)
-	    {
-			printf ("%s\n", ((numbers[i])));
-			i++;
-	    }
-
-		string_iterate_lines(numbers, (void*) free);
-		free(numbers);
-        //TODO: parsear el contenido..
-	}
-	else
-	{
-		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		exit(EXIT_FAILURE);
-	}
-
-
+	nuevoMapa->metadata = nuevaMetadataMapa;
 }
+
 
 void metadata_finalizar (t_config *metadataMapa)
 {
@@ -407,11 +398,8 @@ void cargarPokeNests (t_list* items)
 		exit(EXIT_FAILURE);
 	}
 
-
-
-
-
 }
+
 
 void cargarEntrenador (t_list* items, char simbolo)
 {
@@ -428,6 +416,7 @@ void cargarEntrenador (t_list* items, char simbolo)
 		exit(EXIT_FAILURE);
 	}
 }
+
 
 void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 {
@@ -466,6 +455,7 @@ int estaDentroDelMargenDelMapa(int pos_x, int pos_y)
 
 }
 
+
 int estosObjetosEstanEspaciados(int pos_x1, int pos_y1, int pos_x2, int pos_y2, int espaciado_x, int espaciado_y)
 {
 	int dif_x = (pos_x1 - pos_x2);
@@ -487,6 +477,7 @@ int estosObjetosEstanEspaciados(int pos_x1, int pos_y1, int pos_x2, int pos_y2, 
 	return 0;
 }
 
+
 int esValidoElEspaciadoDePokeNest(t_list* items, int newPos_x, int newPos_y)
 {
     //defino la condicion (que sea una pokeNest y que cumpla estar espaciada una de otra)
@@ -504,4 +495,58 @@ int esValidoElEspaciadoDePokeNest(t_list* items, int newPos_x, int newPos_y)
 		return 0;
 
 	return 1;
+}
+
+
+t_config *config_create_for_metadataMapa(t_mapa * nuevoMapa)
+{
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	char directorioMapa[250];
+	strcpy (directorioMapa, nuevoMapa->directorioPokeDex);
+
+
+	strcat (directorioMapa, __ubicacionMapas );
+	strcat (directorioMapa, nuevoMapa->nombre);
+	strcat (directorioMapa, __ubicacionMetadataMapas );
+
+
+	t_config * metadataMapa = config_create(directorioMapa);
+
+	if (metadataMapa == NULL || config_keys_amount(metadataMapa) < 0 )
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
+
+	return metadataMapa;
+}
+
+
+uint16_t configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+{
+	//leo ints
+	if (config_has_property(archivoConfig, nombreDeLaPropiedad))
+	{
+		return config_get_int_value(archivoConfig, nombreDeLaPropiedad);
+	}
+	else
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
+}
+
+
+char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+{
+	//leo strings
+	if (config_has_property(archivoConfig, nombreDeLaPropiedad))
+	{
+		return config_get_string_value(archivoConfig, nombreDeLaPropiedad);
+	}
+	else
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
 }
