@@ -23,6 +23,7 @@
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <commons/log.h>
 
 
 //------------------------------------------//
@@ -64,6 +65,7 @@ typedef struct
      t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
 } t_mapa ;
 
+t_log* log;
 
 //------------------------------------------//
 
@@ -206,6 +208,23 @@ int main( int argc, char *argv[] )
 	}
 
 
+	/*levanto el archivo para loggear*/
+	char* file ="/home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/test_files/Mapas/Logs/logMapa";
+	char* pg_name = "Mapa";
+
+	//TODO: revisar que pasa si no esta creado el archivo :S
+	log = log_create(file, pg_name, true, LOG_LEVEL_INFO);
+	if (log != NULL)
+	{
+		puts("se creo OK el arch de log");
+	}
+	else
+	{
+		puts("NO se pudo crear el archivo de log");
+		exit(EXIT_FAILURE);
+	}
+
+
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 	#warning("Consultar si el nombre del mapa puede contener espacios")
@@ -219,11 +238,13 @@ int main( int argc, char *argv[] )
 	if ( directorioPokeDex == NULL || (strlen (directorioPokeDex) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+		log_error(log, "errorSintacticoSemantico nombre del directorio incorrecto");
 		exit(EXIT_FAILURE);
 	}
 	if ( nombreMapa == NULL || (strlen (nombreMapa) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+		log_error(log, "errorSintacticoSemantico nombre del directorio incorrecto");
 		exit(EXIT_FAILURE);
 	}
 
@@ -286,7 +307,7 @@ void dibujarMapa (t_list* items, t_mapa * mapa)
 	cargarPokeNests (items);
 
 
-
+	log_info(log, "voy a tratar de dibujar el mapa ");
 	nivel_gui_dibujar(items, mapa->nombre);
 
 	while ( 1 ) {
@@ -360,7 +381,7 @@ void leerMetadataDelMapa (t_config *metadataMapa, t_mapa * nuevoMapa)
 void metadata_finalizar (t_config *metadataMapa)
 {
 	//TODO: borrar todo...
-
+	log_info(log, "borro metadata Mapa");
 	config_destroy (metadataMapa);
 }
 
@@ -395,6 +416,7 @@ void cargarPokeNests (t_list* items)
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
+		log_error(log, "errorSintacticoSemantico fuera del mapa");
 		exit(EXIT_FAILURE);
 	}
 
