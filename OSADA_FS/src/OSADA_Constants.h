@@ -41,5 +41,13 @@ typedef struct {
 	char relleno[40];
 } t_header;
 
+typedef void *t_ptroBloque = malloc(4);
+
+typedef struct {
+	t_header header;
+	char bitmap[];
+	osadaFile tablaArchivos[2048];
+	uint32_t tablaAsignaciones[];
+} osadaFS;
 
 #endif /* OSADA_CONSTANTS_H_ */
