@@ -267,6 +267,7 @@ int main( int argc, char *argv[] )
 
 
 
+
 	printf("%d\n", mapa->metadata->tiempoChequeadoDeadlock);
 	printf("%s\n", mapa->metadata->batalla);
 	printf("%s\n", mapa->metadata->algoritmo);
