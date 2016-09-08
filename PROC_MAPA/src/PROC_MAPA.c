@@ -23,7 +23,12 @@
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <commons/log.h>
 
+//agregado de librerias para leer directorios
+#include <sys/types.h>
+#include <dirent.h>		/* "readdir" etc. are defined here. */
+#include <limits.h>		/* limits.h defines "PATH_MAX". */
 
 //------------------------------------------//
 /* ********************************************	*/
@@ -47,6 +52,7 @@ typedef struct
 	char capturadoPorEntrenador;	//'0' para ninguno, simbolo del entrenador para identificar quien lo tiene
 } t_pokemon;
 
+/*
 typedef struct
 {
 	char identificador;
@@ -55,15 +61,18 @@ typedef struct
 	uint16_t pos_y;
 	t_pokemon pokemones;	//a futuro esto deberia ser un array o una lista enrealidad....
 } t_pokeNest;
+*/
 
 typedef struct
 {
      char * nombre;
      char * directorioPokeDex;
      t_metadataMapa * metadata;
-     t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
+     t_list* items;
+     //t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
 } t_mapa ;
 
+t_log* log;
 
 //------------------------------------------//
 
@@ -75,21 +84,21 @@ typedef struct
 
 /*
  * @NAME: dibujarMapa
- * @DESC: dibuja el mapa, recibe un nombre.
+ * @DESC: dibuja el mapa en pantalla en base a la estructura t_mapa
  */
-void dibujarMapa (t_list* items, t_mapa * mapa);
+void dibujarMapa (t_mapa * mapa);
 
 /*
  * @NAME: borrarMapa
- * @DESC: borra el mapa, recibe la lista de items.
+ * @DESC: borra el mapa, recibe la estructura t_mapa
  */
-void borrarMapa (t_list* items);
+void borrarMapa (t_mapa * mapa);
 
 /*
  * @NAME: cargarPokeNests
- * @DESC: carga las PokeNests de este mapa.
+ * @DESC: Dado un archivo de configuracion con la metadata, lee sus parametros
  */
-void cargarPokeNests (t_list* items);
+void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa);
 
 /*
  * @NAME: estaDentroDelMargenDelMapa
@@ -128,7 +137,7 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
  * @NAME: metadata_inicializar
  * @DESC: lee toda la metadata del mapa y la inicializa
  */
-t_mapa * inicializarEstructurasDelMapa (t_config *metadataMapa, char nombreMapa[], char directorioPokeDex[]);
+t_mapa * inicializarEstructurasDelMapa (char nombreMapa[], char directorioPokeDex[]);
 
 /*
  * @NAME: metadata_finalizar
@@ -140,7 +149,7 @@ void metadata_finalizar (t_config *metadataMapa);
  * @NAME: leerMetadataDelMapa
  * @DESC: inicializa todas las estructuras del mapa
  */
-void leerMetadataDelMapa (t_config *metadataMapa,  t_mapa * nuevoMapa);
+void leerMetadataDelMapa (t_mapa * nuevoMapa);
 
 /*
  * @NAME: config_create_for_metadataMapa
@@ -160,6 +169,30 @@ uint16_t configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50]);
  */
 char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50]);
 
+/*
+ * @NAME: leerRecursivamenteLasPokenest
+ * @DESC: Funcion de llamado para comenzar a leer las pokenest
+ */
+void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa);
+
+/*
+ * @NAME: buscamePokeNestEnEsteDirectorio
+ * @DESC: Lee el directorio pasado por parametro e intenta buscar si tiene PokeNests
+ */
+static void buscamePokeNestEnEsteDirectorio (const char * nombreDirectorio, t_mapa * nuevoMapa);
+
+
+/*
+ * @NAME: levantarConfigPokeNest
+ * @DESC: Recibe un directorio (que supuestamente contiene la metadata de una pokenest) y agrega la pokenest a los items del mapa
+ *
+ * Se baso en estas webs:
+ * 	//http://www.lemoda.net/c/recursive-directory/
+ *	//https://www.gnu.org/software/libc/manual/html_node/Simple-Directory-Lister.html
+ *
+ */
+void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa);
+
 //------------------------------------------//
 /* ********************************************	*/
 //----------- Sector Constantes -------------//
@@ -172,6 +205,9 @@ char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 
 #define __ubicacionMapas "/Mapas/"
 #define __ubicacionMetadataMapas "/metadata"
+#define __ubicacionDirPokenest "/PokeNests/"
+#define __ubicacionMetadataPokeNest "/metadata"
+
 
 #define __nombreEnConfig_Deadlock "TiempoChequeoDeadlock"
 #define __nombreEnConfig_Batalla "Batalla"
@@ -180,6 +216,11 @@ char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 #define __nombreEnConfig_Retardo "retardo"
 #define __nombreEnConfig_IP "IP"
 #define __nombreEnConfig_Puerto "Puerto"
+
+
+#define __nombreEnConfigIdPokeNest "Identificador"
+#define __nombreEnConfigPosicionPokeNest "Posicion"
+
 
 //------------------------------------------//
 
@@ -206,6 +247,24 @@ int main( int argc, char *argv[] )
 	}
 
 
+	/*levanto el archivo para loggear*/
+	//TODO: revisar que pasa si no existe el archivo de log y/o el directorio
+	char* file ="/home/utnso/Escritorio/logMapa_teamRocket";
+	char* pg_name = "Mapa";
+
+	//TODO: revisar que pasa si no esta creado el archivo :S
+	log = log_create(file, pg_name, false, LOG_LEVEL_INFO);
+	if (log != NULL)
+	{
+		puts("se creo OK el arch de log");
+	}
+	else
+	{
+		puts("NO se pudo crear el archivo de log");
+		exit(EXIT_FAILURE);
+	}
+
+
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 	#warning("Consultar si el nombre del mapa puede contener espacios")
@@ -219,11 +278,13 @@ int main( int argc, char *argv[] )
 	if ( directorioPokeDex == NULL || (strlen (directorioPokeDex) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+		log_error(log, "errorSintacticoSemantico nombre del directorio incorrecto");
 		exit(EXIT_FAILURE);
 	}
 	if ( nombreMapa == NULL || (strlen (nombreMapa) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
+		log_error(log, "errorSintacticoSemantico nombre del directorio incorrecto");
 		exit(EXIT_FAILURE);
 	}
 
@@ -235,33 +296,35 @@ int main( int argc, char *argv[] )
 
 	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
 
-	t_list* items = list_create();
-	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
+
+
 	t_mapa * mapa;
+	nivel_gui_inicializar();
 
 	//ignoro este warning, se inicializa mas adelante.
 	#pragma GCC diagnostic ignored "-Wuninitialized"
 	#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-	mapa = inicializarEstructurasDelMapa (metadataMapa, nombreMapa, directorioPokeDex);
+	mapa = inicializarEstructurasDelMapa (nombreMapa, directorioPokeDex);
 
 
 
-	printf("%d\n", mapa->metadata->tiempoChequeadoDeadlock);
-	printf("%s\n", mapa->metadata->batalla);
-	printf("%s\n", mapa->metadata->algoritmo);
-	printf("%d\n", mapa->metadata->quantum);
-	printf("%d\n", mapa->metadata->retardo);
-	printf("%s\n", mapa->metadata->ip);
-	printf("%s\n", mapa->metadata->puerto);
+	//TODO: loguear estos valores (creo que es pedido del enunciado)
+	//printf("%d\n", mapa->metadata->tiempoChequeadoDeadlock);
+	//printf("%s\n", mapa->metadata->batalla);
+	//printf("%s\n", mapa->metadata->algoritmo);
+	//printf("%d\n", mapa->metadata->quantum);
+	//printf("%d\n", mapa->metadata->retardo);
+	//printf("%s\n", mapa->metadata->ip);
+	//printf("%s\n", mapa->metadata->puerto);
 
 
 
-	nivel_gui_inicializar();
-	dibujarMapa (items, mapa);
-	borrarMapa (items);
+
+	dibujarMapa (mapa);
+	borrarMapa (mapa);
 	nivel_gui_terminar();
 
-	metadata_finalizar (metadataMapa);
+
 
 
 
@@ -270,24 +333,21 @@ int main( int argc, char *argv[] )
 }
 
 
-void dibujarMapa (t_list* items, t_mapa * mapa)
+void dibujarMapa (t_mapa * mapa)
 {
 
 
 	//entrenador de prueba por el momento
-	cargarEntrenador(items, '#');
-	cargarEntrenador(items, '$');
-	cargarEntrenador(items, '@');
+	cargarEntrenador(mapa->items, '#');
+	cargarEntrenador(mapa->items, '$');
+	cargarEntrenador(mapa->items, '@');
 
-	moverEntrenador(items, '#', 5,5);
-
-
-
-	cargarPokeNests (items);
+	moverEntrenador(mapa->items, '#', 5,5);
 
 
+	log_info(log, "voy a tratar de dibujar el mapa ");
 
-	nivel_gui_dibujar(items, mapa->nombre);
+	nivel_gui_dibujar(mapa->items, mapa->nombre);
 
 	while ( 1 ) {
 			int key = getch();
@@ -307,7 +367,7 @@ void dibujarMapa (t_list* items, t_mapa * mapa)
 }
 
 
-void borrarMapa (t_list* items)
+void borrarMapa (t_mapa * mapa)
 {
 	//TODO: recorrer listas y borrar.
 
@@ -325,23 +385,30 @@ void borrarMapa (t_list* items)
 }
 
 
-t_mapa * inicializarEstructurasDelMapa (t_config *metadataMapa, char *nombreMapa, char *directorioPokeDex)
+t_mapa * inicializarEstructurasDelMapa (char *nombreMapa, char *directorioPokeDex)
 {
 	t_mapa * nuevoMapa = malloc(sizeof(t_mapa));	//pedir malloc
 	nuevoMapa->nombre = nombreMapa;
 	nuevoMapa->directorioPokeDex = directorioPokeDex;
 
+	t_list* itemsVisiblesEnMapa = list_create();
+	nuevoMapa->items = itemsVisiblesEnMapa;
+
 
 	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	leerMetadataDelMapa (metadataMapa, nuevoMapa);
+
+	leerMetadataDelMapa (nuevoMapa);
+
+	leerRecursivamenteLasPokenest (nuevoMapa);
 
 
 	return nuevoMapa;
 }
 
 
-void leerMetadataDelMapa (t_config *metadataMapa, t_mapa * nuevoMapa)
+void leerMetadataDelMapa (t_mapa * nuevoMapa)
 {
+	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
 	metadataMapa = config_create_for_metadataMapa(nuevoMapa);
 	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
 
@@ -353,19 +420,22 @@ void leerMetadataDelMapa (t_config *metadataMapa, t_mapa * nuevoMapa)
 	nuevaMetadataMapa->ip = configLeerString(metadataMapa, __nombreEnConfig_IP);
 	nuevaMetadataMapa->puerto = configLeerString(metadataMapa, __nombreEnConfig_Puerto);
 
+
 	nuevoMapa->metadata = nuevaMetadataMapa;
+
+	metadata_finalizar (metadataMapa);
 }
 
 
 void metadata_finalizar (t_config *metadataMapa)
 {
 	//TODO: borrar todo...
-
+	log_info(log, "borro metadata Mapa");
 	config_destroy (metadataMapa);
 }
 
 
-void cargarPokeNests (t_list* items)
+void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 {
 	//TODO: levantar datos de un .config:
 		/*		/Mapas/[nombre]/PokeNests/XXXXXX/				-> Las XXXX es un Subdirectorio con el nombre de la pokenest, ej: pikachu.
@@ -373,28 +443,36 @@ void cargarPokeNests (t_list* items)
 		 * 									..../pokemon.dat 	-> archivo con lo unico importante el lvl del pokemon (hay un .dat x cada pokemon)
 		 */
 
-	//TODO: pensar en usar un struct. Ver si Struct solo para pokenest o en gral.
+	char metadataIdentificador;
+	//char infoLeida[50];
+	//strcpy (infoLeida, configLeerString(configPokeNest,__nombreEnConfigIdPokeNest ) );
+	//metadataIdentificador = *(infoLeida+0);
+	//log_info(log, infoLeida);
+	metadataIdentificador = 'P';
+	//metadataIdentificador = infoLeida[0];
 
-	//TODO: levantar dinamico con .config estos datos.
-		/*		reemplazar 'H' por metadata -> Identificador.
-		 * 		reemplazar
-		 */
-	char metadataIdentificador = 'P';	//pikachu
-	int pos_x = 10;
-	int pos_y = 10;
+	//char * posicionPokeNest;
+	int pos_x = 4;
+	int pos_y = 6;
+
+	//posicionPokeNest = configLeerString(configPokeNest,__nombreEnConfigPosicionPokeNest );
+	//TODO: parsearPosPokeNest
+
+	//TODO: levantar dinamico este valor.
 	int cant_de_pokemones_en_pokenest = 4;	// -> Hay que contar cuantos archivos hay exeptuando el de metadata.
 
-	CrearCaja(items, 'A', 13, 13, cant_de_pokemones_en_pokenest);
+
 
 	//TODO: validar si la pokeNest tiene pokemon de una unica especie..)
 	//TODO: consultar si es unico el identificador de pokenest x mapa..
-	if ( estaDentroDelMargenDelMapa(pos_x, pos_y) && esValidoElEspaciadoDePokeNest(items, pos_x, pos_y) )
+	if ( estaDentroDelMargenDelMapa(pos_x, pos_y) && esValidoElEspaciadoDePokeNest(nuevoMapa->items, pos_x, pos_y) )
 	{
-		CrearCaja(items, metadataIdentificador, pos_x, pos_y, cant_de_pokemones_en_pokenest);
+		CrearCaja(nuevoMapa->items, metadataIdentificador, pos_x, pos_y, cant_de_pokemones_en_pokenest);
 	}
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
+		log_error(log, "errorSintacticoSemantico fuera del mapa");
 		exit(EXIT_FAILURE);
 	}
 
@@ -549,4 +627,109 @@ char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
 		exit(EXIT_FAILURE);
 	}
+}
+
+void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
+{
+
+
+	//voy a recorrer la carpeta de las pokenest y revisar cuantas hay!
+
+    //TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+    char directorioMapa[250];
+    strcpy (directorioMapa, nuevoMapa->directorioPokeDex);
+
+
+    strcat (directorioMapa, "Mapas/" );
+    strcat (directorioMapa, nuevoMapa->nombre);
+    strcat (directorioMapa, __ubicacionDirPokenest );
+
+
+    buscamePokeNestEnEsteDirectorio (directorioMapa, nuevoMapa);
+
+
+}
+
+static void buscamePokeNestEnEsteDirectorio (const char * nombreDirectorio, t_mapa * nuevoMapa)
+{
+
+
+	DIR * d;
+    d = opendir (nombreDirectorio);
+	//Reviso si lo pudo abrir
+    if (d == NULL)
+	{
+		//TODO: loguear error no se pudo abrir el directorio.
+    	puts (nombreDirectorio);
+		exit (EXIT_FAILURE);
+	}
+
+	while (1)
+	{
+		struct dirent * entry;
+		const char * d_name;
+
+		//leemos el contenido del directorio d.
+	   	entry = readdir (d);
+	   	if (entry == NULL)
+	   	{
+	   		//No hay mas entradas
+	       	break;
+		}
+
+	   	d_name = entry->d_name;
+	   	//solo listo los directorios (tipo=DT_DIR)
+        if (entry->d_type & DT_DIR)
+        {
+        	//reviso que no sean los directorios "." y ".."
+
+        	if ( ( strcmp (d_name, "..") != 0 ) && (strcmp (d_name, ".") != 0) )
+        	{
+        		int path_length;
+	           	char path[PATH_MAX];
+
+	           	path_length = snprintf (path, PATH_MAX, "%s/%s", nombreDirectorio, d_name);
+
+	           	//printf ("%s\n", path);	cargarPokenest
+	           	levantarConfigPokeNest(path, nuevoMapa);
+
+	            if (path_length >= PATH_MAX)
+	            {
+	               	fprintf (stderr, "Path length has got too long.\n");
+	                    exit (EXIT_FAILURE);
+	            }
+
+	            //recorremos recursivamente archivos dentro de este directorio
+	            buscamePokeNestEnEsteDirectorio (path, nuevoMapa);
+        	}
+		}
+	}
+	//cerramos el directorio
+	if (closedir (d))
+	{
+		//fprintf (stderr, "Could not close '%s': %s\n",
+		//         dir_name, strerror (errno));
+		fprintf (stderr, "Error al cerrar un directorio.\n");
+		exit (EXIT_FAILURE);
+	}
+}
+
+void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
+{
+	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
+	char directorioMapa[250];
+	strcpy (directorioMapa, nombreDirectorio);
+	strcat (directorioMapa, __ubicacionMetadataPokeNest );
+
+	t_config * metadataPokenest = config_create(nombreDirectorio);
+
+	if (metadataPokenest == NULL || config_keys_amount(metadataPokenest) < 0 )
+	{
+		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
+		exit(EXIT_FAILURE);
+	}
+
+	cargarPokeNests(metadataPokenest, nuevoMapa);
+
+	metadata_finalizar (metadataPokenest);
 }
