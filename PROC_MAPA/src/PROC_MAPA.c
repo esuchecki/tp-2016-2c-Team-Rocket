@@ -72,10 +72,7 @@ typedef struct
      //t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
 } t_mapa ;
 
-t_log* log;
-
-//------------------------------------------//
-
+t_log* myArchivoDeLog;
 
 //------------------------------------------//
 /* ********************************************	*/
@@ -218,8 +215,10 @@ void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa);
 #define __nombreEnConfig_Puerto "Puerto"
 
 
+#define __nombreMetadataPokeNest "metadata"
 #define __nombreEnConfigIdPokeNest "Identificador"
 #define __nombreEnConfigPosicionPokeNest "Posicion"
+#define __separadorEnConfigPosicionPokeNest ";"
 
 
 //------------------------------------------//
@@ -253,8 +252,8 @@ int main( int argc, char *argv[] )
 	char* pg_name = "Mapa";
 
 	//TODO: revisar que pasa si no esta creado el archivo :S
-	log = log_create(file, pg_name, false, LOG_LEVEL_INFO);
-	if (log != NULL)
+	myArchivoDeLog = log_create(file, pg_name, false, LOG_LEVEL_INFO);
+	if (myArchivoDeLog != NULL)
 	{
 		puts("se creo OK el arch de log");
 	}
@@ -263,12 +262,13 @@ int main( int argc, char *argv[] )
 		puts("NO se pudo crear el archivo de log");
 		exit(EXIT_FAILURE);
 	}
-
+	log_info(myArchivoDeLog, "-------------------------------------------------------");
 
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 	#warning("Consultar si el nombre del mapa puede contener espacios")
 	//TODO: consultar si el nombre de un mapa puede contener espacios....? En enunciado dice "Ciudad Paleta"
+	#warning ("cuando hay un error abortivo hay que cerrar correctamente el gui")
 
 	char * nombreMapa = argv[1];
 	char * directorioPokeDex = argv[2];
@@ -278,13 +278,13 @@ int main( int argc, char *argv[] )
 	if ( directorioPokeDex == NULL || (strlen (directorioPokeDex) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
-		log_error(log, "errorSintacticoSemantico nombre del directorio incorrecto");
+		log_error(myArchivoDeLog, "errorSintacticoSemantico nombre del directorio incorrecto");
 		exit(EXIT_FAILURE);
 	}
 	if ( nombreMapa == NULL || (strlen (nombreMapa) < 1 ) )
 	{
 		//TODO: errorSintacticoSemantico nombre del directorio incorrecto
-		log_error(log, "errorSintacticoSemantico nombre del directorio incorrecto");
+		log_error(myArchivoDeLog, "errorSintacticoSemantico nombre del directorio incorrecto");
 		exit(EXIT_FAILURE);
 	}
 
@@ -345,7 +345,7 @@ void dibujarMapa (t_mapa * mapa)
 	moverEntrenador(mapa->items, '#', 5,5);
 
 
-	log_info(log, "voy a tratar de dibujar el mapa ");
+	log_info(myArchivoDeLog, "voy a tratar de dibujar el mapa ");
 
 	nivel_gui_dibujar(mapa->items, mapa->nombre);
 
@@ -427,29 +427,28 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 }
 
 
-void metadata_finalizar (t_config *metadataMapa)
+void metadata_finalizar (t_config *unArchivo)
 {
 	//TODO: borrar todo...
-	log_info(log, "borro metadata Mapa");
-	config_destroy (metadataMapa);
+	log_info(myArchivoDeLog, "Se borro una estructura de configuracion");
+	config_destroy (unArchivo);
 }
 
 
 void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 {
-	//TODO: levantar datos de un .config:
-		/*		/Mapas/[nombre]/PokeNests/XXXXXX/				-> Las XXXX es un Subdirectorio con el nombre de la pokenest, ej: pikachu.
-		 * 									..../metadata		-> archivo con contenido (sobre como graficar pokenest en pantalla)
-		 * 									..../pokemon.dat 	-> archivo con lo unico importante el lvl del pokemon (hay un .dat x cada pokemon)
-		 */
-
 	char metadataIdentificador;
+	metadataIdentificador = configLeerString(configPokeNest,__nombreEnConfigIdPokeNest )[0];
+
 	//char infoLeida[50];
 	//strcpy (infoLeida, configLeerString(configPokeNest,__nombreEnConfigIdPokeNest ) );
 	//metadataIdentificador = *(infoLeida+0);
 	//log_info(log, infoLeida);
 	metadataIdentificador = 'P';
 	//metadataIdentificador = infoLeida[0];
+	char * pos_pokenest = configLeerString(configPokeNest,__nombreEnConfigPosicionPokeNest );
+	int pos_x = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[0] );
+	int pos_y = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[1] );
 
 	//char * posicionPokeNest;
 	int pos_x = 4;
@@ -472,7 +471,7 @@ void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
-		log_error(log, "errorSintacticoSemantico fuera del mapa");
+		log_error(myArchivoDeLog, "errorSintacticoSemantico fuera del mapa o pokenest no espaciadas");
 		exit(EXIT_FAILURE);
 	}
 
@@ -678,6 +677,12 @@ static void buscamePokeNestEnEsteDirectorio (const char * nombreDirectorio, t_ma
 		}
 
 	   	d_name = entry->d_name;
+	   	//reviso que este directorio que contiene las pokenest, tenga un archivo de "metadata"
+	   	if ( (strcmp (d_name, __nombreMetadataPokeNest )) == 0 )
+	   		levantarConfigPokeNest( (char *)nombreDirectorio, nuevoMapa );
+	   	//El archivo actual esta en nombreDirectorio/d_name
+
+
 	   	//solo listo los directorios (tipo=DT_DIR)
         if (entry->d_type & DT_DIR)
         {
@@ -691,7 +696,7 @@ static void buscamePokeNestEnEsteDirectorio (const char * nombreDirectorio, t_ma
 	           	path_length = snprintf (path, PATH_MAX, "%s/%s", nombreDirectorio, d_name);
 
 	           	//printf ("%s\n", path);	cargarPokenest
-	           	levantarConfigPokeNest(path, nuevoMapa);
+
 
 	            if (path_length >= PATH_MAX)
 	            {
@@ -712,6 +717,7 @@ static void buscamePokeNestEnEsteDirectorio (const char * nombreDirectorio, t_ma
 		fprintf (stderr, "Error al cerrar un directorio.\n");
 		exit (EXIT_FAILURE);
 	}
+
 }
 
 void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
@@ -721,7 +727,7 @@ void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
 	strcpy (directorioMapa, nombreDirectorio);
 	strcat (directorioMapa, __ubicacionMetadataPokeNest );
 
-	t_config * metadataPokenest = config_create(nombreDirectorio);
+	t_config * metadataPokenest = config_create(directorioMapa);
 
 	if (metadataPokenest == NULL || config_keys_amount(metadataPokenest) < 0 )
 	{
