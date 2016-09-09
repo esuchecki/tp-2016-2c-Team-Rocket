@@ -11,9 +11,11 @@
 //----------- Sector Include ---------------//
 
 #include "lib/libGrafica.h"
+#include "lib/libSockets.h"
+#include "lib/libPlanificador.h"
+#include "lib/libConfig.h"
+#include <pthread.h>
 //------------------------------------------//
-
-
 
 //------------------------------------------//
 /* ********************************************	*/
@@ -44,6 +46,18 @@ int main( int argc, char *argv[] )
 	validarArgumentos (argc, argv );
 	inicializarLogMapa();
 
+	//Creo el hilo planificador
+	pthread_t hiloPlanificador;
+	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
+
+	//TODO: Config - obtener directorio
+	char *directorioConfig = malloc(100);
+	strcat(directorioConfig,argv[2]);
+	strcat(directorioConfig,"/Mapa");
+	strcat(directorioConfig,argv[1]);
+	strcat(directorioConfig,"/metadata");
+
+	t_config * configMapa = newConfigType (directorioConfig);
 
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
@@ -61,6 +75,11 @@ int main( int argc, char *argv[] )
 
 	dibujarMapa (mapa);
 
+	//atiendo las conexiones de los entrenadores que se me conecten
+	char * Puerto = configLeerString(configMapa,directorioConfig);
+
+	//Atiendo las conexiones
+	atenderConexiones(Puerto);
 
 	finalizarGui(mapa);
 	return EXIT_SUCCESS;	//enrealidad nunca ejecuta esta instruccion

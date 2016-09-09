@@ -5,13 +5,19 @@
 #include <string.h>
 #include <errno.h>
 #include "libSockets.h"
+#include "libPlanificador.h"
 
 void handshake(int i,fd_set sockets_activos){
-	t_data * paquete = paquete = leer_paquete(i);
+	t_data * paquete = leer_paquete(i);
 	if (paquete->header == 99){
-		printf("Se conecto un entrenador");
+
+		t_entrenador *unEntrenador = generarEntrenador(i);
+
+		agregarAColaDeListos(unEntrenador);
+
 	}else{
-		printf("Error al conectar al entrenador");
+
+		printf("No se pudo conectar\n");
 		exit(EXIT_FAILURE);
 	}
 }
