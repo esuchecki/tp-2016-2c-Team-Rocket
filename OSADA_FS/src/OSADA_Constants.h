@@ -22,32 +22,33 @@
 #define __estructuraTablaAsignaciones (4)
 #define __estructuraBloqueDatos (5)
 
-typedef struct {
-	char estado;
-	char  nombreArchivo[17];
-	uint16_t bloquePadre;
-	uint32_t tamanioArchivo;
-	uint32_t fechaUltimaModificacion;
-	uint32_t bloqueInicial;
-} osadaFile;
-
-typedef struct {
-	char identificador[7];
-	char version;
-	uint32_t tamanioFS;
-	uint32_t tamanioBM;
-	uint32_t inicioTabla;
-	uint32_t tamanioDatos;
-	char relleno[40];
-} t_header;
-
-typedef void *t_ptroBloque = malloc(4);
-
-typedef struct {
-	t_header header;
-	char bitmap[];
-	osadaFile tablaArchivos[2048];
-	uint32_t tablaAsignaciones[];
-} osadaFS;
+//typedef struct {
+//	char estado;
+//	char  nombreArchivo[17];
+//	uint16_t bloquePadre;
+//	uint32_t tamanioArchivo;
+//	uint32_t fechaUltimaModificacion;
+//	uint32_t bloqueInicial;
+//} osadaFile;
+//
+//typedef struct {
+//	char identificador[7];
+//	char version;
+//	uint32_t tamanioFS;
+//	uint32_t tamanioBM;
+//	uint32_t inicioTabla;
+//	uint32_t tamanioDatos;
+//	char relleno[40];
+//} t_header;
+//
+//typedef void *t_ptroBloque = malloc(4);
+//
+//typedef struct {
+//	t_header header;
+//	char bitmap[];
+//	osadaFile tablaArchivos[2048];
+//	uint32_t tablaAsignaciones[];
+//} osadaFS;
 
 #endif /* OSADA_CONSTANTS_H_ */
+

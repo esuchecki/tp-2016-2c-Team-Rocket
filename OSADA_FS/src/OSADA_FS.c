@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <OSADA_Constants.h>
+#include <osada.h>
+
 
 int calcularBloques(int estructura, int bytes){
 	int cantidad_bloques = bytes /__tamanioBloque;
