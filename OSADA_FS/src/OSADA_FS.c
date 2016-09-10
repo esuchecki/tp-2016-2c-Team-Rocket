@@ -39,6 +39,7 @@ int calcularBloques(int estructura, int bytes){
 		   retorno = 0;
 	}
 	return retorno;
+
 }
 
 
