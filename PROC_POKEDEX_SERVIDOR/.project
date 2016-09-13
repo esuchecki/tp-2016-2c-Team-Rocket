@@ -3,6 +3,7 @@
 	<name>PROC_POKEDEX_SERVIDOR</name>
 	<comment></comment>
 	<projects>
+		<project>libTeamRocket</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

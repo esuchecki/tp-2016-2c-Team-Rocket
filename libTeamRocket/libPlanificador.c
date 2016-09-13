@@ -8,6 +8,8 @@
 #include "libPlanificador.h"
 #include <pthread.h>
 #include <stdlib.h>
+#include <commons/collections/list.h>
+
 
 void * ejecutarPlanificador(){
 
@@ -15,7 +17,7 @@ void * ejecutarPlanificador(){
 }
 
 void agregarAColaDeListos(t_entrenador *unEntrenador){
-	list_add(colaListos,&unEntrenador);
+	list_add(colaListos,unEntrenador);
 }
 
 t_entrenador * generarEntrenador(int i){

@@ -61,6 +61,11 @@ int setup_listen(char * IP, char * Port){
 
 	if(bind(socketEscucha,serverInfo->ai_addr,serverInfo->ai_addrlen )< 0){
 		printf("Puerto en Time-wait, error del bind");
+		int yes =1;
+		if (setsockopt(socketEscucha, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+		    perror("setsockopt");
+		    exit(1);
+		}
 		exit(-1);
 	}
 	freeaddrinfo(serverInfo);
@@ -91,7 +96,7 @@ t_data * leer_paquete(int socket){
 
 	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
-	recv(socket,&paquete_entrante->data,paquete_entrante->tamanio,MSG_WAITALL);
+	recv(socket,paquete_entrante->data,paquete_entrante->tamanio,MSG_WAITALL);
 
 	return paquete_entrante;
 }
@@ -118,9 +123,9 @@ char * serializar(t_data * unPaquete){
 }
 
 void common_send(int socket, t_data * paquete){
-	char * buffer;
+	void * buffer;
 	int tamanioTotal;
-	tamanioTotal = paquete->tamanio + sizeof(int) + sizeof(int);
+	tamanioTotal = paquete->tamanio  + sizeof(int) + sizeof(int);
 	buffer = serializar(paquete);
 
 	send(socket,buffer,tamanioTotal,MSG_WAITALL);
