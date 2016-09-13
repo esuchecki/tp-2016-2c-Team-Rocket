@@ -1,12 +1,13 @@
 /*
  * libPlanificador.c
  *
- *  Created on: 9/9/2016
+ *  Created on: 12/9/2016
  *      Author: utnso
  */
 
 #include "libPlanificador.h"
 #include <pthread.h>
+#include <stdlib.h>
 
 void * ejecutarPlanificador(){
 

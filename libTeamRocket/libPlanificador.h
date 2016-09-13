@@ -1,12 +1,12 @@
 /*
  * libPlanificador.h
  *
- *  Created on: 9/9/2016
+ *  Created on: 12/9/2016
  *      Author: utnso
  */
 
-#ifndef LIB_LIBPLANIFICADOR_H_
-#define LIB_LIBPLANIFICADOR_H_
+#ifndef LIBPLANIFICADOR_H_
+#define LIBPLANIFICADOR_H_
 
 #include <commons/collections/list.h>
 
@@ -22,4 +22,6 @@ void * ejecutarPlanificador();
 void agregarAColaDeListos(t_entrenador *unEntrenador);
 t_entrenador * generarEntrenador(int i);
 
-#endif /* LIB_LIBPLANIFICADOR_H_ */
+
+
+#endif /* LIBPLANIFICADOR_H_ */

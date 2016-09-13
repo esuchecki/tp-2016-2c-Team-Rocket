@@ -3,6 +3,7 @@
 	<name>PROC_MAPA</name>
 	<comment></comment>
 	<projects>
+		<project>libTeamRocket</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

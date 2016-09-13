@@ -1,3 +1,10 @@
+/*
+ * libSockets.c
+ *
+ *  Created on: 12/9/2016
+ *      Author: utnso
+ */
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -135,9 +142,13 @@ void atenderConexion(int i,fd_set sockets_activos){
 
 }
 
-int atenderConexiones(char *PuertoEscucha){
+int atenderConexiones(void *Puerto){
+	char * PuertoEscucha = Puerto;
+	printf("%s\n", PuertoEscucha);
+
 	int socketEscucha;
 	fd_set sockets_activos,sockets_para_revisar;
+
 	socketEscucha = setup_listen("localhost",PuertoEscucha);
 
 	listen(socketEscucha,1024);

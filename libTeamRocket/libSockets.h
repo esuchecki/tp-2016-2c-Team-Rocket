@@ -1,10 +1,9 @@
 /*
  * libSockets.h
  *
- *  Created on: 8/9/2016
+ *  Created on: 12/9/2016
  *      Author: utnso
  */
-
 
 #ifndef LIBSOCKETS_H_
 #define LIBSOCKETS_H_
@@ -37,7 +36,7 @@ int setup_listen(char * IP,char * Port);
  * @DESC: utiliza la funcion select y esta a la espera de conexiones
  */
 
-int atenderConexiones(char * PuertoEscucha);
+int atenderConexiones(void * PuertoEscucha);
 
 /*
  * @NAME: connect_to
