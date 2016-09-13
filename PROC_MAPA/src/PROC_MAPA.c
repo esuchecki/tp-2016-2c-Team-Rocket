@@ -38,14 +38,14 @@ void inicializarLogMapa ();
 //------------------------------------------//
 
 
-
+/*
 void* ejecutarPlanificador(){
 	return EXIT_SUCCESS;
 }
 
-void* atenderConexiones(){
+int* atenderConexiones(){
 	return EXIT_SUCCESS;
-}
+}*/
 
 int main( int argc, char *argv[] )
 {
