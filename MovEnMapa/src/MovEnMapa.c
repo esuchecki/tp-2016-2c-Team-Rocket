@@ -24,6 +24,10 @@
  */
 
 int queHago(int e_posX, int e_posY, int p_posX,int p_posY, char ultimoMov){
+
+	//TODO: ver en cada movimiento que no se vaya fuera del mapa...
+	// en teoria no va a pasar porque los pokemones van a estar en el mapa y se va a mover hasta alli.
+	// pero quedaria joya chequearlo
 	int respuesta = -1;
 		int distanciaX= p_posX-e_posX;
 		int distanciaY= p_posY-e_posY;
