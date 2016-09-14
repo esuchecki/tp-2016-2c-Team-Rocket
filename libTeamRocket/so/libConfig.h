@@ -20,7 +20,7 @@
 //agreagado de librerias utn.so
 #include <commons/config.h>
 #include <commons/string.h>
-#include <commons/log.h>
+//#include <commons/log.h>
 
 //agregado de librerias para leer directorios
 #include <sys/types.h>
@@ -28,8 +28,6 @@
 #include <limits.h>		/* limits.h defines "PATH_MAX". */
 
 
-//nuestras librerias
-#include "libGrafica.h"
 
 //------------------------------------------//
 
@@ -39,7 +37,7 @@
 /* ********************************************	*/
 //----------- Sector Estructuras -------------//
 
-extern t_log* myArchivoDeLog;
+//extern t_log* myArchivoDeLog;
 
 //------------------------------------------//
 
@@ -58,8 +56,10 @@ void metadata_finalizar (t_config *unArchivo);
 /*
  * @NAME: configLeerInt
  * @DESC: Lee un valor de tipo Int en el archivo de config
+ *
+ * @RET : devuelve true en bool * error si hay problemas.
  */
-uint16_t configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50]);
+uint16_t  configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], bool * devolvioError);
 
 
 
@@ -80,7 +80,12 @@ t_config * newConfigType (char * direccionArchivo);
 
 /*
  * @NAME: buscamePokeNestEnEsteDirectorio
- * @DESC: Recibe un directorio inicial (nombreDirectorio), y busca en todos los subdirectorios el (nombreArchivo) y llama a la funcion levantarConfigPokeNest con la ubicacion de ese archivo.
+ * @DESC: Recibe un directorio inicial (nombreDirectorio), y busca en todos los subdirectorios (la funcion fc es el criterio de busqueda).
+ *
+ * @RET:  Retorna 0 si hubo algun error.
+ *
+ *
+ * Nota: Ejemplo de uso, para recorrer las pokenest.
  *
  *
  * Se baso en estas webs:
@@ -89,7 +94,7 @@ t_config * newConfigType (char * direccionArchivo);
  *
  *
  */
-void buscamePokeNestEnEsteDirectorio (  const char * nombreDirectorio, void (*fc) (const char *, const char *)  );
+int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const char *, const char *)  );
 
 
 

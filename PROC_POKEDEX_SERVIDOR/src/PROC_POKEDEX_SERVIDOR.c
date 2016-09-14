@@ -7,14 +7,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <libSockets.h>
-#include <libPlanificador.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <so/libPlanificador.h>
+#include <so/libSockets.h>
 
 int main(int argc, char*argv[]) {
 

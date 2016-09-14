@@ -5,7 +5,8 @@
  *      Author: utnso
  */
 
-#include "libPlanificador.h"
+#include "../so/libPlanificador.h"
+
 #include <pthread.h>
 #include <stdlib.h>
 #include <commons/collections/list.h>

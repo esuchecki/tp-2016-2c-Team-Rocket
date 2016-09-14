@@ -11,10 +11,10 @@
 //----------- Sector Include ---------------//
 
 #include "lib/libGrafica.h"
-#include <libSockets.h>
-#include <libPlanificador.h>
-#include "lib/libConfig.h"
+#include <so/libConfig.h>
 #include <pthread.h>
+#include <so/libPlanificador.h>
+#include <so/libSockets.h>
 //------------------------------------------//
 
 //------------------------------------------//
@@ -31,7 +31,7 @@ void inicializarLogMapa ();
 /* ********************************************	*/
 //----------- Sector Constantes -------------//
 
-#define __ubicacionArchivoDeLog "/home/utnso/Escritorio/logMapa_teamRocket"
+#define __ubicacionArchivoDeLog "./logMapa_teamRocket"
 #define __nombreDePrograma "Mapa"
 
 

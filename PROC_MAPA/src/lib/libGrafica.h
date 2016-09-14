@@ -29,7 +29,7 @@
 
 
 //agregados librerias propias
-#include "libConfig.h"
+#include "mapaConfig.h"
 
 
 //------------------------------------------//
@@ -196,6 +196,8 @@ void loguearEstructuraDelMapa(t_mapa * nuevoMapa);
  * ***Usar esta funcion para finalizar ante algun error..***
  */
 void finalizarGui (t_mapa * mapa);
+
+
 //------------------------------------------//
 
 
