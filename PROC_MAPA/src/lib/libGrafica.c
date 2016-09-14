@@ -266,7 +266,7 @@ void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
     strcpy (directorioMapa, nuevoMapa->directorioPokeDex);
 
 
-    strcat (directorioMapa, "Mapas/" );
+    strcat (directorioMapa, __ubicacionMapas );
     strcat (directorioMapa, nuevoMapa->nombre);
     strcat (directorioMapa, __ubicacionDirPokenest );
 

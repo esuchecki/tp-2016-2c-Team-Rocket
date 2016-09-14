@@ -57,11 +57,6 @@ int main( int argc, char *argv[] )
 	nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
-	//Creo el hilo planificador
-	pthread_t hiloPlanificador,hiloConexiones;
-	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
-	pthread_create(&hiloConexiones, NULL, (void *)atenderConexiones, (void *)mapa->metadata->puerto);
-
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 	#warning("Consultar si el nombre del mapa puede contener espacios")
@@ -71,9 +66,15 @@ int main( int argc, char *argv[] )
 
 	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
 
-
-
 	dibujarMapa (mapa);
+
+	//Creo el hilo planificador
+	pthread_t hiloPlanificador,hiloConexiones;
+	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
+	pthread_create(&hiloConexiones, NULL, (void *)atenderConexiones, (void *)mapa->metadata->puerto);
+
+
+
 
 	finalizarGui(mapa);
 	return EXIT_SUCCESS;	//enrealidad nunca ejecuta esta instruccion

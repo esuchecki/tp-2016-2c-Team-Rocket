@@ -10,8 +10,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <OSADA_Constants.h>
-#include <osada.h>
+#include "OSADA_Constants.h"
+#include "osada-utils/osada.h"
 
 
 int calcularBloques(int estructura, int bytes){
