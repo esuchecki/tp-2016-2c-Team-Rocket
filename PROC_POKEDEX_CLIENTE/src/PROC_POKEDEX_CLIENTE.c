@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <libSockets.h>
+#include <so/libSockets.h>
 #include <string.h>
 
 int main(int argc,char*argv[]){

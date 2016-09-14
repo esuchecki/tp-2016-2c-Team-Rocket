@@ -73,14 +73,9 @@ t_mapa * inicializarEstructurasDelMapa (char *nombreMapa, char *directorioPokeDe
 	nuevoMapa->items = itemsVisiblesEnMapa;
 
 
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-
 	leerMetadataDelMapa (nuevoMapa);
-
 	leerRecursivamenteLasPokenest (nuevoMapa);
 
-
-	loguearEstructuraDelMapa(nuevoMapa);
 
 	return nuevoMapa;
 }
@@ -88,22 +83,28 @@ t_mapa * inicializarEstructurasDelMapa (char *nombreMapa, char *directorioPokeDe
 
 void leerMetadataDelMapa (t_mapa * nuevoMapa)
 {
+    log_info(myArchivoDeLog,"Voy a leer la metadata del mapa.");
 	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
 	metadataMapa = config_create_for_metadataMapa(nuevoMapa);
 	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
 
-	nuevaMetadataMapa->tiempoChequeadoDeadlock = configLeerInt(metadataMapa, __nombreEnConfig_Deadlock);
-	nuevaMetadataMapa->batalla = configLeerString(metadataMapa, __nombreEnConfig_Batalla);
-	nuevaMetadataMapa->algoritmo = configLeerString(metadataMapa, __nombreEnConfig_Algoritmo);
-	nuevaMetadataMapa->quantum = configLeerInt(metadataMapa, __nombreEnConfig_Quantum);
-	nuevaMetadataMapa->retardo = configLeerInt(metadataMapa, __nombreEnConfig_Retardo);
-	nuevaMetadataMapa->ip = configLeerString(metadataMapa, __nombreEnConfig_IP);
-	nuevaMetadataMapa->puerto = configLeerString(metadataMapa, __nombreEnConfig_Puerto);
+	nuevaMetadataMapa->tiempoChequeadoDeadlock = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Deadlock);
+	nuevaMetadataMapa->batalla = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Batalla);
+	nuevaMetadataMapa->algoritmo = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Algoritmo);
+	nuevaMetadataMapa->quantum = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Quantum);
+	nuevaMetadataMapa->retardo = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Retardo);
+	nuevaMetadataMapa->ip = _mapa_configLeerString(metadataMapa, __nombreEnConfig_IP);
+	nuevaMetadataMapa->puerto = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Puerto);
 
 
 	nuevoMapa->metadata = nuevaMetadataMapa;
 
+	#warning ("aca hay un problema..")
+	//TODO: duplicar strings, creo que cuando borro la metadata se me muere el string :S:S.. (revisar). Hacer string_duplicate por el momento solo en _mapa_configLeerString..
+	loguearEstructuraDelMapa(nuevoMapa);
 	metadata_finalizar (metadataMapa);
+
+	log_info(myArchivoDeLog,"Finaliza la lectura de metadata del mapa.");
 }
 
 
@@ -111,9 +112,9 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 {
 	char metadataIdentificador;
-	metadataIdentificador = configLeerString(configPokeNest,__nombreEnConfigIdPokeNest )[0];
+	metadataIdentificador = _mapa_configLeerString(configPokeNest,__nombreEnConfigIdPokeNest )[0];
 
-	char * pos_pokenest = configLeerString(configPokeNest,__nombreEnConfigPosicionPokeNest );
+	char * pos_pokenest = _mapa_configLeerString(configPokeNest,__nombreEnConfigPosicionPokeNest );
 	int pos_x = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[0] );
 	int pos_y = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[1] );
 
@@ -127,6 +128,7 @@ void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 	if ( estaDentroDelMargenDelMapa(pos_x, pos_y) && esValidoElEspaciadoDePokeNest(nuevoMapa->items, pos_x, pos_y) )
 	{
 		CrearCaja(nuevoMapa->items, metadataIdentificador, pos_x, pos_y, cant_de_pokemones_en_pokenest);
+		log_info(myArchivoDeLog,"Se creo una Pokenest: [ %c | x=%s | y=%s | cant=%s ]", metadataIdentificador, string_itoa(pos_x), string_itoa(pos_y), string_itoa(cant_de_pokemones_en_pokenest));
 	}
 	else
 	{
@@ -145,6 +147,7 @@ void cargarEntrenador (t_list* items, char simbolo)
 	if (estaDentroDelMargenDelMapa(__entrenadorPosInicialEnX,__entrenadorPosInicialEnY) ==1 )
 	{
 		CrearPersonaje(items, simbolo, __entrenadorPosInicialEnX, __entrenadorPosInicialEnY);
+		log_info(myArchivoDeLog,"Se conecto un entrenador: [ %c ]", simbolo);
 		return;
 	}
 	else
@@ -172,6 +175,7 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 	else
 	{
 		//TODO: errorSintacticoSemantico fuera del mapa
+		log_error(myArchivoDeLog, "errorSintacticoSemantico entrenador fuera del mapa");
 		finalizarGui(NULL);
 	}
 }
@@ -239,16 +243,15 @@ int esValidoElEspaciadoDePokeNest(t_list* items, int newPos_x, int newPos_y)
 
 t_config *config_create_for_metadataMapa(t_mapa * nuevoMapa)
 {
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	char directorioMapa[250];
-	strcpy (directorioMapa, nuevoMapa->directorioPokeDex);
+	char * directorioMapa;
+	directorioMapa = malloc ( (sizeof (char)) * PATH_MAX +1);
+
+	sprintf(directorioMapa, "/%s/%s/%s/%s", nuevoMapa->directorioPokeDex, __ubicacionMapas, nuevoMapa->nombre, __ubicacionMetadataMapas);
 
 
-	strcat (directorioMapa, __ubicacionMapas );
-	strcat (directorioMapa, nuevoMapa->nombre);
-	strcat (directorioMapa, __ubicacionMetadataMapas );
+	t_config * metadataMapa = _mapa_newConfigType(directorioMapa);
+	free (directorioMapa);
 
-	t_config * metadataMapa = newConfigType(directorioMapa);
 
 	return metadataMapa;
 }
@@ -258,17 +261,14 @@ t_config *config_create_for_metadataMapa(t_mapa * nuevoMapa)
 
 void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
 {
+	log_info(myArchivoDeLog,"Voy a leer las PokeNest y cargarlas");
 
-	//voy a recorrer la carpeta de las pokenest y revisar cuantas hay!
+	char * directorioMapa;
+	directorioMapa = malloc ( (sizeof (char)) * PATH_MAX +1);
 
-    //TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-    char directorioMapa[250];
-    strcpy (directorioMapa, nuevoMapa->directorioPokeDex);
+	sprintf(directorioMapa, "/%s/%s/%s/%s", nuevoMapa->directorioPokeDex, __ubicacionMapas, nuevoMapa->nombre , __ubicacionDirPokenest);
 
 
-    strcat (directorioMapa, "Mapas/" );
-    strcat (directorioMapa, nuevoMapa->nombre);
-    strcat (directorioMapa, __ubicacionDirPokenest );
 
     //esta funcion me compara si el archivo actual es un archivo llamado __nombreMetadataPokeNest. Si es asi, levanto la config de este archivo.
     //esto es debido a que recorre recursivamente subdirectorios..
@@ -280,9 +280,14 @@ void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
     		   		levantarConfigPokeNest( (char *)nombreDirectorio, nuevoMapa );
 
     }
-    buscamePokeNestEnEsteDirectorio (directorioMapa,  (void *) _funcionOrdenSuperiorQueQuieroEjecutar );
+
+    //consulto si devolvio 0.
+    if ( ( encontrarEnUnDirectorio (directorioMapa,  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
+    	finalizarGui(nuevoMapa);
 
 
+    free (directorioMapa);
+    log_info(myArchivoDeLog,"Finalizo la carga de PokeNest.");
 
 }
 
@@ -290,37 +295,40 @@ void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
 
 void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
 {
-	//TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
-	char directorioMapa[250];
-	strcpy (directorioMapa, nombreDirectorio);
-	strcat (directorioMapa, __ubicacionMetadataPokeNest );
+	char * directorioMapa;
+	directorioMapa = malloc ( (sizeof (char)) * PATH_MAX +1);
 
-	t_config * metadataPokenest = newConfigType(directorioMapa);
+	sprintf(directorioMapa, "/%s/%s", nombreDirectorio, __ubicacionMetadataPokeNest);
 
+
+	t_config * metadataPokenest = _mapa_newConfigType(directorioMapa);
 	cargarPokeNests(metadataPokenest, nuevoMapa);
 
+
 	metadata_finalizar (metadataPokenest);
+	free (directorioMapa);
 }
 
 
 void loguearEstructuraDelMapa(t_mapa * nuevoMapa)
 {
-	//TODO: loguear estos valores (creo que es pedido del enunciado)
-	//printf("%d\n", mapa->metadata->tiempoChequeadoDeadlock);
-	//printf("%s\n", mapa->metadata->batalla);
-	//printf("%s\n", mapa->metadata->algoritmo);
-	//printf("%d\n", mapa->metadata->quantum);
-	//printf("%d\n", mapa->metadata->retardo);
-	//printf("%s\n", mapa->metadata->ip);
-	//printf("%s\n", mapa->metadata->puerto);
-	// etc....
+	log_info(myArchivoDeLog,"tiempoChequeadoDeadlock= %s", string_itoa(nuevoMapa->metadata->tiempoChequeadoDeadlock) );
+	log_info(myArchivoDeLog,"ModoBatalla= %s", nuevoMapa->metadata->batalla );
+	log_info(myArchivoDeLog,"Algoritmo= %s", nuevoMapa->metadata->algoritmo );
+	log_info(myArchivoDeLog,"Quantum= %s", string_itoa(nuevoMapa->metadata->quantum) );
+	log_info(myArchivoDeLog,"Retardo= %s", string_itoa(nuevoMapa->metadata->retardo) );
+	log_info(myArchivoDeLog,"IP= %s", nuevoMapa->metadata->ip );
+	log_info(myArchivoDeLog,"Puerto= %s", nuevoMapa->metadata->puerto );
 }
 
 void finalizarGui (t_mapa * mapa)
 {
+	log_info(myArchivoDeLog, "voy a finalizar la gui");
 	borrarMapa (mapa);
 	nivel_gui_terminar();
-	//TODO: log..
-	puts ("se finaliza el proceso");
+	log_destroy(myArchivoDeLog);
 	exit(EXIT_FAILURE);
 }
+
+
+

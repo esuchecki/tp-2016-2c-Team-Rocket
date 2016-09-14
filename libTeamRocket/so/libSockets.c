@@ -5,14 +5,16 @@
  *      Author: utnso
  */
 
+#include "../so/libSockets.h"
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include "libSockets.h"
-#include "libPlanificador.h"
+
+#include "../so/libPlanificador.h"
 
 void handshake(int i,fd_set sockets_activos){
 	t_data * paquete = leer_paquete(i);
