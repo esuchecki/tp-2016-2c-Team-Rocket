@@ -20,6 +20,7 @@
  * 			- 2 -> movete arriba
  * 			- 3 -> movete izquierda
  * 			- 4 -> movete abajo
+ * 			- -1-> hay algun error... ver mas adelante
  */
 
 int queHago(int e_posX, int e_posY, int p_posX,int p_posY, char ultimoMov){
