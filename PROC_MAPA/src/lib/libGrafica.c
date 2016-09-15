@@ -99,10 +99,8 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 
 	nuevoMapa->metadata = nuevaMetadataMapa;
 
-	#warning ("aca hay un problema..")
-	//TODO: duplicar strings, creo que cuando borro la metadata se me muere el string :S:S.. (revisar). Hacer string_duplicate por el momento solo en _mapa_configLeerString..
-	loguearEstructuraDelMapa(nuevoMapa);
 	metadata_finalizar (metadataMapa);
+	loguearEstructuraDelMapa(nuevoMapa);
 
 	log_info(myArchivoDeLog,"Finaliza la lectura de metadata del mapa.");
 }

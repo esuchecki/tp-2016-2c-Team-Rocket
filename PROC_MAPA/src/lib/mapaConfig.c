@@ -15,8 +15,9 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 
 	if ( *devolvioError == true )
 	{
-		finalizarGui(NULL);
+		#warning ("resolver este warning")
 		free (devolvioError);
+		finalizarGui(NULL);
 		return 0;
 	}
 	else
@@ -29,12 +30,12 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 {
 	char * aux;
-	aux = configLeerString (archivoConfig, nombreDeLaPropiedad);
+	aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
 
 	if ( aux == NULL )
 	{
+		free (aux);
 		finalizarGui(NULL);
-		//free (aux);
 		return 0;
 	}
 	else
@@ -51,8 +52,8 @@ t_config * _mapa_newConfigType (char * directorio)
 
 	if ( aux == NULL )
 	{
+		free (aux);
 		finalizarGui(NULL);
-		//free (aux);
 		return 0;
 	}
 	else

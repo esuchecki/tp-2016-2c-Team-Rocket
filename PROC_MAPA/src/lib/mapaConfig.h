@@ -14,6 +14,7 @@
 
 #include <so/libConfig.h>
 #include <stdlib.h>
+#include <commons/string.h>
 
 /*
  * @NAME: _mapa_configLeerInt
