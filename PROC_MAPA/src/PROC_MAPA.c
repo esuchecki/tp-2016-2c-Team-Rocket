@@ -57,6 +57,13 @@ int main( int argc, char *argv[] )
 	nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
+	//Creo el hilo planificador
+	pthread_attr_t atributoHilo;
+	pthread_attr_init(&atributoHilo);
+	pthread_t hiloPlanificador,hiloConexiones;
+	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
+	pthread_create(&hiloConexiones, &atributoHilo, (void *)atenderConexiones, (void *)mapa->metadata->puerto);
+
 	#warning("Consultar el nombre del proceso")
 	//TODO: consultar el nombre de proceso, creo que es "mapa"
 	#warning("Consultar si el nombre del mapa puede contener espacios")
@@ -68,15 +75,14 @@ int main( int argc, char *argv[] )
 
 	dibujarMapa (mapa);
 
-	//Creo el hilo planificador
-	pthread_t hiloPlanificador,hiloConexiones;
-	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
-	pthread_create(&hiloConexiones, NULL, (void *)atenderConexiones, (void *)mapa->metadata->puerto);
 
 
+	pthread_join(hiloConexiones,NULL);
+	pthread_join(hiloPlanificador,NULL);
 
 
 	finalizarGui(mapa);
+
 	return EXIT_SUCCESS;	//enrealidad nunca ejecuta esta instruccion
 }
 
