@@ -11,7 +11,7 @@
 void dibujarMapa (t_mapa * mapa)
 {
 
-
+	//TODO: esto en cualquier momento se va...
 	//entrenador de prueba por el momento
 	cargarEntrenador(mapa->items, '#');
 	cargarEntrenador(mapa->items, '$');
@@ -24,17 +24,21 @@ void dibujarMapa (t_mapa * mapa)
 
 	nivel_gui_dibujar(mapa->items, mapa->nombre);
 
-	while ( 1 ) {
-			int key = getch();
+	while ( 1 )
+	{
+		//TODO: esto no deberia ir aca...
+		revisarRecepcionDeSeniales (mapa);
 
-			switch( key ) {
+		int key = getch();
 
-				case 'Q':
-				case 'q':
-					finalizarGui(mapa);
+		switch( key )
+		{
+			case 'Q':
+			case 'q':
+				finalizarGui(mapa);
 				break;
 
-			}
+		}
 	}
 
 
@@ -46,6 +50,7 @@ void borrarMapa (t_mapa * mapa)
 	if (mapa == NULL)
 		return;
 
+	freeForMetadataMapa (mapa);
 
 	//TODO: recorrer listas y borrar.
 
@@ -99,10 +104,8 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 
 	nuevoMapa->metadata = nuevaMetadataMapa;
 
-	#warning ("aca hay un problema..")
-	//TODO: duplicar strings, creo que cuando borro la metadata se me muere el string :S:S.. (revisar). Hacer string_duplicate por el momento solo en _mapa_configLeerString..
-	loguearEstructuraDelMapa(nuevoMapa);
 	metadata_finalizar (metadataMapa);
+	loguearEstructuraDelMapa(nuevoMapa);
 
 	log_info(myArchivoDeLog,"Finaliza la lectura de metadata del mapa.");
 }
@@ -123,17 +126,14 @@ void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 
 
 
-	//TODO: validar si la pokeNest tiene pokemon de una unica especie..)
-	//TODO: consultar si es unico el identificador de pokenest x mapa..
-	if ( estaDentroDelMargenDelMapa(pos_x, pos_y) && esValidoElEspaciadoDePokeNest(nuevoMapa->items, pos_x, pos_y) )
+	if ( estaDentroDelMargenDelMapa(pos_x, pos_y) && esValidoElEspaciadoDePokeNest(nuevoMapa->items, pos_x, pos_y) && esUnicoEsteIdentificador(nuevoMapa->items, metadataIdentificador))
 	{
 		CrearCaja(nuevoMapa->items, metadataIdentificador, pos_x, pos_y, cant_de_pokemones_en_pokenest);
 		log_info(myArchivoDeLog,"Se creo una Pokenest: [ %c | x=%s | y=%s | cant=%s ]", metadataIdentificador, string_itoa(pos_x), string_itoa(pos_y), string_itoa(cant_de_pokemones_en_pokenest));
 	}
 	else
 	{
-		//TODO: errorSintacticoSemantico fuera del mapa
-		log_error(myArchivoDeLog, "errorSintacticoSemantico fuera del mapa o pokenest no espaciadas");
+		log_error(myArchivoDeLog, "errorSintacticoSemantico. Se quiso crear una Pokenest fuera del mapa o el identificador ya existia o no estaba bien espaciadas. Pokenest: [ %c | x=%s | y=%s | cant=%s ]", metadataIdentificador, string_itoa(pos_x), string_itoa(pos_y), string_itoa(cant_de_pokemones_en_pokenest));
 		finalizarGui(nuevoMapa);
 	}
 
@@ -142,9 +142,7 @@ void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 
 void cargarEntrenador (t_list* items, char simbolo)
 {
-	//TODO: Consultar si el simbolo de 1 entrenador es unico en un mapa (entiendo que si)
-
-	if (estaDentroDelMargenDelMapa(__entrenadorPosInicialEnX,__entrenadorPosInicialEnY) ==1 )
+	if (estaDentroDelMargenDelMapa(__entrenadorPosInicialEnX,__entrenadorPosInicialEnY) ==1 && esUnicoEsteIdentificador(items, simbolo))
 	{
 		CrearPersonaje(items, simbolo, __entrenadorPosInicialEnX, __entrenadorPosInicialEnY);
 		log_info(myArchivoDeLog,"Se conecto un entrenador: [ %c ]", simbolo);
@@ -152,7 +150,8 @@ void cargarEntrenador (t_list* items, char simbolo)
 	}
 	else
 	{
-		//TODO: errorSintacticoSemantico fuera del mapa
+		log_error(myArchivoDeLog, "error se conecto un entrenador con un simbolo ya existente o se quiso cargar al entrenador en una posicion inicial fuera del area del mapa. Simbolo: [ %c ]", simbolo);
+		//TODO: deberia finalizar la gui? Enrealidad deberia finalizar al entrenador....
 		finalizarGui(NULL);
 	}
 }
@@ -160,13 +159,6 @@ void cargarEntrenador (t_list* items, char simbolo)
 
 void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 {
-	//TODO: Consultar si un entrenador se puede mover afuera del mapa (entiendo que no)
-	//		deberia abortar mapa o entrenador??
-
-
-	//TODO: valido que se mueva de a 1 paso? (1 paso y ademas no en diagonal)
-	//		deberia abortar mapa o entrenador??
-
 	if (estaDentroDelMargenDelMapa(newPos_x,newPos_y) ==1 )
 	{
 		MoverPersonaje(items, simbolo, newPos_x, newPos_y);
@@ -174,8 +166,8 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 	}
 	else
 	{
-		//TODO: errorSintacticoSemantico fuera del mapa
-		log_error(myArchivoDeLog, "errorSintacticoSemantico entrenador fuera del mapa");
+		log_error(myArchivoDeLog, "errorSintacticoSemantico el entrenador se movio fuera del mapa.");
+		//TODO: deberia finalizar la gui? Enrealidad deberia finalizar al entrenador....
 		finalizarGui(NULL);
 	}
 }
@@ -321,6 +313,7 @@ void loguearEstructuraDelMapa(t_mapa * nuevoMapa)
 	log_info(myArchivoDeLog,"Puerto= %s", nuevoMapa->metadata->puerto );
 }
 
+
 void finalizarGui (t_mapa * mapa)
 {
 	log_info(myArchivoDeLog, "voy a finalizar la gui");
@@ -331,4 +324,90 @@ void finalizarGui (t_mapa * mapa)
 }
 
 
+bool esUnicoEsteIdentificador (t_list* items, char idDelItem)
+{
+	//defino la condicion (que no exista el item)
+	bool _yaExistiaEsteId(ITEM_NIVEL* item)
+	{
+		if (item->id == idDelItem)	//sabemos que idDelItem es un char.
+		{
+			return 1;	//Ese id ya existe
+	 	}
+		return 0;
+	}
 
+	//devuelvo 0-false si NO es unico.
+	if (list_count_satisfying( items, (void *) _yaExistiaEsteId ) > 0)
+		return 0;
+
+	//devuelvo 1-true xq es unico.
+	return 1;
+}
+
+
+void revisarRecepcionDeSeniales (t_mapa * unMapa)
+{
+	//TODO: Que hilo deberia revisar las señales? Gui? Planificador? Etc..
+
+	//TODO: no pude pasar por parametro la estructura de mapa, deberia crear una variable global para la estructura del mapa?
+
+	if (signal( SIGUSR2, tratarLaSenialRecibida ) == SIG_ERR)
+	{
+		log_error(myArchivoDeLog, "error en la senial SIGUSR2");
+		finalizarGui(unMapa);
+	}
+	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
+	{
+		log_error(myArchivoDeLog, "error en la senial SIGTERM");
+		finalizarGui(unMapa);
+	}
+	if (signal(SIGINT, tratarLaSenialRecibida)==SIG_ERR)
+	{
+		log_error(myArchivoDeLog, "error en la senial SIGINT");
+		finalizarGui(unMapa);
+	}
+}
+
+
+void tratarLaSenialRecibida (int senial)
+{
+	switch (senial)
+	{
+		//hago que cuando aborte, cierre bien la Gui.
+		case SIGINT:
+			log_info(myArchivoDeLog,"Recibi la senial SIGINT." );
+			finalizarGui(NULL);
+			break;
+
+		case SIGUSR2:
+			log_info(myArchivoDeLog,"Recibi la senial SIGUSR2." );
+
+			//TODO: implementar semaforos. Si el planificador tenia en ejecucion, deberia esperar que termine, y recien ahi releer...
+
+			//TODO: no pude pasar por parametro la estructura de mapa, deberia crear una variable global para la estructura del mapa?
+			//TODO: resolver la recarga de la metadata del mapa...
+
+			//freeForMetadataMapa (NULL);
+			//leerMetadataDelMapa (NULL);
+			break;
+
+		case SIGTERM:
+			log_info(myArchivoDeLog,"Recibi la senial SIGTERM." );
+			finalizarGui(NULL);
+			break;
+	}
+
+}
+
+void freeForMetadataMapa (t_mapa * unMapa)
+{
+	//borro todos los strings primero
+	free(unMapa->metadata->algoritmo);
+	free(unMapa->metadata->batalla);
+	free(unMapa->metadata->ip);
+	free(unMapa->metadata->puerto);
+
+	free(unMapa->metadata);
+	unMapa->metadata = NULL;
+	log_info(myArchivoDeLog,"Libere de memoria la estructura unMapa->metadata." );
+}

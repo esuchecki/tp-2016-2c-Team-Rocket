@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <signal.h>
 
 //agreagado de librerias utn.so
 #include <nivel.h>
@@ -197,6 +198,29 @@ void loguearEstructuraDelMapa(t_mapa * nuevoMapa);
  */
 void finalizarGui (t_mapa * mapa);
 
+/*
+ * @NAME: esUnicoEsteIdentificador
+ * @DESC: Devuelve true si el identificador, ej: '#', ya existe en la lista de items.
+ */
+bool esUnicoEsteIdentificador (t_list* items, char idDelItem);
+
+/*
+ * @NAME: revisarRecepcionDeSeniales
+ * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial..
+ */
+void revisarRecepcionDeSeniales (t_mapa * unMapa);
+
+/*
+ * @NAME: tratarLaSenialRecibida
+ * @DESC: Trata la senial recibida..
+ */
+void tratarLaSenialRecibida (int senial);
+
+/*
+ * @NAME: tratarLaSenialRecibida
+ * @DESC: Libera de memoria la estructura unMapa->metadata.
+ */
+void freeForMetadataMapa (t_mapa * unMapa);
 
 //------------------------------------------//
 
