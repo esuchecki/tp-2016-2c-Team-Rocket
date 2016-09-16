@@ -16,6 +16,7 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 	if ( *devolvioError == true )
 	{
 		#warning ("resolver este warning")
+		//TODO: resolver el warning de finalizarGui (en todo este archivo).
 		free (devolvioError);
 		finalizarGui(NULL);
 		return 0;

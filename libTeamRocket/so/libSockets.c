@@ -207,3 +207,4 @@ int atenderConexiones(void *Puerto){
 	}
 }
 
+//TODO: hacer una fc que chequee si se desconecto un host (pj. entrenador pokemon).
