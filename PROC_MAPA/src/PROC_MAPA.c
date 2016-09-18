@@ -57,6 +57,7 @@ int main( int argc, char *argv[] )
 	nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
+	/*
 	//Creo el hilo planificador
 	pthread_attr_t atributoHilo;
 	pthread_attr_init(&atributoHilo);
@@ -72,14 +73,14 @@ int main( int argc, char *argv[] )
 
 
 	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
-
+*/
 	dibujarMapa (mapa);
 
 
-
+/*
 	pthread_join(hiloConexiones,NULL);
 	pthread_join(hiloPlanificador,NULL);
-
+*/
 
 	finalizarGui(mapa);
 

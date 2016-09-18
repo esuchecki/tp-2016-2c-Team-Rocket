@@ -1,0 +1,63 @@
+Para Mapa y Entrenador:
+=======================
+
+1) En el Handshake deberian intercambiar como informacion: 
+	(Obligatorio)	El entrenador debe enviar su identificador (es un char) al mapa. Por ejemplo '#'.
+	(Opcional_medio al pedo) Mapa enviar su nombre al Entrenador, asi el entrenador valida que se conecto al mapa correcto.
+	
+	
+*******************************************************************************
+
+
+2) Mensajes que envia el entrenador al mapa:
+--------------------------------------------
+
+[A] -> Conocer la posicion de una pokenest.
+	(Obligatorio) El entrenador le debe enviar el identificador de pokenest, ej 'P'.
+
+[B] -> Mover Entrenador.
+	(Creo que lo mejor es subdividirlo en 4 msjs, unicamente con header)
+	(+) Moverse 1 posicion Arriba
+	(+) Moverse 1 posicion Abajo
+	(+) Moverse 1 posicion a la izquierda
+	(+) Moverse 1 posicion a la derecha
+	
+[C] -> Capturar Pokemon
+	(Obligatorio) El entrenador le debe enviar el identificador de pokenest, ej 'P'.
+
+[D] -> Finalizacion de objetivos
+	(Entiendo que no le pasa ninguna informacion)
+	(El mapa liberara los recursos y desconectara el entrenador)
+	(El entrenador pasara al siguiente mapa)
+	
+[E] -> Este es mi mejor Pokemon
+	(Obligatorio) El entrenador le va a pasar el nombre del pokemon (Ej 'pikachu002.dat')
+	(Hay que implementar un metodo en entrenador que busque su mejor pokemon)
+	
+	
+*******************************************************************************
+
+
+3) Mensajes que envia el mapa al entrenador:
+--------------------------------------------
+
+[A] -> Enviar la pos de un pokenest
+	(Obligatorio) Pasar (¿un struct?) con pos_x / pos_y
+	
+[B] -> Capturaste al pokemon
+	(Obligatorio) Path con la ubicacion del archivo.
+	
+[C] -> Pasame tu mejor pokemon.
+	(Entiendo que no le pasa ninguna informacion)
+	(El entrenador lo debe interpretar como que se encuentra en un deadlock)
+	
+[D] -> Ganaste la batalla pokemon
+	(Entiendo que no le pasa ninguna informacion)
+	(Ver punto siguiente)
+	
+[E] -> Perdiste la batalla pokemon
+	(Entiendo que no le pasa ninguna informacion)
+	(Revisar si es preferible pasar solo headers (entiendo que si) o que pase un bit en el payload para saber si gano o perdio.)
+	
+[F] -> Ubicacion de la medalla del mapa
+	(Obligatorio) Path con la ubicacion del archivo.
