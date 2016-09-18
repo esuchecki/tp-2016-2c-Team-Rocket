@@ -29,7 +29,6 @@ void dibujarMapa (t_mapa * mapa)
 	{
 		//TODO: esto no deberia ir aca...??
 		//Nota: es un ejemplo de uso!! darle bola
-		revisarRecepcionDeSeniales (mapa, (void *) finalizarGui );
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) finalizarGui, (void* ) accionDelMapaAnteSIGUSR2 );
 
 /*

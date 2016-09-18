@@ -17,7 +17,7 @@ MAPA_NAME="prueba1"
 POKEDEX="~/git/tp-2016-2c-Team-Rocket/PROC_MAPA/test_files"
 
 # declare EXEC variable
-EXEC="~/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/PROC_MAPA"
+EXEC="~/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa"
 
 
 #limpio pantalla

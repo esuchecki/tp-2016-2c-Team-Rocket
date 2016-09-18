@@ -57,30 +57,31 @@ int main( int argc, char *argv[] )
 	nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
-	/*
+	inicializarSenialesMapa (mapa, (void *) finalizarGui );
+
+
 	//Creo el hilo planificador
 	pthread_attr_t atributoHilo;
 	pthread_attr_init(&atributoHilo);
 	pthread_t hiloPlanificador,hiloConexiones;
 	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
 	pthread_create(&hiloConexiones, &atributoHilo, (void *)atenderConexiones, (void *)mapa->metadata->puerto);
+	//TODO: Lucas soy emi, creo que despues va a haber que darle otro tratamiento a los sockets para que no impriman msjs en pantalla (medio hacen lio con la gui).
+	//dps mirate en libTeamRocket/so/metodos_a_implementar_sockets que me parece que estan todos los metodos que vamos a tener que llamar entre entrenador y mapa!.
 
-	#warning("Consultar el nombre del proceso")
-	//TODO: consultar el nombre de proceso, creo que es "mapa"
-	#warning("Consultar si el nombre del mapa puede contener espacios")
-	//TODO: consultar si el nombre de un mapa puede contener espacios....? En enunciado dice "Ciudad Paleta"
 	#warning ("cuando hay un error abortivo hay que cerrar correctamente el gui")
 
 
 	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
-*/
+	//Nota: esto se hace revisando que al inicializar las conexiones el puerto no este ocupado!!
+
 	dibujarMapa (mapa);
 
 
-/*
+
 	pthread_join(hiloConexiones,NULL);
 	pthread_join(hiloPlanificador,NULL);
-*/
+
 
 	finalizarGui(mapa);
 

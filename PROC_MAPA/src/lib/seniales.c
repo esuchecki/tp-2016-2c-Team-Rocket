@@ -6,7 +6,7 @@
  */
 #include "seniales.h"
 
-void revisarRecepcionDeSeniales (t_mapa * unMapa, void (*fc) (t_mapa *))
+void inicializarSenialesMapa (t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	//TODO: Que hilo deberia revisar las señales? Gui? Planificador? Etc..
 

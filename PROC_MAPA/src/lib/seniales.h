@@ -24,12 +24,12 @@
 
 
 /*
- * @NAME: revisarRecepcionDeSeniales
+ * @NAME: inicializarSenialesMapa
  * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial.. En caso de error abortivo, cierra correctamente la gui con la fc y el parametro unMapa.
  *
  * NOTA: si llamas a este metodo, tu proxima linea deberia ser funcionesQueQuieroEjecutarSegunLaSenial!!!
  */
-void revisarRecepcionDeSeniales (t_mapa * unMapa, void (*fc) (t_mapa *));
+void inicializarSenialesMapa (t_mapa * unMapa, void (*fc) (t_mapa *));
 
 /*
  * @NAME: funcionesQueQuieroEjecutarSegunLaSenial
