@@ -23,12 +23,15 @@ void dibujarMapa (t_mapa * mapa)
 	log_info(myArchivoDeLog, "voy a tratar de dibujar el mapa ");
 
 	nivel_gui_dibujar(mapa->items, mapa->nombre);
+	//TODO: se deberia redibujar el nivel ante cada cambio...
 
 	while ( 1 )
 	{
-		//TODO: esto no deberia ir aca...
-		revisarRecepcionDeSeniales (mapa);
+		//TODO: esto no deberia ir aca...??
+		//Nota: es un ejemplo de uso!! darle bola
+		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) finalizarGui, (void* ) accionDelMapaAnteSIGUSR2 );
 
+/*
 		int key = getch();
 
 		switch( key )
@@ -39,6 +42,7 @@ void dibujarMapa (t_mapa * mapa)
 				break;
 
 		}
+*/
 	}
 
 
@@ -345,59 +349,7 @@ bool esUnicoEsteIdentificador (t_list* items, char idDelItem)
 }
 
 
-void revisarRecepcionDeSeniales (t_mapa * unMapa)
-{
-	//TODO: Que hilo deberia revisar las señales? Gui? Planificador? Etc..
 
-	//TODO: no pude pasar por parametro la estructura de mapa, deberia crear una variable global para la estructura del mapa?
-
-	if (signal( SIGUSR2, tratarLaSenialRecibida ) == SIG_ERR)
-	{
-		log_error(myArchivoDeLog, "error en la senial SIGUSR2");
-		finalizarGui(unMapa);
-	}
-	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
-	{
-		log_error(myArchivoDeLog, "error en la senial SIGTERM");
-		finalizarGui(unMapa);
-	}
-	if (signal(SIGINT, tratarLaSenialRecibida)==SIG_ERR)
-	{
-		log_error(myArchivoDeLog, "error en la senial SIGINT");
-		finalizarGui(unMapa);
-	}
-}
-
-
-void tratarLaSenialRecibida (int senial)
-{
-	switch (senial)
-	{
-		//hago que cuando aborte, cierre bien la Gui.
-		case SIGINT:
-			log_info(myArchivoDeLog,"Recibi la senial SIGINT." );
-			finalizarGui(NULL);
-			break;
-
-		case SIGUSR2:
-			log_info(myArchivoDeLog,"Recibi la senial SIGUSR2." );
-
-			//TODO: implementar semaforos. Si el planificador tenia en ejecucion, deberia esperar que termine, y recien ahi releer...
-
-			//TODO: no pude pasar por parametro la estructura de mapa, deberia crear una variable global para la estructura del mapa?
-			//TODO: resolver la recarga de la metadata del mapa...
-
-			//freeForMetadataMapa (NULL);
-			//leerMetadataDelMapa (NULL);
-			break;
-
-		case SIGTERM:
-			log_info(myArchivoDeLog,"Recibi la senial SIGTERM." );
-			finalizarGui(NULL);
-			break;
-	}
-
-}
 
 void freeForMetadataMapa (t_mapa * unMapa)
 {
@@ -410,4 +362,12 @@ void freeForMetadataMapa (t_mapa * unMapa)
 	free(unMapa->metadata);
 	unMapa->metadata = NULL;
 	log_info(myArchivoDeLog,"Libere de memoria la estructura unMapa->metadata." );
+}
+
+
+void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa)
+{
+	//TODO: implementar semaforos. Si el planificador tenia en ejecucion, deberia esperar que termine, y recien ahi releer...
+	freeForMetadataMapa (unMapa);
+	leerMetadataDelMapa (unMapa);
 }

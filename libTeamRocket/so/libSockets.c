@@ -159,17 +159,25 @@ void common_send(int socket, t_data * paquete) {
 void atenderConexion(int i, fd_set sockets_activos) {
 
 	//hago lo que tenga que hacer cuando se conecte un entrenador
-	t_data *prueba;
-	prueba = leer_paquete(i);
-	if (prueba->header == 10) {
-		char msj[20];
-		strcpy(msj, "Su turno entrenador");
-		prueba = pedirPaquete(2, 20, msj);
-		common_send(i, prueba);
-	} else {
-		printf("estamos aca?");
+	t_data * paquete;
+	paquete = leer_paquete(i);
+	switch(paquete->header){
+	case peticionPokenest:
+		//TODO: dado el identificador de una pokenest mandarle la posicion de la pokenest
+		break;
+	case moverEntrenador:
+		//TODO: mover al entrenador una posicion
+		break;
+	case capturarPokemon:
+		//TODO: dado el identificador de la pokenest capturarle al pokemon
+		break;
+	case objetivosCumplidos:
+		//TODO: liberar recursos y desconectar entrenador
+		break;
+	case mejorPokemon:
+		//TODO: recibe al mejor pokemon para... batalla pokemon?
+		break;
 	}
-
 }
 
 int atenderConexiones(void * data) {
@@ -192,7 +200,7 @@ int atenderConexiones(void * data) {
 
 		int retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
 		NULL, NULL, NULL);
-		printf("retorno select: %d\n", retornoSelect);
+
 		if (retornoSelect == -1) {
 			goto labelSelect;
 		}

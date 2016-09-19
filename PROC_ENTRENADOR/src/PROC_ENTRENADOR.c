@@ -31,14 +31,14 @@ int main() {
 	//TODO: subo este codigo para que no se pierda, hay que aprolijar... Disculpen chicos!
 //	levantarConfig();
 
-	int socket = connect_to("127.0.0.1", "8400");
+	int socket = connect_to("127.0.0.1", "6400");
 	if (socket == -1) {
 		printf("No se pudo conectar");
 		exit(EXIT_FAILURE);
 	} else {
 		printf("socket: %d\n", socket);
 		int simbolo = 0;
-		t_data * info = pedirPaquete(99, 0, &simbolo);
+		t_data * info = pedirPaquete(99, sizeof(int), &simbolo);
 
 		common_send(socket, info);
 
@@ -46,13 +46,23 @@ int main() {
 			info = leer_paquete(socket);
 
 			switch (info->header) {
-			case 1:
-				printf("Es tu turno\n");
-				t_data * envio = pedirPaquete(10, 0, NULL);
-				common_send(socket, envio);
+			case ubicacionPokenest:
+				//TODO: en info->data estara la posicion de la pokenest
 				break;
-			case 2:
-				printf("mensajeMapa: %s\n", (char *) info->data);
+			case capturastePokemon:
+				//TODO: hacer lo que tengo que hacer
+				break;
+			case dameMejorPokemon:
+				//TODO: enviar pokemon mas fuerte. realizar esta funcion
+				break;
+			case ganasteBatalla:
+				//TODO: hacer lo que tenga que hacer
+				break;
+			case perdisteBatalla:
+				//TODO: hacer lo que tenga que hacer
+				break;
+			case ubicacionMedallaMapa:
+				//TODO: hacer lo que tenga que hacer
 				break;
 			}
 		}

@@ -17,6 +17,23 @@ typedef struct {
 	void * data;
 }t_data;
 
+enum enviosEntrenador{
+	peticionPokenest = 10,
+	moverEntrenador = 11,//ver si subdividirlo en 4 diferentes
+	capturarPokemon = 12,
+	objetivosCumplidos = 13,
+	mejorPokemon = 14
+};
+
+enum enviosMapa{
+	ubicacionPokenest = 20,
+	capturastePokemon = 21,
+	dameMejorPokemon = 22,
+	ganasteBatalla = 23,
+	perdisteBatalla = 24,
+	ubicacionMedallaMapa = 25
+};
+
 fd_set sockets_activos;
 
 /*

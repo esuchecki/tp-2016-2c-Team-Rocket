@@ -17,12 +17,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
-#include <signal.h>
+
+
 
 //agreagado de librerias utn.so
 #include <nivel.h>
-#include <tad_items.h>		//contiene una lista con los items a dibujar en el mapa
+
 #include <curses.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>
@@ -31,6 +31,8 @@
 
 //agregados librerias propias
 #include "mapaConfig.h"
+#include "seniales.h"
+#include "estructurasMapa.h"
 
 
 //------------------------------------------//
@@ -43,51 +45,7 @@
 
 
 
-//------------------------------------------//
-/* ********************************************	*/
-//----------- Sector Estructuras -------------//
 
-typedef struct
-{
-	uint16_t tiempoChequeadoDeadlock;
-	char * batalla;
-	char * algoritmo;
-	uint16_t quantum;
-	uint16_t retardo;
-	char * ip;
-	char * puerto;
-} t_metadataMapa ;
-
-
-typedef struct
-{
-	uint16_t nivel;
-	char capturadoPorEntrenador;	//'0' para ninguno, simbolo del entrenador para identificar quien lo tiene
-} t_pokemon;
-
-/*
-typedef struct
-{
-	char identificador;
-	char tipo[20];
-	uint16_t pos_x;
-	uint16_t pos_y;
-	t_pokemon pokemones;	//a futuro esto deberia ser un array o una lista enrealidad....
-} t_pokeNest;
-*/
-
-typedef struct
-{
-     char * nombre;
-     char * directorioPokeDex;
-     t_metadataMapa * metadata;
-     t_list* items;
-     //t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
-} t_mapa ;
-
-t_log* myArchivoDeLog;
-
-//------------------------------------------//
 
 
 
@@ -204,23 +162,19 @@ void finalizarGui (t_mapa * mapa);
  */
 bool esUnicoEsteIdentificador (t_list* items, char idDelItem);
 
-/*
- * @NAME: revisarRecepcionDeSeniales
- * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial..
- */
-void revisarRecepcionDeSeniales (t_mapa * unMapa);
 
-/*
- * @NAME: tratarLaSenialRecibida
- * @DESC: Trata la senial recibida..
- */
-void tratarLaSenialRecibida (int senial);
 
 /*
  * @NAME: tratarLaSenialRecibida
  * @DESC: Libera de memoria la estructura unMapa->metadata.
  */
 void freeForMetadataMapa (t_mapa * unMapa);
+
+/*
+ * @NAME: accionDelMapaAnteSIGUSR2
+ * @DESC: Cuando recibe la senial mencionada, ejecuta esta fc.
+ */
+void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa);
 
 //------------------------------------------//
 
