@@ -13,10 +13,10 @@
 #include <string.h>
 #include "../so/libSockets.h"
 
-void desconectarEntrenador(int socket){
+void desconectarEntrenador(int nroDesocket){
 	bool seDesconecto(void * data){
 		t_entrenador * alguno = data;
-		return alguno->socket == socket;
+		return alguno->nroDesocket == nroDesocket ;
 	}
 
 	t_entrenador * entrenadorAEliminar = list_remove_by_condition(colaListos,seDesconecto);
@@ -25,22 +25,24 @@ void desconectarEntrenador(int socket){
 }
 
 t_entrenador * ejecutar_algoritmo(char * algoritmo){
-	if(strcmp(algoritmo,"RR")){
-
-		t_entrenador * elProximo = list_get(colaListos, 0);
+	if(strcmp(algoritmo,"RR")==0){
+		printf("la cola de listos tiene %d elementos\n",list_size(colaListos));
+		t_entrenador * elProximo = list_remove(colaListos, 0);
+		return elProximo;
+		/*t_entrenador * elProximo = list_get(colaListos, 0);
 		if(elProximo->instruccionesEjecutadas < elProximo->quantum){
 			return elProximo;
 		}else{
 			list_add(colaListos,elProximo);
 			elProximo = list_get(colaListos,1);
 			return elProximo;
-		}
+		}*/
 
 
 	}else{
 		//algoritmo entrenador mas cercano a pokedex
 		t_entrenador *uno = malloc(sizeof(t_entrenador));
-		uno->socket = 0;
+		uno->nroDesocket  = 0;
 		return uno;
 	}
 }
@@ -49,16 +51,17 @@ void * ejecutarPlanificador(void * datos) {
 	printf("iniciado hilo planificador\n");
 	while (1) {
 		sem_wait(&entrenador_listo);
-
+		printf("Entre al planificador");
 		pthread_mutex_lock(&mutex_algoritmo);
 
 		t_entrenador *proximoEntrenador = ejecutar_algoritmo("RR");
 
 		int null = 0;
 
-		t_data *turno = pedirPaquete(1,0,&null);
+		t_data *turno = pedirPaquete(1,sizeof(int),&null);
 
-		common_send(proximoEntrenador->socket,turno);
+		common_send(proximoEntrenador->nroDesocket ,turno);
+		printf("envie paquete al entrenador: %d\n",proximoEntrenador->nroDesocket );
 
 		free(turno);
 
@@ -78,7 +81,7 @@ void agregarAColaDeListos(t_entrenador *unEntrenador) {
 t_entrenador * generarEntrenador(int i,void * data) {
 	t_entrenador *unEntrenador = malloc(sizeof(t_entrenador));
 
-	unEntrenador->socket = i;
+	unEntrenador->nroDesocket  = i;
 
 	return unEntrenador;
 }

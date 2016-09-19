@@ -18,7 +18,7 @@ sem_t entrenador_listo;
 pthread_mutex_t mutex_listos,mutex_algoritmo;
 
 typedef struct{
-	int socket;
+	int nroDesocket;
 	char simbolo;
 	int quantum;
 	int instruccionesEjecutadas;
@@ -49,7 +49,7 @@ void * ejecutarPlanificador();
 void agregarAColaDeListos(t_entrenador *unEntrenador);
 t_entrenador * generarEntrenador(int i,void * data);
 t_entrenador * ejecutar_algoritmo(char * algoritmo);
-void desconectarEntrenador(int socket);
+void desconectarEntrenador(int nroDesocket );
 
 
 #endif /* LIBPLANIFICADOR_H_ */

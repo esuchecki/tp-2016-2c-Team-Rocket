@@ -16,12 +16,14 @@
 
 #include "../so/libPlanificador.h"
 
-void handshake(int i, fd_set sockets_activos) {
-	t_data * paquete = leer_paquete(i);
+void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
+	t_data * paquete = leer_paquete(socket_nueva_conexion);
 
 	if (paquete->header == 99) {
 
-		t_entrenador *unEntrenador = generarEntrenador(i, paquete->data);
+		t_entrenador *unEntrenador = generarEntrenador(socket_nueva_conexion, paquete->data);
+
+		printf("el entrenador tiene socket: %d",unEntrenador->nroDesocket );
 
 		agregarAColaDeListos(unEntrenador);
 
@@ -84,6 +86,9 @@ int connect_to(char* IP, char * port) {
 	}
 	int serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype,
 			serverInfo->ai_protocol);
+	printf("serverSocket funcion conect to: %d\n", serverSocket);
+	printf("ai_family: %d, ai_socket_type: %d, ai_protocol: %d \n",serverInfo->ai_family, serverInfo->ai_socktype,
+			serverInfo->ai_protocol);
 	if (serverSocket == -1) {
 		return -1;
 	}
@@ -100,9 +105,11 @@ t_data * leer_paquete(int socket) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
 
 	recv(socket, &paquete_entrante->header, sizeof(int), MSG_WAITALL);
-	if (paquete_entrante->header == 0) {
+	if (paquete_entrante->header <= 0 || paquete_entrante->header == EPIPE) {
 		//desconexion
+		printf("Se desconecto el socket nro: %d",socket);
 		desconectarEntrenador(socket);
+		FD_CLR(socket,&sockets_activos);
 		return paquete_entrante;
 	} else {
 		recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
@@ -157,7 +164,7 @@ void atenderConexion(int i, fd_set sockets_activos) {
 	if (prueba->header == 10) {
 		char msj[20];
 		strcpy(msj, "Su turno entrenador");
-		prueba = pedirPaquete(1, 20, msj);
+		prueba = pedirPaquete(2, 20, msj);
 		common_send(i, prueba);
 	} else {
 		printf("estamos aca?");
@@ -165,15 +172,15 @@ void atenderConexion(int i, fd_set sockets_activos) {
 
 }
 
-int atenderConexiones(void *Puerto) {
-	//char * PuertoEscucha = Puerto;
-	printf("Hola hilo conexiones \n");
+int atenderConexiones(void * data) {
+//	t_mapa * mapa = data;
 
 	int socketEscucha, socketMasGrande;
-	fd_set sockets_activos, sockets_para_revisar;
 
-	socketEscucha = setup_listen("localhost", "7400");
-	printf("mi socket escucha es : %d\n", socketEscucha);
+	fd_set  sockets_para_revisar;
+
+	socketEscucha = setup_listen("localhost", "6500");
+
 	listen(socketEscucha, 1024);
 
 	socketMasGrande = socketEscucha;

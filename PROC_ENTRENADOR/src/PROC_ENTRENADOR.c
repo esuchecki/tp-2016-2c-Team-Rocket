@@ -31,7 +31,7 @@ int main() {
 	//TODO: subo este codigo para que no se pierda, hay que aprolijar... Disculpen chicos!
 //	levantarConfig();
 
-	int socket = connect_to("localhost", "7400");
+	int socket = connect_to("127.0.0.1", "8400");
 	if (socket == -1) {
 		printf("No se pudo conectar");
 		exit(EXIT_FAILURE);

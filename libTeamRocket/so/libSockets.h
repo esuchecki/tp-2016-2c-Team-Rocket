@@ -17,6 +17,8 @@ typedef struct {
 	void * data;
 }t_data;
 
+fd_set sockets_activos;
+
 /*
  * @NAME: common_setup
  * @DESC: devuelve las configuraciones para utilizar sockets, tanto para el servidor como el cliente
@@ -79,7 +81,7 @@ void common_send(int socket, t_data * paquete);
  * @DESC: recibe del socket i, el codigo 99, para ver que la conexion este ok.
  */
 
-void handshake(int i,fd_set sockets_activos);
+void handshake(int socket_nueva_conexion,fd_set sockets_activos);
 
 /*
  * @NAME: atenderConexion

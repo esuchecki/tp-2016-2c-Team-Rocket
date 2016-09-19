@@ -6,6 +6,7 @@
  */
 
 #include "mapaConfig.h"
+#include "libGrafica.h"
 
 uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 {
@@ -15,8 +16,9 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 
 	if ( *devolvioError == true )
 	{
-		#warning ("resolver este warning")
+
 		//TODO: resolver el warning de finalizarGui (en todo este archivo).
+		//resuelto, habia que incluir libGrafica.h porque sino no la reconocia la funcion
 		free (devolvioError);
 		finalizarGui(NULL);
 		return 0;
