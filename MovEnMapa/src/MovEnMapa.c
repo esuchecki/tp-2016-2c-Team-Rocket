@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "commons/collections/list.h"
+#include <commons/collections/list.h>
 
 typedef struct estadoEntrenador {
 	int e_posX;
@@ -131,15 +131,9 @@ int main(void) {
 	estado->e_posY = 0;
 	//TODO: CREO la lista de pokes asi voy agregando la estructura que cree
 	//		y despues la recorremos asi va a buscar varios pokes
-	/*
-	 *
-	 *
-	 *
-	 *
-	 * la linea de aca abajo no anda
-	 * la 156 tampoco!!!
-	 */
-	//t_list* listaPoke = list_create();
+
+
+	t_list* listaPoke = list_create();
 	int itera = 0;
 	char nombre = 'a';
 	int px = 2;
@@ -154,7 +148,7 @@ int main(void) {
 		nombre++;
 		px += 3;
 		py += 4;
-		//list_add(listaPoke, hitos);
+		list_add(listaPoke, hitos);
 	}
 
 	/*

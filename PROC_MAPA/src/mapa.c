@@ -22,7 +22,7 @@
 //----------- Sector Funciones -------------//
 
 void validarArgumentos ( int argc, char *argv[] );
-void inicializarLogMapa ();
+void inicializarLogMapa ( char *argv[] );
 
 //------------------------------------------//
 
@@ -32,7 +32,6 @@ void inicializarLogMapa ();
 //----------- Sector Constantes -------------//
 
 #define __ubicacionArchivoDeLog "./logMapa_teamRocket"
-#define __nombreDePrograma "Mapa"
 
 
 //------------------------------------------//
@@ -50,7 +49,7 @@ int* atenderConexiones(){
 int main( int argc, char *argv[] )
 {
 	validarArgumentos (argc, argv );
-	inicializarLogMapa();
+	inicializarLogMapa(argv);
 
 	t_mapa * mapa;
 
@@ -130,13 +129,13 @@ void validarArgumentos ( int argc, char *argv[] )
 
 }
 
-void inicializarLogMapa ()		/*levanto el archivo para loggear*/
+void inicializarLogMapa ( char *argv[] )		/*levanto el archivo para loggear*/
 {
 
 
 	//TODO: revisar que pasa si no existe el archivo de log y/o el directorio
 	char* file =__ubicacionArchivoDeLog;
-	char* pg_name = __nombreDePrograma;
+	char* pg_name = argv[0];
 
 	//TODO: revisar que pasa si no esta creado el archivo :S
 	myArchivoDeLog = log_create(file, pg_name, false, LOG_LEVEL_INFO);

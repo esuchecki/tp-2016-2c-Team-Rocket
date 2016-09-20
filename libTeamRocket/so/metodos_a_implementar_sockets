@@ -61,3 +61,7 @@ Para Mapa y Entrenador:
 	
 [F] -> Ubicacion de la medalla del mapa
 	(Obligatorio) Path con la ubicacion del archivo.
+	
+[G] -> Es tu turno!!!
+	(Entiendo que no le pasa ninguna informacion)
+	(El entrenador debe responderle al mapa)

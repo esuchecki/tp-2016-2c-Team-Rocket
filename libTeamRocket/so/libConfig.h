@@ -77,6 +77,17 @@ char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
  */
 t_config * newConfigType (char * direccionArchivo);
 
+/*
+ * @NAME: configLeerArray
+ * @DESC: Recibe la ubicacion de un archivo del tipo de configuracion y devuelve un array de char
+ * * Ejemplo:
+ *     VALORES=[1,2,3,4,5]
+ *     El array que devuelve termina en NULL
+ *
+ */
+char ** configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50]);
+
+
 
 
 /*

@@ -2,4 +2,4 @@
 
 #revisar que esto tenga permisos de ejecucion..
 
-tail -f logMapa_teamRocket 
+killall -s SIGUSR2 mapa

@@ -56,6 +56,19 @@ t_config * newConfigType (char * directorio)
 
 }
 
+char ** configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+{
+	//leo un array
+	 if (config_has_property(archivoConfig, nombreDeLaPropiedad))
+	 {
+		 char** contenido = config_get_array_value(archivoConfig, nombreDeLaPropiedad);
+		 return contenido;
+	 }
+	 else
+	 {
+		 return NULL;
+	 }
+}
 
 
 

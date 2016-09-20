@@ -19,11 +19,11 @@ typedef struct {
 
 enum enviosEntrenador{
 	peticionPokenest = 10,
-	moverEntrenador = 11,//ver si subdividirlo en 4 diferentes
+	moverAlEntrenador = 11,	//ver si subdividirlo en 4 diferentes
 	capturarPokemon = 12,
 	objetivosCumplidos = 13,
 	mejorPokemon = 14
-};
+} ;
 
 enum enviosMapa{
 	ubicacionPokenest = 20,

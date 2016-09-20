@@ -165,7 +165,7 @@ void atenderConexion(int i, fd_set sockets_activos) {
 	case peticionPokenest:
 		//TODO: dado el identificador de una pokenest mandarle la posicion de la pokenest
 		break;
-	case moverEntrenador:
+	case moverAlEntrenador:
 		//TODO: mover al entrenador una posicion
 		break;
 	case capturarPokemon:

@@ -6,9 +6,9 @@
  */
 
 #include "mapaConfig.h"
-#include "libGrafica.h"
 
-uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+
+uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	uint16_t aux;
 	bool * devolvioError = malloc (sizeof(bool));
@@ -16,11 +16,8 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 
 	if ( *devolvioError == true )
 	{
-
-		//TODO: resolver el warning de finalizarGui (en todo este archivo).
-		//resuelto, habia que incluir libGrafica.h porque sino no la reconocia la funcion
 		free (devolvioError);
-		finalizarGui(NULL);
+		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else
@@ -30,7 +27,7 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 	}
 }
 
-char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	char * aux;
 	aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
@@ -38,7 +35,7 @@ char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropieda
 	if ( aux == NULL )
 	{
 		free (aux);
-		finalizarGui(NULL);
+		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else
@@ -48,7 +45,7 @@ char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropieda
 	}
 }
 
-t_config * _mapa_newConfigType (char * directorio)
+t_config * _mapa_newConfigType (char * directorio, t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	t_config * aux;
 	aux = newConfigType (directorio);
@@ -56,7 +53,7 @@ t_config * _mapa_newConfigType (char * directorio)
 	if ( aux == NULL )
 	{
 		free (aux);
-		finalizarGui(NULL);
+		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else
