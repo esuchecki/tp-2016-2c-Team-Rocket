@@ -10,36 +10,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <OSADA_Constants.h>
-#include <osada.h>
+#include "OSADA_Constants.h"
+#include "osada_functions.h"
+#include <commons/bitarray.h>
 
+int main(void) {
+	puts("Prueba Main Osada"); /* prints PROCESO ENTRENADOR */
 
-int calcularBloques(int estructura, int bytes){
-	int cantidad_bloques = bytes /__tamanioBloque;
-	int bloques_bitmap = cantidad_bloques/8/__tamanioBloque;
-	int bloques_asignaciones = (cantidad_bloques - 1 - bloques_bitmap - 1024) * 4 /  __tamanioBloque;
-	int retorno = 0;
-	switch(estructura) {
-	   case __estructuraHeader:
-		   retorno = 1;
-		   break;
-	   case __estructuraBitmap:
-		   retorno = bloques_bitmap;
-		   break;
-	   case __estructuraTablaArchivos:
-		   retorno = 1024;
-		   break;
-	   case __estructuraTablaAsignaciones:
-		   retorno = bloques_asignaciones;
-		   break;
-	   case __estructuraBloqueDatos:
-		   retorno =  (cantidad_bloques - 1 - bloques_bitmap - 1024 - bloques_asignaciones);
-		   break;
-	   default :
-		   retorno = 0;
-	}
-	return retorno;
-
+	//TODO: subo este codigo para que no se pierda, hay que aprolijar... Disculpen chicos!
+	establecerTamanio(65*1024);
+	abrirArchivo();
+	osada_header* header = obtenerHeader();
+	char* prueba = "prueba";
+	printf("%s\n", prueba);
+	printf("%s\n", header->magic_number);
+	printf("%d\n", calcularBloques(__estructuraBitmap));
+	printf("%d\n", header->bitmap_blocks);
+	return EXIT_SUCCESS;
 }
-
-
