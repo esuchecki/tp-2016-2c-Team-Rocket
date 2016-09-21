@@ -13,6 +13,7 @@
 #include "OSADA_Constants.h"
 #include "osada_functions.h"
 #include <commons/bitarray.h>
+#include "osada-utils/osada.h"
 
 int main(void) {
 	puts("Prueba Main Osada"); /* prints PROCESO ENTRENADOR */

@@ -17,4 +17,4 @@ retardo=500
 IP=127.0.0.1
 
 #Puerto del mapa
-Puerto=5001
+Puerto=5050

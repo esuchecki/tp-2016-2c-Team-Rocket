@@ -5,7 +5,7 @@
  *      Author: utnso
  */
 
-#include "libConfig.h"
+#include "../so/libConfig.h"
 
 
 
@@ -15,23 +15,23 @@
 void metadata_finalizar (t_config *unArchivo)
 {
 	//TODO: borrar todo...
-	log_info(myArchivoDeLog, "Se borro una estructura de configuracion");
+	//log_info(myArchivoDeLog, "Se borro una estructura de configuracion");
 	config_destroy (unArchivo);
 }
 
 
-uint16_t configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+uint16_t configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], bool * devolvioError)
 {
 	//leo ints
 	if (config_has_property(archivoConfig, nombreDeLaPropiedad))
 	{
+		*devolvioError = false;
 		return config_get_int_value(archivoConfig, nombreDeLaPropiedad);
 	}
 	else
 	{
-		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		finalizarGui(NULL);
-		exit(EXIT_FAILURE);
+		*devolvioError = true;
+		return 0;
 	}
 }
 
@@ -40,36 +40,39 @@ char * configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 {
 	//leo strings
 	if (config_has_property(archivoConfig, nombreDeLaPropiedad))
-	{
 		return config_get_string_value(archivoConfig, nombreDeLaPropiedad);
-	}
 	else
-	{
-		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		finalizarGui(NULL);
-		exit(EXIT_FAILURE);
-	}
+		return NULL;
 }
 
 t_config * newConfigType (char * directorio)
 {
 	t_config * newConfigType = config_create(directorio);
 
-	if (newConfigType == NULL || config_keys_amount(newConfigType) < 0 )
-	{
-		//TODO: errorSintacticoSemantico no se pudo levantar el archivo config
-		finalizarGui(NULL);
-		exit(EXIT_FAILURE);
-	}
+	if (newConfigType == NULL || config_keys_amount(newConfigType) < 1 )
+		return NULL;
 
 	return newConfigType;
 
 }
 
+char ** configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+{
+	//leo un array
+	 if (config_has_property(archivoConfig, nombreDeLaPropiedad))
+	 {
+		 char** contenido = config_get_array_value(archivoConfig, nombreDeLaPropiedad);
+		 return contenido;
+	 }
+	 else
+	 {
+		 return NULL;
+	 }
+}
 
 
 
-void buscamePokeNestEnEsteDirectorio (  const char * nombreDirectorio, void (*fc) (const char *, const char *)  )
+int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const char *, const char *)  )
 {
 
 
@@ -79,8 +82,7 @@ void buscamePokeNestEnEsteDirectorio (  const char * nombreDirectorio, void (*fc
     if (d == NULL)
 	{
 		//TODO: loguear error no se pudo abrir el directorio.
-    	//puts (nombreDirectorio);
-    	finalizarGui(NULL);
+    	return 0;
 	}
 
 	while (1)
@@ -122,23 +124,25 @@ void buscamePokeNestEnEsteDirectorio (  const char * nombreDirectorio, void (*fc
 
 	            if (path_length >= PATH_MAX)
 	            {
-	               	fprintf (stderr, "Path length has got too long.\n");
-	               	finalizarGui(NULL);
+	               	//fprintf (stderr, "Path length has got too long.\n");
+	            	return 0;
 	            }
 
-	            //recorremos recursivamente archivos dentro de este directorio
-	            buscamePokeNestEnEsteDirectorio (path,(void *) fc);
+	            //recorremos recursivamente archivos dentro de este directorio, si hubo error aborta.
+	            if ( (encontrarEnUnDirectorio (path,(void *) fc)) == 0)
+	            	return 0;
         	}
 		}
 	}
 	//cerramos el directorio
 	if (closedir (d))
 	{
-		//fprintf (stderr, "Could not close '%s': %s\n",
-		//         dir_name, strerror (errno));
-		fprintf (stderr, "Error al cerrar un directorio.\n");
-		finalizarGui(NULL);
+    	return 0;
 	}
+
+
+	//todo correcto..
+	return 1;
 
 }
 

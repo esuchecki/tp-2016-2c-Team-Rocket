@@ -1,0 +1,11 @@
+chicos por las dudas mirense si pueden el video de la shared library 
+pero basicamente lo que tienen que hacer es lo siguiente para que les ande siempre la libreria
+
+abran la consola
+escriban: 
+	gedit .bashrc
+al final del archivo escriban: 
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug
+	(la direccion es la direccion donde ustedes tengan guardado el repo)
+	
+y con eso ya deberia andan bien

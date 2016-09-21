@@ -1,10 +1,9 @@
 /*
  * libSockets.h
  *
- *  Created on: 8/9/2016
+ *  Created on: 12/9/2016
  *      Author: utnso
  */
-
 
 #ifndef LIBSOCKETS_H_
 #define LIBSOCKETS_H_
@@ -17,6 +16,25 @@ typedef struct {
 	int tamanio;
 	void * data;
 }t_data;
+
+enum enviosEntrenador{
+	peticionPokenest = 10,
+	moverAlEntrenador = 11,	//ver si subdividirlo en 4 diferentes
+	capturarPokemon = 12,
+	objetivosCumplidos = 13,
+	mejorPokemon = 14
+} ;
+
+enum enviosMapa{
+	ubicacionPokenest = 20,
+	capturastePokemon = 21,
+	dameMejorPokemon = 22,
+	ganasteBatalla = 23,
+	perdisteBatalla = 24,
+	ubicacionMedallaMapa = 25
+};
+
+fd_set sockets_activos;
 
 /*
  * @NAME: common_setup
@@ -37,7 +55,7 @@ int setup_listen(char * IP,char * Port);
  * @DESC: utiliza la funcion select y esta a la espera de conexiones
  */
 
-int atenderConexiones(char * PuertoEscucha);
+int atenderConexiones(void * PuertoEscucha);
 
 /*
  * @NAME: connect_to
@@ -80,7 +98,7 @@ void common_send(int socket, t_data * paquete);
  * @DESC: recibe del socket i, el codigo 99, para ver que la conexion este ok.
  */
 
-void handshake(int i,fd_set sockets_activos);
+void handshake(int socket_nueva_conexion,fd_set sockets_activos);
 
 /*
  * @NAME: atenderConexion

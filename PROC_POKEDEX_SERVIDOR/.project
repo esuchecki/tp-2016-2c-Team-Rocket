@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>PROC_MAPA</name>
+	<name>PROC_POKEDEX_SERVIDOR</name>
 	<comment></comment>
 	<projects>
 		<project>libTeamRocket</project>

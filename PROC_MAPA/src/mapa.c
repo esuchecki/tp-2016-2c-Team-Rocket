@@ -11,10 +11,10 @@
 //----------- Sector Include ---------------//
 
 #include "lib/libGrafica.h"
-#include "lib/libSockets.h"
-#include "lib/libPlanificador.h"
-#include "lib/libConfig.h"
+#include <so/libConfig.h>
 #include <pthread.h>
+#include <so/libPlanificador.h>
+#include <so/libSockets.h>
 //------------------------------------------//
 
 //------------------------------------------//
@@ -22,7 +22,7 @@
 //----------- Sector Funciones -------------//
 
 void validarArgumentos ( int argc, char *argv[] );
-void inicializarLogMapa ();
+void inicializarLogMapa ( char *argv[] );
 
 //------------------------------------------//
 
@@ -31,57 +31,58 @@ void inicializarLogMapa ();
 /* ********************************************	*/
 //----------- Sector Constantes -------------//
 
-#define __ubicacionArchivoDeLog "/home/utnso/Escritorio/logMapa_teamRocket"
-#define __nombreDePrograma "Mapa"
+#define __ubicacionArchivoDeLog "./logMapa_teamRocket"
 
 
 //------------------------------------------//
 
 
+/*
+void* ejecutarPlanificador(){
+	return EXIT_SUCCESS;
+}
 
-
+int* atenderConexiones(){
+	return EXIT_SUCCESS;
+}*/
 
 int main( int argc, char *argv[] )
 {
 	validarArgumentos (argc, argv );
-	inicializarLogMapa();
-
-	//Creo el hilo planificador
-	pthread_t hiloPlanificador;
-	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
-
-	//TODO: Config - obtener directorio
-	char *directorioConfig = malloc(100);
-	strcat(directorioConfig,argv[2]);
-	strcat(directorioConfig,"/Mapa");
-	strcat(directorioConfig,argv[1]);
-	strcat(directorioConfig,"/metadata");
-
-	t_config * configMapa = newConfigType (directorioConfig);
-
-	#warning("Consultar el nombre del proceso")
-	//TODO: consultar el nombre de proceso, creo que es "mapa"
-	#warning("Consultar si el nombre del mapa puede contener espacios")
-	//TODO: consultar si el nombre de un mapa puede contener espacios....? En enunciado dice "Ciudad Paleta"
-	#warning ("cuando hay un error abortivo hay que cerrar correctamente el gui")
-
-
-	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
+	inicializarLogMapa(argv);
 
 	t_mapa * mapa;
 
 	nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
+	inicializarSenialesMapa (mapa, (void *) finalizarGui );
+
+
+	//Creo el hilo planificador
+	pthread_t hiloPlanificador,hiloConexiones;
+	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
+	pthread_create(&hiloConexiones,NULL, (void *)atenderConexiones, (void *)mapa);
+
+	//TODO: Lucas soy emi, creo que despues va a haber que darle otro tratamiento a los sockets para que no impriman msjs en pantalla (medio hacen lio con la gui).
+	//dps mirate en libTeamRocket/so/metodos_a_implementar_sockets que me parece que estan todos los metodos que vamos a tener que llamar entre entrenador y mapa!.
+
+	#warning ("cuando hay un error abortivo hay que cerrar correctamente el gui")
+
+
+	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
+	//Nota: esto se hace revisando que al inicializar las conexiones el puerto no este ocupado!!
+
 	dibujarMapa (mapa);
 
-	//atiendo las conexiones de los entrenadores que se me conecten
-	char * Puerto = configLeerString(configMapa,directorioConfig);
 
-	//Atiendo las conexiones
-	atenderConexiones(Puerto);
+
+	pthread_join(hiloConexiones,NULL);
+	pthread_join(hiloPlanificador,NULL);
+
 
 	finalizarGui(mapa);
+
 	return EXIT_SUCCESS;	//enrealidad nunca ejecuta esta instruccion
 }
 
@@ -128,13 +129,13 @@ void validarArgumentos ( int argc, char *argv[] )
 
 }
 
-void inicializarLogMapa ()		/*levanto el archivo para loggear*/
+void inicializarLogMapa ( char *argv[] )		/*levanto el archivo para loggear*/
 {
 
 
 	//TODO: revisar que pasa si no existe el archivo de log y/o el directorio
 	char* file =__ubicacionArchivoDeLog;
-	char* pg_name = __nombreDePrograma;
+	char* pg_name = argv[0];
 
 	//TODO: revisar que pasa si no esta creado el archivo :S
 	myArchivoDeLog = log_create(file, pg_name, false, LOG_LEVEL_INFO);
