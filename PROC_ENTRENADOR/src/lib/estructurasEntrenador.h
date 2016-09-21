@@ -19,6 +19,15 @@
 
 typedef struct
 {
+	int cant_muertes;
+	int cant_deadlocks;
+	time_t bloqEnPokeNest_time;
+	time_t start_time;
+}t_stats;
+
+
+typedef struct
+{
 	char * nombreMapa;
 	char * objetivosDelMapa;	//array o lista a futuro  - a definir
 } t_mapa;
@@ -37,6 +46,7 @@ typedef struct
      char * nombre;
      char * directorioPokeDex;
      t_metadataEntrenador* metadata;
+     t_stats misEstadisticas;
 } t_entrenadorFisico;
 
 

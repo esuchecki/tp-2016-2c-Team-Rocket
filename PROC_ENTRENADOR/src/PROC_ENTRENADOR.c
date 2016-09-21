@@ -22,6 +22,7 @@
 #include <so/libConfig.h>
 #include <unistd.h>
 
+#include "lib/estadisticas.h"
 //librerias propias
 
 #include "lib/estructurasEntrenador.h"
@@ -52,12 +53,27 @@ int main( int argc, char *argv[] )
 
 
 
+	//*******************************************************
+	//TODO: en la fc que ejecuta la logica del entrenador, agergar este llamado:
+	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
+	//TODO: por ahora contaria solo el tiempo que estuvo boludiando con los sockets y otras cosas...
+
+	sleep(2);
+
+	//TODO: cuando se convirtio en maestro pokemon hay que llamar a este metodo
+	mostrarTiempoTotalAventura (&miEntrenador->misEstadisticas);
+	//TODO: y otros a implementar...
+	//*******************************************************
+
+
+
+
+
 	inicializarSocketEntrenador ();
 
-	borrarEntrenador();
 
 
-
+	finalizarEntrenador(miEntrenador);
 	return EXIT_SUCCESS;
 }
 
@@ -117,16 +133,20 @@ void inicializarLogEntrenador ( char *argv[] )		/*levanto el archivo para loggea
 }
 
 
-void inicializarSocketEntrenador ()
+void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador)
 {
 	//TODO: proximamente lo levantamos dinamico..
 	log_info(myArchivoDeLog, "Inicializando la conexion por socket");
 	int socket = connect_to("127.0.0.1", "6400");
 	if (socket == -1) {
 		puts("No se pudo conectar");
-		exit(EXIT_FAILURE);
+		//TODO: agregar las variables nombreMapa IP/Puerto al Log.
+		log_info(myArchivoDeLog, "No se pudo inicializar la conexion por socket");
+		finalizarEntrenador(nuevoEntrenador);
 	} else {
 		printf("socket: %d\n", socket);
+		//TODO: agregar las variables nombreMapa IP/Puerto al Log.
+		log_info(myArchivoDeLog, "Me conecte por socket, mi socket es: %d", socket);
 		int simbolo = 0;
 		t_data * info = pedirPaquete(99, sizeof(int), &simbolo);
 
