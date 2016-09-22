@@ -34,7 +34,7 @@
 
 void validarArgumentos ( int argc, char *argv[] );
 void inicializarLogEntrenador (char *argv[]);
-void inicializarSocketEntrenador ();
+void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador);
 //------------------------------------------//
 
 
@@ -69,7 +69,7 @@ int main( int argc, char *argv[] )
 
 
 
-	inicializarSocketEntrenador ();
+	inicializarSocketEntrenador (miEntrenador);
 
 
 
@@ -141,7 +141,7 @@ void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador)
 	if (socket == -1) {
 		puts("No se pudo conectar");
 		//TODO: agregar las variables nombreMapa IP/Puerto al Log.
-		log_info(myArchivoDeLog, "No se pudo inicializar la conexion por socket");
+		log_error(myArchivoDeLog, "No se pudo inicializar la conexion por socket");
 		finalizarEntrenador(nuevoEntrenador);
 	} else {
 		printf("socket: %d\n", socket);

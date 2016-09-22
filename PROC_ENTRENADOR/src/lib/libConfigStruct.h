@@ -20,6 +20,10 @@ void finalizarEntrenador (t_entrenadorFisico * nuevoEntrenador);
 void leerMetadataDelEntrenador (t_entrenadorFisico * nuevoEntrenador);
 t_config *config_create_for_metadataEntrenador(t_entrenadorFisico * nuevoEntrenador);
 void loguearEstructuraDelEntrenador(t_entrenadorFisico * nuevoEntrenador);
+void inicializarHojaDeViaje (t_config *metadataEntrenador, t_entrenadorFisico * miEntrenador);
+t_mapa * crearNuevoNodo (char * aQueMapasMeTengoQueConectar, t_config *metadataEntrenador, t_entrenadorFisico * miEntrenador);
+void loguearHojaDeViajeDeUnMapa (t_mapa * nodoActual);
+
 //------------------------------------------//
 
 
@@ -32,7 +36,9 @@ void loguearEstructuraDelEntrenador(t_entrenadorFisico * nuevoEntrenador);
 
 #define __nombreEnConfig_Vidas "vidas"
 #define __nombreEnConfig_Reintentos "reintentos"
-
+#define __nombreEnConfig_Simbolo "simbolo"
+#define __nombreEnConfig_HojaViajes "hojaDeViaje"
+#define __nombreEnConfig_ObjMapa "obj[%s]"	//%s corresponde al nombre del mapa.
 
 
 

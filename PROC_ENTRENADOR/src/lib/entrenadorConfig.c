@@ -15,8 +15,7 @@ uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPro
 
 	if ( *devolvioError == true )
 	{
-
-
+		log_error(myArchivoDeLog,"Problemas en _entrenador_configLeerInt= %s", nombreDeLaPropiedad);
 		free (devolvioError);
 		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
 		return 0;
@@ -30,18 +29,17 @@ uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPro
 
 char * _entrenador_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
 {
-	char * aux;
-	aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
-
-	if ( aux == NULL )
+	if ( configLeerString (archivoConfig, nombreDeLaPropiedad) == NULL )
 	{
-		free (aux);
+		log_error(myArchivoDeLog,"Problemas en _entrenador_configLeerString= %s", nombreDeLaPropiedad);
+		//free (aux);
 		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
 		return 0;
 	}
 	else
 	{
-		//free (aux);
+		char * aux;
+		aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
 		return aux;
 	}
 }
@@ -53,6 +51,7 @@ t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * un
 
 	if ( aux == NULL )
 	{
+		log_error(myArchivoDeLog,"Problemas en _entrenador_newConfigType= %s", directorio);
 		free (aux);
 		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
 		return 0;
@@ -70,21 +69,23 @@ char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPr
 
 	if ( aux1 == NULL )
 	{
+		log_error(myArchivoDeLog,"Problemas en _entrenador_configLeerArray= %s", nombreDeLaPropiedad);
 		free (aux1);
 		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
 		return 0;
 	}
 	else
 	{
-		char ** aux2;
-
+		char ** aux2 = malloc (sizeof(aux1));
+		//aux2 = string_duplicate(aux1);
 		int i = 0;
 		while (aux1[i] != NULL)
 		{
-			aux2[i] = aux1[i];
+			aux2[i] = string_duplicate (aux1[i]);
 			i++;
 		}
-		//free (aux);
+		aux2[i]=NULL;	//Luego de que termino la ultima iteracion, le copio el NULL al final
+		free (aux1);
 		return aux2;
 	}
 }

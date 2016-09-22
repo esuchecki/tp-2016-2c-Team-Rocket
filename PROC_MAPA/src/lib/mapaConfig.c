@@ -16,6 +16,7 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 
 	if ( *devolvioError == true )
 	{
+		log_error(myArchivoDeLog,"Problemas en _mapa_configLeerInt= %s", nombreDeLaPropiedad);
 		free (devolvioError);
 		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
@@ -29,18 +30,17 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 
 char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_mapa * unMapa, void (*fc) (t_mapa *))
 {
-	char * aux;
-	aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
-
-	if ( aux == NULL )
+	if ( configLeerString (archivoConfig, nombreDeLaPropiedad) == NULL )
 	{
-		free (aux);
+		log_error(myArchivoDeLog,"Problemas en _mapa_configLeerString= %s", nombreDeLaPropiedad);
+		//free (aux);
 		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else
 	{
-		//free (aux);
+		char * aux;
+		aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
 		return aux;
 	}
 }
@@ -52,6 +52,7 @@ t_config * _mapa_newConfigType (char * directorio, t_mapa * unMapa, void (*fc) (
 
 	if ( aux == NULL )
 	{
+		log_error(myArchivoDeLog,"Problemas en _mapa_newConfigType= %s", directorio);
 		free (aux);
 		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;

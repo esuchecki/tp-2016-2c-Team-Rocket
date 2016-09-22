@@ -29,13 +29,13 @@ typedef struct
 typedef struct
 {
 	char * nombreMapa;
-	char * objetivosDelMapa;	//array o lista a futuro  - a definir
+	char ** objetivosDelMapa;	//VALORES=[1,2,3,4,5]. El array termina en NULL.
 } t_mapa;
 
 typedef struct
 {
-	char * simbolo;
-	t_mapa * hojaDeViaje;	//array o lista a futuro - a definir
+	char simbolo;
+	t_list * hojaDeViaje;	//Es una lista que contiene nodos del tipo t_mapa.
 	uint16_t vidas;
 	uint16_t reintentos;
 } t_metadataEntrenador ;

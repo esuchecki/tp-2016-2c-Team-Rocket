@@ -54,9 +54,13 @@ void borrarMapa (t_mapa * mapa)
 	if (mapa == NULL)
 		return;
 
-	freeForMetadataMapa (mapa);
+	if (mapa->metadata != NULL)
+		freeForMetadataMapa (mapa);
 
 	//TODO: recorrer listas y borrar.
+
+
+	//free(mapa->metadata);
 
 	/*
 	BorrarItem(items, '#');
@@ -77,6 +81,8 @@ t_mapa * inicializarEstructurasDelMapa (char *nombreMapa, char *directorioPokeDe
 	t_mapa * nuevoMapa = malloc(sizeof(t_mapa));	//pedir malloc
 	nuevoMapa->nombre = nombreMapa;
 	nuevoMapa->directorioPokeDex = directorioPokeDex;
+	nuevoMapa->items = NULL;
+	nuevoMapa->metadata = NULL;
 
 	t_list* itemsVisiblesEnMapa = list_create();
 	nuevoMapa->items = itemsVisiblesEnMapa;
@@ -96,6 +102,7 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
 	metadataMapa = config_create_for_metadataMapa(nuevoMapa);
 	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
+	nuevoMapa->metadata = nuevaMetadataMapa;
 
 	nuevaMetadataMapa->tiempoChequeadoDeadlock = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Deadlock, nuevoMapa, (void *) finalizarGui);
 	nuevaMetadataMapa->batalla = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Batalla, nuevoMapa, (void *) finalizarGui);
@@ -106,7 +113,7 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 	nuevaMetadataMapa->puerto = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Puerto, nuevoMapa, (void *) finalizarGui);
 
 
-	nuevoMapa->metadata = nuevaMetadataMapa;
+	//nuevoMapa->metadata = nuevaMetadataMapa;
 
 	metadata_finalizar (metadataMapa);
 	loguearEstructuraDelMapa(nuevoMapa);
@@ -279,7 +286,10 @@ void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
 
     //consulto si devolvio 0.
     if ( ( encontrarEnUnDirectorio (directorioMapa,  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
+    {
+    	log_error(myArchivoDeLog, "problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'");
     	finalizarGui(nuevoMapa);
+    }
 
 
     free (directorioMapa);
@@ -354,10 +364,10 @@ bool esUnicoEsteIdentificador (t_list* items, char idDelItem)
 void freeForMetadataMapa (t_mapa * unMapa)
 {
 	//borro todos los strings primero
-	free(unMapa->metadata->algoritmo);
-	free(unMapa->metadata->batalla);
-	free(unMapa->metadata->ip);
-	free(unMapa->metadata->puerto);
+	//free(unMapa->metadata->algoritmo);
+	//free(unMapa->metadata->batalla);
+	//free(unMapa->metadata->ip);
+	//free(unMapa->metadata->puerto);
 
 	free(unMapa->metadata);
 	unMapa->metadata = NULL;
