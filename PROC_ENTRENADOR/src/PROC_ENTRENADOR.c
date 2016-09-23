@@ -27,6 +27,8 @@
 
 #include "lib/estructurasEntrenador.h"
 #include "lib/libConfigStruct.h"
+#include "lib/seniales.h"
+#include "so/constantes.h"
 
 //------------------------------------------//
 /* ********************************************	*/
@@ -35,6 +37,9 @@
 void validarArgumentos ( int argc, char *argv[] );
 void inicializarLogEntrenador (char *argv[]);
 void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador);
+void accionDelMapaAnteSIGUSR1 (t_entrenadorFisico * unEntrenador);
+void accionDelMapaAnteSIGTERM (t_entrenadorFisico * unEntrenador);
+
 //------------------------------------------//
 
 
@@ -66,6 +71,15 @@ int main( int argc, char *argv[] )
 	//*******************************************************
 
 
+
+	//*******************************************************
+	//TODO: esto deberia ir en el while de movimientos de un entrenador..
+	inicializarSenialesMapa (miEntrenador, (void *) finalizarEntrenador );
+
+	sleep(2);	//para probar tirarle una senial.
+
+	funcionesQueQuieroEjecutarSegunLaSenial(miEntrenador, (void *) finalizarEntrenador, (void* ) accionDelMapaAnteSIGUSR1, (void*) accionDelMapaAnteSIGTERM );
+	//*******************************************************
 
 
 
@@ -111,14 +125,15 @@ void validarArgumentos ( int argc, char *argv[] )
 
 void inicializarLogEntrenador ( char *argv[] )		/*levanto el archivo para loggear*/
 {
-
-
 	//TODO: revisar que pasa si no existe el archivo de log y/o el directorio
-	char* file =__ubicacionArchivoDeLog;
-	char* pg_name = argv[0];
+
+
+	//argv[0];	Program_NAME
+	//argv[1];	Nombre del entrenador
+	//string_from_format(__ubicacionArchivoDeLogEntrenador, argv[1])	//Con esto le paso el nombre del archivo de log.
 
 	//TODO: revisar que pasa si no esta creado el archivo :S
-	myArchivoDeLog = log_create(file, pg_name, false, LOG_LEVEL_INFO);
+	myArchivoDeLog = log_create( string_from_format(__ubicacionArchivoDeLogEntrenador, argv[1]) , argv[0], false, LOG_LEVEL_INFO);
 	if (myArchivoDeLog != NULL)
 	{
 		puts("se creo OK el arch de log");
@@ -180,3 +195,18 @@ void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador)
 	close(socket);
 }
 
+
+void accionDelMapaAnteSIGUSR1 (t_entrenadorFisico * unEntrenador)
+{
+	//TODO: ¿Tengo que validar que la metadata este inicializada?
+	unEntrenador->metadata->vidas++;	//sumo una vida
+}
+
+void accionDelMapaAnteSIGTERM (t_entrenadorFisico * unEntrenador)
+{
+	//TODO: ¿Tengo que validar que la metadata este inicializada?
+	if ( unEntrenador->metadata->vidas > 0)		//Minima cantidad de vidas es 0.
+			unEntrenador->metadata->vidas--;	//resto una vida
+
+	//TODO: Validar si me quede sin vidas me muero =(
+}

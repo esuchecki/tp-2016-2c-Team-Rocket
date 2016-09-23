@@ -27,14 +27,6 @@ void inicializarLogMapa ( char *argv[] );
 //------------------------------------------//
 
 
-//------------------------------------------//
-/* ********************************************	*/
-//----------- Sector Constantes -------------//
-
-#define __ubicacionArchivoDeLog "./logMapa_teamRocket"
-
-
-//------------------------------------------//
 
 
 /*
@@ -131,14 +123,16 @@ void validarArgumentos ( int argc, char *argv[] )
 
 void inicializarLogMapa ( char *argv[] )		/*levanto el archivo para loggear*/
 {
-
-
 	//TODO: revisar que pasa si no existe el archivo de log y/o el directorio
-	char* file =__ubicacionArchivoDeLog;
-	char* pg_name = argv[0];
+
+	//argv[0];	Program_NAME
+	//argv[1];	Nombre del mapa
+	//string_from_format(__ubicacionArchivoDeLogMapa, argv[1])	//Con esto le paso el nombre del archivo de log.
 
 	//TODO: revisar que pasa si no esta creado el archivo :S
-	myArchivoDeLog = log_create(file, pg_name, false, LOG_LEVEL_INFO);
+	myArchivoDeLog = log_create( string_from_format(__ubicacionArchivoDeLogMapa, argv[1]) , argv[0], false, LOG_LEVEL_INFO);
+
+
 	if (myArchivoDeLog != NULL)
 	{
 		puts("se creo OK el arch de log");
