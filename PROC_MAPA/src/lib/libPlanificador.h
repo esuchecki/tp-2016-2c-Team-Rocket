@@ -10,6 +10,7 @@
 
 #include <commons/collections/list.h>
 #include <semaphore.h>
+#include <so/libSockets.h>
 
 
 t_list *colaListos;
@@ -49,5 +50,22 @@ t_entrenador * ejecutar_algoritmo(char * algoritmo);
 void desconectarEntrenador(int nroDesocket );
 
 int obtenerCoordenadasPokenest(char identificadorPokenest);
+
+void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos);
+
+void consumirQuantum(int numeroDeSocket);
+
+
+
+
+
+
+
+
+int atenderConexiones(void * data);
+
+void handshake(int socket_nueva_conexion, fd_set sockets_activos);
+
+void atenderConexion(int i, fd_set sockets_activos);
 
 #endif /* LIBPLANIFICADOR_H_ */

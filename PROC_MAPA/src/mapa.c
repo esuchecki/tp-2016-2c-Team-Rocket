@@ -13,7 +13,8 @@
 #include "lib/libGrafica.h"
 #include <so/libConfig.h>
 #include <pthread.h>
-#include <so/libPlanificador.h>
+#include "lib/libPlanificador.h"
+#include "lib/conexiones.h"
 #include <so/libSockets.h>
 //------------------------------------------//
 

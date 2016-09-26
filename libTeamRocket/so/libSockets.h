@@ -31,7 +31,8 @@ enum enviosMapa{
 	dameMejorPokemon = 22,
 	ganasteBatalla = 23,
 	perdisteBatalla = 24,
-	ubicacionMedallaMapa = 25
+	ubicacionMedallaMapa = 25,
+	otorgarTurno = 26
 };
 
 
@@ -48,13 +49,6 @@ struct addrinfo* common_setup(char * IP, char * Port);
  */
 
 int setup_listen(char * IP,char * Port);
-
-/*
- * @NAME: atenderConexiones
- * @DESC: utiliza la funcion select y esta a la espera de conexiones
- */
-
-int atenderConexiones(void * data);
 
 /*
  * @NAME: connect_to
@@ -92,10 +86,7 @@ char * serializar(t_data * unPaquete);
 
 void common_send(int socket, t_data * paquete);
 
-void handshake(int socket_nueva_conexion, fd_set sockets_activos);
 
-void atenderConexion(int i, fd_set sockets_activos);
 
-void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos);
 
 #endif /* LIBSOCKETS_H_ */
