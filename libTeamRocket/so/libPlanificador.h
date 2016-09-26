@@ -14,8 +14,9 @@
 
 t_list *colaListos;
 t_list *colaBloqueados;
-sem_t entrenador_listo;
-pthread_mutex_t mutex_listos,mutex_algoritmo;
+t_list *colaEjecucion;
+sem_t entrenador_listo,entrenador_bloqueado;
+pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
 
 typedef struct{
 	int nroDesocket;
@@ -25,31 +26,28 @@ typedef struct{
 	//TODO: ver que otros datos poner aca
 }t_entrenador;
 
-typedef struct
-{
-	int tiempoChequeadoDeadlock;
-	char * batalla;
-	char * algoritmo;
-	int quantum;
-	int retardo;
-	char * ip;
-	char * puerto;
-} t_metadataMapa2 ;
+void inicializar_estructuras_planificador();
 
-typedef struct
-{
-     char * nombre;
-     char * directorioPokeDex;
-     t_metadataMapa2 * metadata;
-     t_list* items;
-     //t_pokeNest pokeNest;		//a futuro esto deberia ser un array o una lista enrealidad...
-} t_mapa2 ;
+void * ejecutarPlanificador(void * data);
 
-void * ejecutarPlanificador();
 void agregarAColaDeListos(t_entrenador *unEntrenador);
+
+void * manejarEntrenadoresBloqueados();
+
+t_entrenador * desbloquearEntrenador();
+
+void agregarAColaDeBloqueados(t_entrenador *unEntrenador);
+
+void agregarAListaDeEjecucion(t_entrenador * entrenador_a_ejecutar) ;
+
+t_entrenador * removerDeListaDeEjecucion(int socket_entrenador);
+
 t_entrenador * generarEntrenador(int i,void * data);
+
 t_entrenador * ejecutar_algoritmo(char * algoritmo);
+
 void desconectarEntrenador(int nroDesocket );
 
+int obtenerCoordenadasPokenest(char identificadorPokenest);
 
 #endif /* LIBPLANIFICADOR_H_ */

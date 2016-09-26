@@ -19,7 +19,7 @@ typedef struct {
 
 enum enviosEntrenador{
 	peticionPokenest = 10,
-	moverEntrenador = 11,//ver si subdividirlo en 4 diferentes
+	movimientoEntrenador = 11,//ver si subdividirlo en 4 diferentes
 	capturarPokemon = 12,
 	objetivosCumplidos = 13,
 	mejorPokemon = 14
@@ -34,7 +34,6 @@ enum enviosMapa{
 	ubicacionMedallaMapa = 25
 };
 
-fd_set sockets_activos;
 
 /*
  * @NAME: common_setup
@@ -55,7 +54,7 @@ int setup_listen(char * IP,char * Port);
  * @DESC: utiliza la funcion select y esta a la espera de conexiones
  */
 
-int atenderConexiones(void * PuertoEscucha);
+int atenderConexiones(void * data);
 
 /*
  * @NAME: connect_to
@@ -93,20 +92,10 @@ char * serializar(t_data * unPaquete);
 
 void common_send(int socket, t_data * paquete);
 
-/*
- * @NAME: handshake
- * @DESC: recibe del socket i, el codigo 99, para ver que la conexion este ok.
- */
+void handshake(int socket_nueva_conexion, fd_set sockets_activos);
 
-void handshake(int socket_nueva_conexion,fd_set sockets_activos);
+void atenderConexion(int i, fd_set sockets_activos);
 
-/*
- * @NAME: atenderConexion
- * @DESC: es la funcion que va a realizar el proceso cuando atienda a las distintas conexiones
- */
-
-void atenderConexion(int i,fd_set sockets_activos);
-
-
+void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos);
 
 #endif /* LIBSOCKETS_H_ */

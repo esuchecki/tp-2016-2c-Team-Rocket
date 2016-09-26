@@ -37,16 +37,6 @@ void inicializarLogMapa ();
 
 //------------------------------------------//
 
-
-/*
-void* ejecutarPlanificador(){
-	return EXIT_SUCCESS;
-}
-
-int* atenderConexiones(){
-	return EXIT_SUCCESS;
-}*/
-
 int main( int argc, char *argv[] )
 {
 	validarArgumentos (argc, argv );
@@ -59,10 +49,10 @@ int main( int argc, char *argv[] )
 
 	inicializarSenialesMapa (mapa, (void *) finalizarGui );
 
-
-	//Creo el hilo planificador
-	pthread_t hiloPlanificador,hiloConexiones;
-	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, NULL);
+	pthread_t hiloPlanificador,hiloConexiones,hiloBloqueados;
+	inicializar_estructuras_planificador();
+	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, (void *)mapa);
+	pthread_create(&hiloBloqueados,NULL,manejarEntrenadoresBloqueados,NULL);
 	pthread_create(&hiloConexiones,NULL, (void *)atenderConexiones, (void *)mapa);
 
 	//TODO: Lucas soy emi, creo que despues va a haber que darle otro tratamiento a los sockets para que no impriman msjs en pantalla (medio hacen lio con la gui).
@@ -76,11 +66,9 @@ int main( int argc, char *argv[] )
 
 	dibujarMapa (mapa);
 
-
-
-	pthread_join(hiloConexiones,NULL);
 	pthread_join(hiloPlanificador,NULL);
-
+	pthread_join(hiloConexiones,NULL);
+	pthread_join(hiloBloqueados,NULL);
 
 	finalizarGui(mapa);
 

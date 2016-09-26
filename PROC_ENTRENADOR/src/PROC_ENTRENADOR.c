@@ -31,7 +31,7 @@ int main() {
 	//TODO: subo este codigo para que no se pierda, hay que aprolijar... Disculpen chicos!
 //	levantarConfig();
 
-	int socket = connect_to("127.0.0.1", "6400");
+	int socket = connect_to("127.0.0.1", "6600");
 	if (socket == -1) {
 		printf("No se pudo conectar");
 		exit(EXIT_FAILURE);
@@ -41,7 +41,7 @@ int main() {
 		t_data * info = pedirPaquete(99, sizeof(int), &simbolo);
 
 		common_send(socket, info);
-
+		printf("envia paquete handshake");
 		while (1) {
 			info = leer_paquete(socket);
 

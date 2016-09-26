@@ -21,16 +21,17 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
 
 	if (paquete->header == 99) {
 
-		t_entrenador *unEntrenador = generarEntrenador(socket_nueva_conexion, paquete->data);
+		t_entrenador *unEntrenador = generarEntrenador(socket_nueva_conexion,
+				paquete->data);
 
-		printf("el entrenador tiene socket: %d",unEntrenador->nroDesocket );
+		printf("el entrenador tiene socket: %d", unEntrenador->nroDesocket);
 
 		agregarAColaDeListos(unEntrenador);
 
 		sem_post(&entrenador_listo);
 	} else {
 
-		printf("No se pudo conectar\n");
+		printf("No se pudo conectar, fallo el handshake\n");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -65,6 +66,8 @@ struct addrinfo* common_setup(char * IP, char * Port) {
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = 0;
+
 
 	if (!strcmp(IP, "localhost")) {
 		hints.ai_flags = AI_PASSIVE;
@@ -72,7 +75,7 @@ struct addrinfo* common_setup(char * IP, char * Port) {
 	} else {
 		error = getaddrinfo(IP, Port, &hints, &serverInfo);
 	}
-	if (error) {
+	if (error != 0) {
 		//printf("Problema con el getaddrinfo(): %d",(gai_stdrerror(error)));
 		return NULL;
 	}
@@ -86,9 +89,7 @@ int connect_to(char* IP, char * port) {
 	}
 	int serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype,
 			serverInfo->ai_protocol);
-	printf("serverSocket funcion conect to: %d\n", serverSocket);
-	printf("ai_family: %d, ai_socket_type: %d, ai_protocol: %d \n",serverInfo->ai_family, serverInfo->ai_socktype,
-			serverInfo->ai_protocol);
+
 	if (serverSocket == -1) {
 		return -1;
 	}
@@ -105,22 +106,15 @@ t_data * leer_paquete(int socket) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
 
 	recv(socket, &paquete_entrante->header, sizeof(int), MSG_WAITALL);
-	if (paquete_entrante->header <= 0 || paquete_entrante->header == EPIPE) {
-		//desconexion
-		printf("Se desconecto el socket nro: %d",socket);
-		desconectarEntrenador(socket);
-		FD_CLR(socket,&sockets_activos);
-		return paquete_entrante;
-	} else {
-		recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
+	recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
 
-		paquete_entrante->data = malloc(paquete_entrante->tamanio);
+	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
-		recv(socket, paquete_entrante->data, paquete_entrante->tamanio,
-		MSG_WAITALL);
+	recv(socket, paquete_entrante->data, paquete_entrante->tamanio,
+	MSG_WAITALL);
 
-		return paquete_entrante;
-	}
+	return paquete_entrante;
+
 }
 
 t_data * pedirPaquete(int header, int tamanio, void * data) {
@@ -155,21 +149,55 @@ void common_send(int socket, t_data * paquete) {
 
 	free(buffer);
 }
+void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos) {
+
+	if (paquete->header <= 0 || paquete->header == EPIPE) {
+		//desconexion
+
+		desconectarEntrenador(socket_recepcion);
+
+		FD_CLR(socket_recepcion, &sockets_activos);
+	}
+}
 
 void atenderConexion(int i, fd_set sockets_activos) {
-
 	//hago lo que tenga que hacer cuando se conecte un entrenador
 	t_data * paquete;
 	paquete = leer_paquete(i);
-	switch(paquete->header){
+	detectarDesconexion(paquete,i,sockets_activos);
+	switch (paquete->header) {
 	case peticionPokenest:
-		//TODO: dado el identificador de una pokenest mandarle la posicion de la pokenest
+		;
+		char * identificadorPokenest = paquete->data;
+		int  coordenadas = obtenerCoordenadasPokenest(*identificadorPokenest);
+
+		t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest,
+				sizeof(int), &coordenadas);
+
+
+		common_send(i, nuevoPaquete);
+
+		//TODO: descartar quantum
+
+		free(nuevoPaquete);
+
 		break;
-	case moverEntrenador:
-		//TODO: mover al entrenador una posicion
+	case movimientoEntrenador:
+		//TODO: registrar movimiento del entrenador, descartar quantum
 		break;
 	case capturarPokemon:
-		//TODO: dado el identificador de la pokenest capturarle al pokemon
+		;
+
+		t_entrenador * entrenador = removerDeListaDeEjecucion(i);
+
+		agregarAColaDeBloqueados(entrenador);
+
+		//TODO:descartar quantum
+
+		sem_post(&entrenador_bloqueado);
+
+		sem_post(&entrenador_listo);
+
 		break;
 	case objetivosCumplidos:
 		//TODO: liberar recursos y desconectar entrenador
@@ -185,9 +213,11 @@ int atenderConexiones(void * data) {
 
 	int socketEscucha, socketMasGrande;
 
-	fd_set  sockets_para_revisar;
+	fd_set sockets_para_revisar,sockets_activos;
 
-	socketEscucha = setup_listen("localhost", "6500");
+	socketEscucha = setup_listen("localhost", "6600");
+
+	printf("%d\n",socketEscucha);
 
 	listen(socketEscucha, 1024);
 
@@ -232,7 +262,6 @@ int atenderConexiones(void * data) {
 					}
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
-
 					atenderConexion(i, sockets_activos);
 				}
 			}
@@ -240,4 +269,3 @@ int atenderConexiones(void * data) {
 	}
 }
 
-//TODO: hacer una fc que chequee si se desconecto un host (pj. entrenador pokemon).
