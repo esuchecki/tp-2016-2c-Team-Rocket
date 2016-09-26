@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "commons/collections/list.h"
+#include <commons/collections/list.h>
 
 typedef struct estadoEntrenador {
 	int e_posX;
@@ -23,7 +23,7 @@ typedef struct estadoEntrenador {
 typedef struct hitos {
 	int p_posX;
 	int p_posY;
-	char p_nombre;
+	char* p_nombre;
 } t_hitos;
 
 enum actividad {
@@ -87,7 +87,7 @@ int queHago(t_estadoEntrenador* estado) {
 	return respuesta;
 }
 
-void capturarPoke(){
+void capturarPoke() {
 	//TODO.. todo jaj
 }
 
@@ -124,24 +124,17 @@ void actualizarEstado(t_estadoEntrenador* estado, int respuesta) {
 }
 
 int main(void) {
-
+	t_list* listaPokeCapturados = list_create();
 	t_estadoEntrenador* estado = malloc(sizeof(t_estadoEntrenador));
 	/*Seteo los valores ahora a mano, luego los traemos del config*/
 	estado->e_posX = 0;
 	estado->e_posY = 0;
 	//TODO: CREO la lista de pokes asi voy agregando la estructura que cree
 	//		y despues la recorremos asi va a buscar varios pokes
-	/*
-	 *
-	 *
-	 *
-	 *
-	 * la linea de aca abajo no anda
-	 * la 156 tampoco!!!
-	 */
-	//t_list* listaPoke = list_create();
+
+	t_list* listaPoke = list_create();
 	int itera = 0;
-	char nombre = 'a';
+	char* nombre = 'a';
 	int px = 2;
 	int py = 3;
 	while (itera < 4) {
@@ -154,7 +147,7 @@ int main(void) {
 		nombre++;
 		px += 3;
 		py += 4;
-		//list_add(listaPoke, hitos);
+		list_add(listaPoke, hitos);
 	}
 
 	/*
@@ -162,30 +155,35 @@ int main(void) {
 	 * esto lo voy a cambiar cuando ande la lista de hitos... entonces
 	 * voy a recorrer esa lista buscando las posiciones donde estan los pokes
 	 */
-	estado->p_posX = 7;
-	estado->p_posY = 10;
-	estado->ultimoMov = 'Y';
 
+	bool juego = true;
+	int posicion=0;
+	while (juego) {
+		t_hitos* hitos = list_get(listaPoke,posicion);
 
+		estado->p_posX = hitos->p_posX;
+		estado->p_posY = hitos->p_posY;
+		char* letraPoke = hitos->p_nombre;
 
+		int act = 99;
+		int iteracion = 0;
+		while (act > 0) {
 
-	int act = 99;
-	int iteracion = 0;
-	while (act > 0) {
-		printf("iteracion %i \n", iteracion);
-		int respuesta = queHago(estado);
-		printf("devuelve %i \n", respuesta);
-		actualizarEstado(estado, respuesta);
-		iteracion++;
-		if (respuesta == 0) {
-			act = 0;
-			printf("TOMA POKEMON!!!!!  \n");
-		} else if (respuesta == -1) {
-			act = -1;
-			printf("SE FUE DEL MAPA, O ALGUN ERROR PASO! \n");
+			printf("iteracion %i \n", iteracion);
+			int respuesta = queHago(estado);
+			printf("devuelve %i \n", respuesta);
+			actualizarEstado(estado, respuesta);
+			iteracion++;
+			if (respuesta == 0) {
+				act = 0;
+				list_add(listaPokeCapturados, letraPoke);
+				printf("TOMA POKEMON!!!!!  \n");
+			} else if (respuesta == -1) {
+				act = -1;
+				printf("SE FUE DEL MAPA, O ALGUN ERROR PASO! \n");
+			}
 		}
 	}
-
 	free(estado);
 	return EXIT_SUCCESS;
 }

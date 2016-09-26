@@ -16,27 +16,150 @@
 #include <commons/collections/list.h>
 #include <commons/config.h>
 #include <commons/string.h>
+#include <commons/log.h>
 #include <so/libSockets.h>
 #include <so/libPlanificador.h>
 #include <so/libConfig.h>
 #include <unistd.h>
 
-/*
- * @NAME: levantarConfig
- * @DESC: levanta la config de entrenador.
- * void levantarConfig(void);
- */
+#include "lib/estadisticas.h"
+//librerias propias
 
-int main() {
-	//TODO: subo este codigo para que no se pierda, hay que aprolijar... Disculpen chicos!
-//	levantarConfig();
+#include "lib/estructurasEntrenador.h"
+#include "lib/libConfigStruct.h"
+#include "lib/seniales.h"
+#include "so/constantes.h"
 
-	int socket = connect_to("127.0.0.1", "6600");
-	if (socket == -1) {
-		printf("No se pudo conectar");
+//------------------------------------------//
+/* ********************************************	*/
+//----------- Sector Funciones -------------//
+
+void validarArgumentos ( int argc, char *argv[] );
+void inicializarLogEntrenador (char *argv[]);
+void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador);
+void accionDelMapaAnteSIGUSR1 (t_entrenadorFisico * unEntrenador);
+void accionDelMapaAnteSIGTERM (t_entrenadorFisico * unEntrenador);
+
+//------------------------------------------//
+
+
+
+
+
+
+int main( int argc, char *argv[] )
+{
+
+	validarArgumentos (argc, argv );
+	inicializarLogEntrenador(argv);
+
+	t_entrenadorFisico * miEntrenador;
+	miEntrenador = inicializarEstructurasDelEntrenador (argv[1], argv[2]);
+
+	//*******************************************************
+	//TODO: en la fc que ejecuta la logica del entrenador, agergar este llamado:
+	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
+	//TODO: por ahora contaria solo el tiempo que estuvo boludiando con los sockets y otras cosas...
+
+	sleep(2);
+
+	//TODO: cuando se convirtio en maestro pokemon hay que llamar a este metodo
+	mostrarTiempoTotalAventura (&miEntrenador->misEstadisticas);
+	//TODO: y otros a implementar...
+	//*******************************************************
+
+
+
+	//*******************************************************
+	//TODO: esto deberia ir en el while de movimientos de un entrenador..
+	inicializarSenialesMapa (miEntrenador, (void *) finalizarEntrenador );
+
+	sleep(2);	//para probar tirarle una senial.
+
+	funcionesQueQuieroEjecutarSegunLaSenial(miEntrenador, (void *) finalizarEntrenador, (void* ) accionDelMapaAnteSIGUSR1, (void*) accionDelMapaAnteSIGTERM );
+	//*******************************************************
+
+
+
+	inicializarSocketEntrenador (miEntrenador);
+
+
+
+	finalizarEntrenador(miEntrenador);
+	return EXIT_SUCCESS;
+}
+
+void validarArgumentos ( int argc, char *argv[] )
+{
+	puts("PROCESO ENTRENADOR"); /* prints PROCESO ENTRENADOR */
+
+	//arg[0] -> nombre del proceso ejecutable
+	//arg[1] -> nombre del Entrenador
+	//arg[2] -> donde esta ubicada la pokedex
+	if ( argc !=3  ) /* debe recibir 3 argumentos */
+	{
+		printf("\tUso incorrecto..\n");
+		printf("\tuso: %s nombreEntrenador dirPokeDex\n", argv[0]);
+	  	printf("\tejemplo: %s %s %s\n", argv[0], "Ash", "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/test_files");
 		exit(EXIT_FAILURE);
+	}
+
+
+
+
+	if ( argv[1] == NULL || (strlen (argv[1]) < 2 ) )
+	{
+		printf("\tRevise los parametros.\n");
+		exit(EXIT_FAILURE);
+	}
+	if ( argv[2] == NULL || (strlen (argv[2]) < 2 ) )
+	{
+		printf("\tRevise los parametros.\n");
+		exit(EXIT_FAILURE);
+	}
+
+
+}
+
+void inicializarLogEntrenador ( char *argv[] )		/*levanto el archivo para loggear*/
+{
+	//TODO: revisar que pasa si no existe el archivo de log y/o el directorio
+
+
+	//argv[0];	Program_NAME
+	//argv[1];	Nombre del entrenador
+	//string_from_format(__ubicacionArchivoDeLogEntrenador, argv[1])	//Con esto le paso el nombre del archivo de log.
+
+	//TODO: revisar que pasa si no esta creado el archivo :S
+	myArchivoDeLog = log_create( string_from_format(__ubicacionArchivoDeLogEntrenador, argv[1]) , argv[0], false, LOG_LEVEL_INFO);
+	if (myArchivoDeLog != NULL)
+	{
+		puts("se creo OK el arch de log");
+	}
+	else
+	{
+		puts("NO se pudo crear el archivo de log");
+		exit(EXIT_FAILURE);
+	}
+	log_info(myArchivoDeLog, "-------------------------------------------------------");
+
+}
+
+
+void inicializarSocketEntrenador (t_entrenadorFisico * nuevoEntrenador)
+{
+	//TODO: proximamente lo levantamos dinamico..
+	log_info(myArchivoDeLog, "Inicializando la conexion por socket");
+	int socket = connect_to("127.0.0.1", "6400");
+	if (socket == -1) {
+		puts("No se pudo conectar");
+		//TODO: agregar las variables nombreMapa IP/Puerto al Log.
+		log_error(myArchivoDeLog, "No se pudo inicializar la conexion por socket");
+		finalizarEntrenador(nuevoEntrenador);
 	} else {
 		printf("socket: %d\n", socket);
+		//TODO: agregar las variables nombreMapa IP/Puerto al Log.
+		log_info(myArchivoDeLog, "Me conecte por socket, mi socket es: %d", socket);
 		int simbolo = 0;
 		t_data * info = pedirPaquete(99, sizeof(int), &simbolo);
 
@@ -68,78 +191,20 @@ int main() {
 		}
 	}
 	close(socket);
-	return EXIT_SUCCESS;
 }
 
-/*void levantarConfig() {
- char directorioPokeDex[250] =
- "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/test_files/";
 
- //TODO: chequear la longitud del string, por ejemplo si es de 10 y le ingreso 15 tengo problemas...
- char directorioMapa[250];
- strcpy(directorioMapa, directorioPokeDex);
+void accionDelMapaAnteSIGUSR1 (t_entrenadorFisico * unEntrenador)
+{
+	//TODO: ¿Tengo que validar que la metadata este inicializada?
+	unEntrenador->metadata->vidas++;	//sumo una vida
+}
 
- //TODO: usar alguna v.global o preprocesador para esta config.
- //TODO: investigar string_from_format
- strcat(directorioMapa, "/Entrenadores/");
- strcat(directorioMapa, "Ash");
- strcat(directorioMapa, "/metadata");
+void accionDelMapaAnteSIGTERM (t_entrenadorFisico * unEntrenador)
+{
+	//TODO: ¿Tengo que validar que la metadata este inicializada?
+	if ( unEntrenador->metadata->vidas > 0)		//Minima cantidad de vidas es 0.
+			unEntrenador->metadata->vidas--;	//resto una vida
 
- t_config *metadataEntrenador;
- metadataEntrenador = config_create(directorioMapa);
-
- if (metadataEntrenador == NULL
- || config_keys_amount(metadataEntrenador) < 0) {
- //TODO: errorSintacticoSemantico no se pudo levantar el archivo config
- exit(EXIT_FAILURE);
- }
-
- //leo strings
- if (config_has_property(metadataEntrenador, "nombre")) {
- char nombre[50];
- strcpy(nombre, (config_get_string_value(metadataEntrenador, "nombre")));
- printf("Mi nombre: %s\n", nombre);
-
- } else {
- //TODO: errorSintacticoSemantico no se pudo levantar el archivo config
- exit(EXIT_FAILURE);
- }
-
- //leo ints
- if (config_has_property(metadataEntrenador, "vidas")) {
- int vidas;
- vidas = config_get_int_value(metadataEntrenador, "vidas");
- printf("Vidas: %d\n", vidas);
-
- } else {
- //TODO: errorSintacticoSemantico no se pudo levantar el archivo config
- exit(EXIT_FAILURE);
- }
-
- //leo un array
- if (config_has_property(metadataEntrenador, "hojaDeViaje")) {
- char** numbers = config_get_array_value(metadataEntrenador,
- "hojaDeViaje");
- if (numbers == NULL) {
- //TODO: errorSintacticoSemantico no se pudo levantar el archivo config
- }
-
- printf("La hoja de viaje:");
- int i = 0;
- while (numbers[i] != NULL) {
- printf("%s\n", ((numbers[i])));
- i++;
- }
-
- string_iterate_lines(numbers, (void*) free);
- free(numbers);
- //TODO: parsear el contenido..
- } else {
- //TODO: errorSintacticoSemantico no se pudo levantar el archivo config
- exit(EXIT_FAILURE);
- }
-
- //TODO: liberar memoria..
-
- }
- */
+	//TODO: Validar si me quede sin vidas me muero =(
+}

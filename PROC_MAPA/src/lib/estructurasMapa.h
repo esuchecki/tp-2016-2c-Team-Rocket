@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <tad_items.h>		//contiene una lista con los items a dibujar en el mapa
 
+#include <commons/log.h>
 
 //------------------------------------------//
 /* ********************************************	*/

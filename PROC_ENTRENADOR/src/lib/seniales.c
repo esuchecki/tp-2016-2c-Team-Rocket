@@ -6,28 +6,26 @@
  */
 #include "seniales.h"
 
-void inicializarSenialesMapa (t_mapa * unMapa, void (*fc) (t_mapa *))
+void inicializarSenialesMapa (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
 {
-	//TODO: Que hilo deberia revisar las señales? Gui? Planificador? Etc..
-
 	_SIGINT_flag = 0;	//reseteo el flag.
 	_SIGTERM_flag = 0;	//reseteo el flag.
-	_SIGUSR2_flag = 0;	//reseteo el flag.
+	_SIGUSR1_flag = 0;	//reseteo el flag.
 
-	if (signal( SIGUSR2, tratarLaSenialRecibida ) == SIG_ERR)
+	if (signal( SIGUSR1, tratarLaSenialRecibida ) == SIG_ERR)
 	{
-		log_error(myArchivoDeLog, "error en la senial SIGUSR2");
-		fc(unMapa);
+		log_error(myArchivoDeLog, "error en la senial SIGUSR1");
+		fc(unEntrenador);
 	}
 	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
 	{
 		log_error(myArchivoDeLog, "error en la senial SIGTERM");
-		fc(unMapa);
+		fc(unEntrenador);
 	}
 	if (signal(SIGINT, tratarLaSenialRecibida)==SIG_ERR)
 	{
 		log_error(myArchivoDeLog, "error en la senial SIGINT");
-		fc(unMapa);
+		fc(unEntrenador);
 	}
 }
 
@@ -41,9 +39,9 @@ void tratarLaSenialRecibida (int senial)
 			_SIGINT_flag = 1;
 			break;
 
-		case SIGUSR2:
-			log_warning(myArchivoDeLog,"Recibi la senial SIGUSR2." );
-			_SIGUSR2_flag = 1;
+		case SIGUSR1:
+			log_warning(myArchivoDeLog,"Recibi la senial SIGUSR1." );
+			_SIGUSR1_flag = 1;
 			break;
 
 		case SIGTERM:
@@ -54,32 +52,34 @@ void tratarLaSenialRecibida (int senial)
 
 }
 
-void funcionesQueQuieroEjecutarSegunLaSenial (t_mapa * unMapa, void (*fcAbortiva) (t_mapa *), void (*fcSIGUSR2) (t_mapa *) )
+void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcAbortiva) (t_entrenadorFisico *), void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) )
 {
 	//TODO: revisar si hay que hacer alguna otra cosa para 'encolar' señales o enrealidad bloquearlas (si no quiero que me interrumpan algo)
 
 
-	//Primero cierro correctamente la gui
+	//Primero cierro correctamente al entrenador
 	if (_SIGINT_flag == 1)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGINT.**" );
-		fcAbortiva(unMapa);
+		fcAbortiva(unEntrenador);
 		_SIGINT_flag = 0;	//reseteo el flag.
 	}
+
+	//Resto vidas
 	if (_SIGTERM_flag == 1)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGTERM.**" );
-		fcAbortiva(unMapa);
+		fcSIGTERM(unEntrenador);
 		_SIGTERM_flag = 0;	//reseteo el flag.
 	}
 
 
-	//Segundo hago releer la metadata del mapa, segun enunciado con señal SIGUSR2
-	if (_SIGUSR2_flag == 1)
+	//sumar vidas al entrenador
+	if (_SIGUSR1_flag == 1)
 	{
-		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGUSR2.**" );
-		fcSIGUSR2(unMapa);
-		_SIGUSR2_flag = 0;	//reseteo el flag.
+		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGUSR1.**" );
+		fcSIGUSR1(unEntrenador);
+		_SIGUSR1_flag = 0;	//reseteo el flag.
 	}
 
 }

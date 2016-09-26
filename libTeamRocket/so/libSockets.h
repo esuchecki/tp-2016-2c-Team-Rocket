@@ -23,7 +23,7 @@ enum enviosEntrenador{
 	capturarPokemon = 12,
 	objetivosCumplidos = 13,
 	mejorPokemon = 14
-};
+} ;
 
 enum enviosMapa{
 	ubicacionPokenest = 20,

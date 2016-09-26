@@ -6,9 +6,9 @@
  */
 
 #include "mapaConfig.h"
-#include "libGrafica.h"
 
-uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+
+uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	uint16_t aux;
 	bool * devolvioError = malloc (sizeof(bool));
@@ -16,11 +16,9 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 
 	if ( *devolvioError == true )
 	{
-
-		//TODO: resolver el warning de finalizarGui (en todo este archivo).
-		//resuelto, habia que incluir libGrafica.h porque sino no la reconocia la funcion
+		log_error(myArchivoDeLog,"Problemas en _mapa_configLeerInt= %s", nombreDeLaPropiedad);
 		free (devolvioError);
-		finalizarGui(NULL);
+		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else
@@ -30,33 +28,33 @@ uint16_t _mapa_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad
 	}
 }
 
-char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50])
+char * _mapa_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_mapa * unMapa, void (*fc) (t_mapa *))
 {
-	char * aux;
-	aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
-
-	if ( aux == NULL )
+	if ( configLeerString (archivoConfig, nombreDeLaPropiedad) == NULL )
 	{
-		free (aux);
-		finalizarGui(NULL);
+		log_error(myArchivoDeLog,"Problemas en _mapa_configLeerString= %s", nombreDeLaPropiedad);
+		//free (aux);
+		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else
 	{
-		//free (aux);
+		char * aux;
+		aux = string_duplicate( configLeerString (archivoConfig, nombreDeLaPropiedad) );
 		return aux;
 	}
 }
 
-t_config * _mapa_newConfigType (char * directorio)
+t_config * _mapa_newConfigType (char * directorio, t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	t_config * aux;
 	aux = newConfigType (directorio);
 
 	if ( aux == NULL )
 	{
+		log_error(myArchivoDeLog,"Problemas en _mapa_newConfigType= %s", directorio);
 		free (aux);
-		finalizarGui(NULL);
+		fc(unMapa);	//fc para finalizar la gui ante un error.
 		return 0;
 	}
 	else

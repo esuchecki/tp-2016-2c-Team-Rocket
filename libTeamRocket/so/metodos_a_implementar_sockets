@@ -4,6 +4,7 @@ Para Mapa y Entrenador:
 1) En el Handshake deberian intercambiar como informacion: 
 	(Obligatorio)	El entrenador debe enviar su identificador (es un char) al mapa. Por ejemplo '#'.
 	(Opcional_medio al pedo) Mapa enviar su nombre al Entrenador, asi el entrenador valida que se conecto al mapa correcto.
+	**(Corrijo)** -> El mapa le debe pasar la posicion inicial al entrenador!
 	
 	
 *******************************************************************************
@@ -61,3 +62,7 @@ Para Mapa y Entrenador:
 	
 [F] -> Ubicacion de la medalla del mapa
 	(Obligatorio) Path con la ubicacion del archivo.
+	
+[G] -> Es tu turno!!!
+	(Entiendo que no le pasa ninguna informacion)
+	(El entrenador debe responderle al mapa)

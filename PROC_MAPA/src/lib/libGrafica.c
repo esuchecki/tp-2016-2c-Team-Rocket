@@ -54,9 +54,13 @@ void borrarMapa (t_mapa * mapa)
 	if (mapa == NULL)
 		return;
 
-	freeForMetadataMapa (mapa);
+	if (mapa->metadata != NULL)
+		freeForMetadataMapa (mapa);
 
 	//TODO: recorrer listas y borrar.
+
+
+	//free(mapa->metadata);
 
 	/*
 	BorrarItem(items, '#');
@@ -77,6 +81,8 @@ t_mapa * inicializarEstructurasDelMapa (char *nombreMapa, char *directorioPokeDe
 	t_mapa * nuevoMapa = malloc(sizeof(t_mapa));	//pedir malloc
 	nuevoMapa->nombre = nombreMapa;
 	nuevoMapa->directorioPokeDex = directorioPokeDex;
+	nuevoMapa->items = NULL;
+	nuevoMapa->metadata = NULL;
 
 	t_list* itemsVisiblesEnMapa = list_create();
 	nuevoMapa->items = itemsVisiblesEnMapa;
@@ -96,17 +102,18 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
 	metadataMapa = config_create_for_metadataMapa(nuevoMapa);
 	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
-
-	nuevaMetadataMapa->tiempoChequeadoDeadlock = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Deadlock);
-	nuevaMetadataMapa->batalla = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Batalla);
-	nuevaMetadataMapa->algoritmo = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Algoritmo);
-	nuevaMetadataMapa->quantum = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Quantum);
-	nuevaMetadataMapa->retardo = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Retardo);
-	nuevaMetadataMapa->ip = _mapa_configLeerString(metadataMapa, __nombreEnConfig_IP);
-	nuevaMetadataMapa->puerto = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Puerto);
-
-
 	nuevoMapa->metadata = nuevaMetadataMapa;
+
+	nuevaMetadataMapa->tiempoChequeadoDeadlock = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Deadlock, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->batalla = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Batalla, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->algoritmo = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Algoritmo, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->quantum = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Quantum, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->retardo = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Retardo, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->ip = _mapa_configLeerString(metadataMapa, __nombreEnConfig_IP, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->puerto = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Puerto, nuevoMapa, (void *) finalizarGui);
+
+
+	//nuevoMapa->metadata = nuevaMetadataMapa;
 
 	metadata_finalizar (metadataMapa);
 	loguearEstructuraDelMapa(nuevoMapa);
@@ -119,9 +126,9 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 {
 	char metadataIdentificador;
-	metadataIdentificador = _mapa_configLeerString(configPokeNest,__nombreEnConfigIdPokeNest )[0];
+	metadataIdentificador = _mapa_configLeerString(configPokeNest,__nombreEnConfigIdPokeNest , nuevoMapa, (void *) finalizarGui)[0];
 
-	char * pos_pokenest = _mapa_configLeerString(configPokeNest,__nombreEnConfigPosicionPokeNest );
+	char * pos_pokenest = _mapa_configLeerString(configPokeNest,__nombreEnConfigPosicionPokeNest , nuevoMapa, (void *) finalizarGui);
 	int pos_x = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[0] );
 	int pos_y = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[1] );
 
@@ -245,7 +252,7 @@ t_config *config_create_for_metadataMapa(t_mapa * nuevoMapa)
 	sprintf(directorioMapa, "/%s/%s/%s/%s", nuevoMapa->directorioPokeDex, __ubicacionMapas, nuevoMapa->nombre, __ubicacionMetadataMapas);
 
 
-	t_config * metadataMapa = _mapa_newConfigType(directorioMapa);
+	t_config * metadataMapa = _mapa_newConfigType(directorioMapa, nuevoMapa, (void *) finalizarGui);
 	free (directorioMapa);
 
 
@@ -279,7 +286,10 @@ void leerRecursivamenteLasPokenest (t_mapa * nuevoMapa)
 
     //consulto si devolvio 0.
     if ( ( encontrarEnUnDirectorio (directorioMapa,  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
+    {
+    	log_error(myArchivoDeLog, "problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'");
     	finalizarGui(nuevoMapa);
+    }
 
 
     free (directorioMapa);
@@ -297,7 +307,7 @@ void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
 	sprintf(directorioMapa, "/%s/%s", nombreDirectorio, __ubicacionMetadataPokeNest);
 
 
-	t_config * metadataPokenest = _mapa_newConfigType(directorioMapa);
+	t_config * metadataPokenest = _mapa_newConfigType(directorioMapa, nuevoMapa, (void *) finalizarGui);
 	cargarPokeNests(metadataPokenest, nuevoMapa);
 
 
@@ -354,10 +364,10 @@ bool esUnicoEsteIdentificador (t_list* items, char idDelItem)
 void freeForMetadataMapa (t_mapa * unMapa)
 {
 	//borro todos los strings primero
-	free(unMapa->metadata->algoritmo);
-	free(unMapa->metadata->batalla);
-	free(unMapa->metadata->ip);
-	free(unMapa->metadata->puerto);
+	//free(unMapa->metadata->algoritmo);
+	//free(unMapa->metadata->batalla);
+	//free(unMapa->metadata->ip);
+	//free(unMapa->metadata->puerto);
 
 	free(unMapa->metadata);
 	unMapa->metadata = NULL;
