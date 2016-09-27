@@ -197,13 +197,3 @@ void consumirQuantum(i){
 
 }
 
-void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos) {
-
-	if (paquete->header <= 0 ) {
-		//desconexion
-		printf("se desconecto alguien");
-		desconectarEntrenador(socket_recepcion);
-
-		FD_CLR(socket_recepcion, &sockets_activos);
-	}
-}

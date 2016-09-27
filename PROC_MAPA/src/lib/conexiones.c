@@ -20,31 +20,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void detectarDesconexion(t_data * paquete, int socket_recepcion,
+		fd_set sockets_activos) {
 
+	if (paquete->header == 0) {
+		//desconexion
+		printf("se desconecto alguien\n");
+		printf("Elimine el numerode socket: %d\n", socket_recepcion);
+		desconectarEntrenador(socket_recepcion);
+		close(socket_recepcion);
+		FD_CLR(socket_recepcion, &sockets_activos);
+		if (socket_recepcion == socketMasGrande) {
+			socketMasGrande = 0;
+			int fd2 = 0;
+			for (fd2 = socket_recepcion - 1; fd2 >= 0; fd2--) {
+				if (FD_ISSET(fd2, &sockets_activos)) {
+					socketMasGrande = fd2;
+					printf("el socket mas grande ahora es:%d\n",fd2);
+					break;
+
+				}
+			}
+		}
+	}
+}
 
 void atenderConexion(int i, fd_set sockets_activos) {
 	//hago lo que tenga que hacer cuando se conecte un entrenador
 	t_data * paquete;
 	paquete = leer_paquete(i);
 
-	detectarDesconexion(paquete,i,sockets_activos);
+	detectarDesconexion(paquete, i, sockets_activos);
 
 	switch (paquete->header) {
 	case peticionPokenest:
 		;
 		char * identificadorPokenest = paquete->data;
-		printf("El identificador de la pokenest es: %c\n",*identificadorPokenest);
+		printf("El identificador de la pokenest es: %c\n",
+				*identificadorPokenest);
 		//int  coordenadas = obtenerCoordenadasPokenest(*identificadorPokenest);
 		//hardocodeo las coordenadas
 		int coordenadaEnX = 4;
 		int coordenadaEnY = 5;
 		void * buffer = malloc(sizeof(int) * 2);
-		memcpy(buffer,&coordenadaEnX,sizeof(int));
-		memcpy(buffer + sizeof(int),&coordenadaEnY,sizeof(int));
+		memcpy(buffer, &coordenadaEnX, sizeof(int));
+		memcpy(buffer + sizeof(int), &coordenadaEnY, sizeof(int));
 
-		t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest,
-				sizeof(int) * 2, buffer);
-
+		t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest, sizeof(int) * 2,
+				buffer);
 
 		common_send(i, nuevoPaquete);
 
@@ -59,15 +82,16 @@ void atenderConexion(int i, fd_set sockets_activos) {
 		//TODO: registrar movimiento del entrenador, descartar quantum
 		;
 
-		int coordenadasEnX=0;
+		int coordenadasEnX = 0;
 
-		int coordenadasEnY=0;
+		int coordenadasEnY = 0;
 
-		memcpy(&coordenadasEnX,paquete->data,sizeof(int));
+		memcpy(&coordenadasEnX, paquete->data, sizeof(int));
 
-		memcpy(&coordenadasEnY,paquete->data + sizeof(int),sizeof(int));
+		memcpy(&coordenadasEnY, paquete->data + sizeof(int), sizeof(int));
 
-		printf("Las coordenadas de la pokenest son: %d , %d\n", coordenadasEnX,coordenadasEnY);
+		printf("Las coordenadas de la pokenest son: %d , %d\n", coordenadasEnX,
+				coordenadasEnY);
 
 		consumirQuantum(i);
 
@@ -77,7 +101,7 @@ void atenderConexion(int i, fd_set sockets_activos) {
 	case capturarPokemon:
 		;
 
-		t_entrenador * entrenador = list_remove(colaListos,0);
+		t_entrenador * entrenador = list_remove(colaListos, 0);
 
 		agregarAColaDeBloqueados(entrenador);
 
@@ -93,6 +117,8 @@ void atenderConexion(int i, fd_set sockets_activos) {
 		break;
 	case mejorPokemon:
 		//TODO: recibe al mejor pokemon para... batalla pokemon?
+		break;
+	case 0:
 		break;
 	}
 }
@@ -117,17 +143,16 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
 	}
 }
 
-
 int atenderConexiones(void * data) {
 //	t_mapa * mapa = data;
 
-	int socketEscucha, socketMasGrande;
+	int socketEscucha;
 
-	fd_set sockets_para_revisar,sockets_activos;
+	fd_set sockets_para_revisar, sockets_activos;
 
-	socketEscucha = setup_listen("localhost", "6800");
+	socketEscucha = setup_listen("localhost", "8001");
 
-	printf("%d\n",socketEscucha);
+	printf("escucha: %d\n", socketEscucha);
 
 	listen(socketEscucha, 1024);
 
@@ -173,6 +198,7 @@ int atenderConexiones(void * data) {
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
 					atenderConexion(i, sockets_activos);
+
 				}
 			}
 		}
