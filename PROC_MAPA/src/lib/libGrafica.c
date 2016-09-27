@@ -13,16 +13,16 @@ void dibujarMapa (t_mapa * mapa)
 
 	//TODO: esto en cualquier momento se va...
 	//entrenador de prueba por el momento
-	cargarEntrenador(mapa->items, '#');
-	cargarEntrenador(mapa->items, '$');
-	cargarEntrenador(mapa->items, '@');
+	//cargarEntrenador(mapa->items, '#');
+	//cargarEntrenador(mapa->items, '$');
+	//cargarEntrenador(mapa->items, '@');
 
-	moverEntrenador(mapa->items, '#', 5,5);
+	//moverEntrenador(mapa->items, '#', 5,5);
 
 
-	log_info(myArchivoDeLog, "voy a tratar de dibujar el mapa ");
+	//log_info(myArchivoDeLog, "voy a tratar de dibujar el mapa ");
 
-	nivel_gui_dibujar(mapa->items, mapa->nombre);
+	//nivel_gui_dibujar(mapa->items, mapa->nombre);
 	//TODO: se deberia redibujar el nivel ante cada cambio...
 
 	while ( 1 )
@@ -30,6 +30,7 @@ void dibujarMapa (t_mapa * mapa)
 		//TODO: esto no deberia ir aca...??
 		//Nota: es un ejemplo de uso!! darle bola
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) finalizarGui, (void* ) accionDelMapaAnteSIGUSR2 );
+		nivel_gui_dibujar(mapa->items, mapa->nombre);
 
 /*
 		int key = getch();
@@ -172,6 +173,7 @@ void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 {
 	if (estaDentroDelMargenDelMapa(newPos_x,newPos_y) ==1 )
 	{
+		log_debug(myArchivoDeLog, "movi al entrenador");
 		MoverPersonaje(items, simbolo, newPos_x, newPos_y);
 		return;
 	}
@@ -380,4 +382,30 @@ void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa)
 	//TODO: implementar semaforos. Si el planificador tenia en ejecucion, deberia esperar que termine, y recien ahi releer...
 	freeForMetadataMapa (unMapa);
 	leerMetadataDelMapa (unMapa);
+}
+
+
+int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int * pos_y)
+{
+	ITEM_NIVEL * resultado;
+
+	bool _coincideElIdconEsteElemento(ITEM_NIVEL* item)
+	{
+		if (item->id == idPokeNest[0])	//sabemos que idPokeNest es un char.
+		{
+			return 1;	//Este es el ID que busco
+		 }
+		return 0;
+	}
+
+	resultado = list_find(unMapa->items, (void *) _coincideElIdconEsteElemento);
+	if (resultado != NULL)
+	{
+		*pos_x = resultado->posx;
+		*pos_y = resultado->posy;
+		//puts ("Encontre una pokenest;");
+		return 1;
+	}
+	return 0;
+
 }

@@ -177,6 +177,11 @@ void freeForMetadataMapa (t_mapa * unMapa);
  */
 void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa);
 
+/*
+ * @NAME: dondeQuedaEstaPokeNest
+ * @DESC: El int que devuelte es 0 en caso de error, 1 en caso de todo ok. La pos la devuelve en pos_x y en pos_y.
+ */
+int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int * pos_y);
 //------------------------------------------//
 
 

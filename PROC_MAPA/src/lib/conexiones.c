@@ -45,7 +45,10 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 	}
 }
 
-void atenderConexion(int i, fd_set sockets_activos) {
+void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
+	//	t_mapa * mapa = data;
+
+
 	//hago lo que tenga que hacer cuando se conecte un entrenador
 	t_data * paquete;
 	paquete = leer_paquete(i);
@@ -58,44 +61,72 @@ void atenderConexion(int i, fd_set sockets_activos) {
 		char * identificadorPokenest = paquete->data;
 		printf("El identificador de la pokenest es: %c\n",
 				*identificadorPokenest);
-		//int  coordenadas = obtenerCoordenadasPokenest(*identificadorPokenest);
-		//hardocodeo las coordenadas
-		int coordenadaEnX = 4;
-		int coordenadaEnY = 5;
-		void * buffer = malloc(sizeof(int) * 2);
-		memcpy(buffer, &coordenadaEnX, sizeof(int));
-		memcpy(buffer + sizeof(int), &coordenadaEnY, sizeof(int));
 
-		t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest, sizeof(int) * 2,
-				buffer);
 
-		common_send(i, nuevoPaquete);
+		int coordenadaEnX = -1;		//inicializo en fantasma
+		int coordenadaEnY = -1;		//inicializo en fantasma
+		if ( dondeQuedaEstaPokeNest (data, paquete->data, &coordenadaEnX, &coordenadaEnY) )		// Aca esta la magia, si no devolvio error entonces lo ejecuto.
+		{
+			log_debug(myArchivoDeLog, "atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : %s;%s", string_itoa(coordenadaEnX), string_itoa(coordenadaEnY));
+			if ( (coordenadaEnX != -1) && (coordenadaEnY != -1) )
+			{
+				void * buffer = malloc(sizeof(int) * 2);
+				memcpy(buffer, &coordenadaEnX, sizeof(int));
+				memcpy(buffer + sizeof(int), &coordenadaEnY, sizeof(int));
 
-		consumirQuantum(i);
+				t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest, sizeof(int) * 2,
+						buffer);
 
-		free(nuevoPaquete);
+				common_send(i, nuevoPaquete);
 
-		sem_post(&entrenador_listo);
+				consumirQuantum(i);
+
+				free(nuevoPaquete);
+
+				sem_post(&entrenador_listo);
+
+				break;	//con esto salvamos que tire error cuando fue una ejecucion valida.
+			}
+		}
+
+		//TODO: romper el entrenador
+		printf("error en dondeQuedaEstaPokeNest");
+
 
 		break;
 	case movimientoEntrenador:
 		//TODO: registrar movimiento del entrenador, descartar quantum
 		;
 
-		int coordenadasEnX = 0;
-
-		int coordenadasEnY = 0;
+		int coordenadasEnX = -1;
+		int coordenadasEnY = 6;		//por ahora este valor hardcode.
+		//int coordenadasEnY = -1;
 
 		memcpy(&coordenadasEnX, paquete->data, sizeof(int));
 
-		memcpy(&coordenadasEnY, paquete->data + sizeof(int), sizeof(int));
+		//memcpy(&coordenadasEnY, paquete->data + sizeof(int), sizeof(int));
 
-		printf("Las coordenadas de la pokenest son: %d , %d\n", coordenadasEnX,
-				coordenadasEnY);
 
-		consumirQuantum(i);
+		log_debug(myArchivoDeLog, "atenderConexion / movimientoEntrenador / X;Y = %s;%s", string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
+		if ( (coordenadasEnX != -1) && (coordenadasEnY != -1) )
+		{
+			//TODO: Lucas, como se quien me mando el paquete??
+			moverEntrenador( data->items, '@', coordenadasEnX, coordenadasEnY);
+			//TODO: (emi) validar si el entrenador se pudo mover correctamente.
 
-		sem_post(&entrenador_listo);
+
+
+			consumirQuantum(i);
+
+			//free(nuevoPaquete);
+
+			sem_post(&entrenador_listo);
+			break;
+		}
+
+		//TODO: romper el entrenador
+		printf("error en dondeQuedaEstaPokeNest");
+
 
 		break;
 	case capturarPokemon:
@@ -123,7 +154,7 @@ void atenderConexion(int i, fd_set sockets_activos) {
 	}
 }
 
-void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
+void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa) {
 	t_data * paquete = leer_paquete(socket_nueva_conexion);
 
 	if (paquete->header == 99) {
@@ -134,6 +165,11 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
 		printf("el entrenador tiene socket: %d", unEntrenador->nroDesocket);
 
 		agregarAColaDeListos(unEntrenador);
+
+		//TODO: tenemos que resolver como hacemos las delegaciones, pero asi cargamos el entrenador..
+		if (unEntrenador->simbolo != '\0')
+			cargarEntrenador(mapa->items, unEntrenador->simbolo);
+		//-------
 
 		sem_post(&entrenador_listo);
 	} else {
@@ -193,11 +229,11 @@ int atenderConexiones(void * data) {
 						if (socket_nueva_conexion > socketMasGrande) {
 							socketMasGrande = socket_nueva_conexion;
 						}
-						handshake(socket_nueva_conexion, sockets_activos);
+						handshake(socket_nueva_conexion, sockets_activos, data);
 					}
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
-					atenderConexion(i, sockets_activos);
+					atenderConexion(i, sockets_activos, data);
 
 				}
 			}

@@ -119,7 +119,7 @@ void inicializarLogMapa ( char *argv[] )		/*levanto el archivo para loggear*/
 	//string_from_format(__ubicacionArchivoDeLogMapa, argv[1])	//Con esto le paso el nombre del archivo de log.
 
 	//TODO: revisar que pasa si no esta creado el archivo :S
-	myArchivoDeLog = log_create( string_from_format(__ubicacionArchivoDeLogMapa, argv[1]) , argv[0], false, LOG_LEVEL_INFO);
+	myArchivoDeLog = log_create( string_from_format(__ubicacionArchivoDeLogMapa, argv[1]) , argv[0], false, LOG_LEVEL_DEBUG);
 
 
 	if (myArchivoDeLog != NULL)

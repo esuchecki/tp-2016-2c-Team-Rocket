@@ -38,6 +38,9 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador);
 void accionDelMapaAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelMapaAnteSIGTERM(t_entrenadorFisico * unEntrenador);
 
+
+void enviarMsjFantasmaParaMoverse (int socketConection, t_data * info);
+
 //------------------------------------------//
 
 int main(int argc, char *argv[]) {
@@ -145,6 +148,7 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 
 		t_data * info = pedirPaquete(99, sizeof(char),
 				&nuevoEntrenador->metadata->simbolo);
+		//TODO: ojo lucas, creo que aca cuando le haces free a info, perdemos el simbolo del entrenador.
 
 		common_send(socketConexion, info);
 
@@ -159,7 +163,7 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 				;
 				char * mensaje = info->data;
 				printf("%s\n", mensaje);
-				*mensaje = 'B';
+				*mensaje = 'P';
 				t_data * paquete = pedirPaquete(peticionPokenest, sizeof(int),
 						mensaje);
 				common_send(socketConexion, paquete);
@@ -176,7 +180,11 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 				memcpy(&coordenadasEnY, info->data + sizeof(int), sizeof(int));
 				printf("Las coordenadas de la pokenest son: %d , %d\n",
 						coordenadasEnX, coordenadasEnY);
+
+				enviarMsjFantasmaParaMoverse(socketConexion, info);
+				sleep(5);
 				exit(EXIT_FAILURE);
+
 				break;
 			case capturastePokemon:
 				//TODO: hacer lo que tengo que hacer
@@ -210,4 +218,20 @@ void accionDelMapaAnteSIGTERM(t_entrenadorFisico * unEntrenador) {
 		unEntrenador->metadata->vidas--;	//resto una vida
 
 	//TODO: Validar si me quede sin vidas me muero =(
+}
+
+
+
+void enviarMsjFantasmaParaMoverse (int socketConection, t_data * info)
+{
+	puts ("entro");
+	//char * mensaje = info->data;
+	int * mensaje = malloc (sizeof(int)) ;
+	//strcpy(mensaje, "6");
+	//printf("%s\n", mensaje);
+	*mensaje = 6;	//solo movete 1 pos.
+	t_data * paquete = pedirPaquete(movimientoEntrenador, sizeof(int), mensaje);
+	common_send(socketConection, paquete);
+	free(mensaje);
+	free(paquete);
 }
