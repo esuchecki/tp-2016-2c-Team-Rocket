@@ -51,7 +51,6 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 	t_mapa * mapa = data;
 
-	//hago lo que tenga que hacer cuando se conecte un entrenador
 	t_data * paquete;
 	paquete = leer_paquete(i);
 
@@ -60,7 +59,6 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 	switch (paquete->header) {
 	case peticionPokenest:
 		;
-
 		int coordenadaEnX = -1;		//inicializo en fantasma
 		int coordenadaEnY = -1;		//inicializo en fantasma
 		if (dondeQuedaEstaPokeNest(data, paquete->data, &coordenadaEnX,
@@ -80,6 +78,8 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 				common_send(i, nuevoPaquete);
 
 				consumirQuantum(i);
+
+				setearDistanciaPokenest(i);
 
 				free(nuevoPaquete);
 
@@ -123,6 +123,8 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 			//free(nuevoPaquete);
 
+			setearDistanciaPokenest(i);
+
 			sleep(mapa->metadata->retardo);
 
 			sem_post(&entrenador_listo);
@@ -136,14 +138,13 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		break;
 	case capturarPokemon:
 		;
+		//TODO: paquete->data tendra el identificador del pokemon a atrapar
 
 		t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
 		quitarDeColaDeListos(entrenador);
 
 		agregarAColaDeBloqueados(entrenador);
-
-		consumirQuantum(i);
 
 		sleep(mapa->metadata->retardo);
 

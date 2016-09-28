@@ -119,6 +119,15 @@ t_entrenador * buscarCercaniaAPokenest(){
 
 }
 
+void setearDistanciaPokenest(int nroDeSocket){
+	t_entrenador *entrenador = reconocerEntrenadorSegunSocket(nroDeSocket);
+
+	//TODO: ver si el entrenador tiene que mandarme su posicion actual para poder
+	//calcular la distancia a la pokenest
+	//para poder setear la siguiente variable entrenador->distanciaAProximaPokenest
+
+}
+
 
 void * ejecutarPlanificador(void * datos) {
 	t_mapa *mapa = datos;
@@ -160,6 +169,8 @@ t_entrenador * desbloquearEntrenador() {
 	//TODO: ver como es el desbloqueo de un entrenador
 
 	entrenador->distanciaAProximaPokenest = -1;
+	entrenador->instruccionesEjecutadas = 0;
+
 	return entrenador;
 }
 

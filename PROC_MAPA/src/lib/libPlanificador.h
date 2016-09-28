@@ -57,4 +57,6 @@ t_entrenador * buscarCercaniaAPokenest();
 
 void quitarDeColaDeListos(t_entrenador * entrenador);
 
+void setearDistanciaPokenest(int nroDeSocket);
+
 #endif /* LIBPLANIFICADOR_H_ */
