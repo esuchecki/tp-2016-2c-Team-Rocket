@@ -134,7 +134,6 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 	log_info(myArchivoDeLog, "Inicializando la conexion por socket");
 	int socketConexion = connect_to("127.0.0.1", "8001");
 	if (socketConexion == -1) {
-		puts("No se pudo conectar \n");
 		//TODO: agregar las variables nombreMapa IP/Puerto al Log.
 		log_error(myArchivoDeLog,
 				"No se pudo inicializar la conexion por socket");
@@ -158,17 +157,18 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 			info = leer_paquete(socketConexion);
 
 			switch (info->header) {
-			case otorgarTurno:
-				//TODO:
+			case pedirPokenest:
 				;
-				char * mensaje = info->data;
-				printf("%s\n", mensaje);
-				*mensaje = 'P';
+				//TODO:Obtener de la lista de objetivos el identificador de
+				//la pokenest, si lla tiene la pokenest no la pide
+				char identificadorPokenest = 'P';//lo hardcodeo ahora
 				t_data * paquete = pedirPaquete(peticionPokenest, sizeof(int),
-						mensaje);
+						&identificadorPokenest);
+
 				common_send(socketConexion, paquete);
-				free(mensaje);
+
 				free(paquete);
+
 				break;
 
 			case ubicacionPokenest:
@@ -183,7 +183,6 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 
 				enviarMsjFantasmaParaMoverse(socketConexion, info);
 				sleep(5);
-				exit(EXIT_FAILURE);
 
 				break;
 			case capturastePokemon:

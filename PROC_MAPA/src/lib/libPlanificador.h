@@ -22,8 +22,8 @@ pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
 typedef struct{
 	int nroDesocket;
 	char simbolo;
-	int quantum;
 	int instruccionesEjecutadas;
+	int distanciaAProximaPokenest;
 	//TODO: ver que otros datos poner aca
 }t_entrenador;
 
@@ -39,13 +39,9 @@ t_entrenador * desbloquearEntrenador();
 
 void agregarAColaDeBloqueados(t_entrenador *unEntrenador);
 
-void agregarAListaDeEjecucion(t_entrenador * entrenador_a_ejecutar) ;
-
-t_entrenador * removerDeListaDeEjecucion(int socket_entrenador);
-
 t_entrenador * generarEntrenador(int i,void * data);
 
-t_entrenador * ejecutar_algoritmo(char * algoritmo);
+t_entrenador * ejecutar_algoritmo(char * algoritmo,int quantum);
 
 void desconectarEntrenador(int nroDesocket );
 
@@ -53,5 +49,12 @@ int obtenerCoordenadasPokenest(char identificadorPokenest);
 
 void consumirQuantum(int numeroDeSocket);
 
+t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket);
+
+t_entrenador * buscarDesconocedorPokenest();
+
+t_entrenador * buscarCercaniaAPokenest();
+
+void quitarDeColaDeListos(t_entrenador * entrenador);
 
 #endif /* LIBPLANIFICADOR_H_ */

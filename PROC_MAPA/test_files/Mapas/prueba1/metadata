@@ -11,10 +11,10 @@ algoritmo=RR
 quantum=3
 
 #Retardo entre accion y accion en pantalla..
-retardo=500
+retardo=5
 
 #Ip del servidor del mapa
 IP=127.0.0.1
 
 #Puerto del mapa
-Puerto=5050
+Puerto=8001

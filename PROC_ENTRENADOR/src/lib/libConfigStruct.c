@@ -63,7 +63,6 @@ void leerMetadataDelEntrenador (t_entrenadorFisico * nuevoEntrenador)
 	nuevaMetadataEntrenador->vidas = _entrenador_configLeerInt(metadataEntrenador, __nombreEnConfig_Vidas, nuevoEntrenador, (void *) finalizarEntrenador);
 	nuevaMetadataEntrenador->simbolo = (_entrenador_configLeerString(metadataEntrenador, __nombreEnConfig_Simbolo, nuevoEntrenador, (void *) finalizarEntrenador))[0];
 
-
 	inicializarHojaDeViaje(metadataEntrenador, nuevoEntrenador);
 
 

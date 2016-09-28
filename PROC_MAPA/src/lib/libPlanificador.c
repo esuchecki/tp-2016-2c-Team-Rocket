@@ -6,6 +6,7 @@
  */
 
 #include "libPlanificador.h"
+#include "estructurasMapa.h"
 
 #include <pthread.h>
 #include <stdlib.h>
@@ -17,6 +18,7 @@
 #include <commons/collections/list.h>
 #include <string.h>
 #include <so/libSockets.h>
+
 
 void inicializar_estructuras_planificador() {
 	sem_init(&entrenador_listo, 1, 0);
@@ -44,12 +46,12 @@ void desconectarEntrenador(int nroDesocket) {
 	free(entrenadorAEliminar);
 }
 
-t_entrenador * ejecutar_algoritmo(char * algoritmo) {
+t_entrenador * ejecutar_algoritmo(char * algoritmo,int quantum) {
 	if (strcmp(algoritmo, "RR") == 0) {
 
 		t_entrenador * elProximo = list_get(colaListos, 0);
 
-		if (elProximo->instruccionesEjecutadas < elProximo->quantum) {
+		if (elProximo->instruccionesEjecutadas < quantum) {
 
 			return elProximo;
 
@@ -67,51 +69,72 @@ t_entrenador * ejecutar_algoritmo(char * algoritmo) {
 
 	} else {
 		//algoritmo entrenador mas cercano a pokedex
-		t_entrenador *uno = malloc(sizeof(t_entrenador));
+		t_entrenador *unEntrenador = malloc(sizeof(t_entrenador));
 
-		return uno;
+		unEntrenador = buscarDesconocedorPokenest();
+
+		if(unEntrenador == NULL){
+
+			t_entrenador  * unEntrenador = buscarCercaniaAPokenest();
+
+			return unEntrenador;
+
+		}else{
+			return unEntrenador;
+		}
 	}
 }
 
-void agregarAListaDeEjecucion(t_entrenador * entrenador_a_ejecutar) {
-	pthread_mutex_lock(&mutex_ejecucion);
-	list_add(colaEjecucion, entrenador_a_ejecutar);
-	pthread_mutex_unlock(&mutex_ejecucion);
+t_entrenador * buscarDesconocedorPokenest(){
 
-}
-
-t_entrenador * removerDeListaDeEjecucion(int socket_entrenador) {
-
-	bool encontrar_socket_entrenador(void * nodo) {
-		return ((((t_entrenador*) nodo)->nroDesocket) == socket_entrenador);
+	bool desconocePokenest(void *datos){
+		t_entrenador * alguno = datos;
+		return  alguno->distanciaAProximaPokenest == -1;
 	}
 
-	pthread_mutex_lock(&mutex_ejecucion);
+	t_entrenador *entrenador  = list_find(colaListos,desconocePokenest);
 
-	t_entrenador * algunEntrenador = list_remove_by_condition(colaEjecucion,
-			encontrar_socket_entrenador);
-
-	pthread_mutex_unlock(&mutex_ejecucion);
-
-	return algunEntrenador;
+	return entrenador;
 
 }
+
+t_entrenador * buscarCercaniaAPokenest(){
+
+	bool cercaDePokenest(void *datos){
+		t_entrenador *elMasCercano = datos;
+		int i,menorDistancia;
+		menorDistancia = 99;
+		for(i=0;list_size(colaListos)> i;i++){
+			t_entrenador * alguno = list_get(colaListos,i);
+			if(alguno->distanciaAProximaPokenest < menorDistancia){
+				menorDistancia = alguno->distanciaAProximaPokenest;
+			}
+		}
+		return  elMasCercano->distanciaAProximaPokenest == menorDistancia;
+	}
+
+	t_entrenador *entrenador  = list_find(colaListos,cercaDePokenest);
+
+	return entrenador;
+
+}
+
 
 void * ejecutarPlanificador(void * datos) {
-//t_mapa *mapa = datos;
+	t_mapa *mapa = datos;
 
 	while (1) {
 		sem_wait(&entrenador_listo);
 
 		pthread_mutex_lock(&mutex_algoritmo);
 
-		t_entrenador *proximoEntrenador = ejecutar_algoritmo("RR");
+		t_entrenador *proximoEntrenador = ejecutar_algoritmo(mapa->metadata->algoritmo,mapa->metadata->quantum);
 
 		pthread_mutex_unlock(&mutex_algoritmo);
 
-		char *mensaje = "Su turno entrenador";
+		int null_data = 0;
 
-		t_data *turno = pedirPaquete(otorgarTurno, strlen(mensaje), mensaje);
+		t_data *turno = pedirPaquete(pedirPokenest, sizeof(int), &null_data);
 
 		common_send(proximoEntrenador->nroDesocket, turno);
 
@@ -134,8 +157,9 @@ void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 t_entrenador * desbloquearEntrenador() {
 	t_entrenador * entrenador = malloc(sizeof(t_entrenador));
 
-//TODO: ver como es el desbloqueo de un entrenador
+	//TODO: ver como es el desbloqueo de un entrenador
 
+	entrenador->distanciaAProximaPokenest = -1;
 	return entrenador;
 }
 
@@ -151,6 +175,8 @@ void * manejarEntrenadoresBloqueados() {
 
 		pthread_mutex_unlock(&mutex_bloqueados);
 
+		sem_post(&entrenador_listo);
+
 	}
 
 	return NULL;
@@ -164,6 +190,25 @@ void agregarAColaDeListos(t_entrenador *unEntrenador) {
 	pthread_mutex_unlock(&mutex_listos);
 }
 
+void quitarDeColaDeListos(t_entrenador * entrenador){
+
+	pthread_mutex_lock(&mutex_listos);
+
+	bool mismoSocket(void * datos){
+
+		t_entrenador * elegido = datos;
+
+		return elegido->nroDesocket == entrenador->nroDesocket;
+
+	}
+
+	list_remove_by_condition(colaListos,mismoSocket);
+
+	pthread_mutex_unlock(&mutex_listos);
+
+}
+
+
 t_entrenador * generarEntrenador(int i, void * data) {
 	t_entrenador *unEntrenador = malloc(sizeof(t_entrenador));
 	char * simboloEntrenador = data;
@@ -171,7 +216,7 @@ t_entrenador * generarEntrenador(int i, void * data) {
 	unEntrenador->nroDesocket = i;
 	unEntrenador->simbolo = *simboloEntrenador;
 	unEntrenador->instruccionesEjecutadas = 0;
-	unEntrenador->quantum = 3;
+	unEntrenador->distanciaAProximaPokenest = -1;
 
 	return unEntrenador;
 }
@@ -183,17 +228,24 @@ int obtenerCoordenadasPokenest(char identificadorPokenest) {
 	return coordenadas;
 }
 
-void consumirQuantum(i){
-
+t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket) {
 	bool encontrar_socket_entrenador(void * nodo) {
-		return ((((t_entrenador*) nodo)->nroDesocket) == i);
+		return ((((t_entrenador*) nodo)->nroDesocket) == nroDeSocket);
 	}
 
-	t_entrenador * entrenador = list_find(colaListos,encontrar_socket_entrenador);
+	t_entrenador * entrenador = list_find(colaListos,
+			encontrar_socket_entrenador);
 
-	entrenador->instruccionesEjecutadas ++;
+	return entrenador;
+}
+void consumirQuantum( int i) {
 
-	printf("cantidad de instrucciones ejecutadas: %d\n",entrenador->instruccionesEjecutadas);
+	t_entrenador * entrenador  = reconocerEntrenadorSegunSocket(i);
+
+	entrenador->instruccionesEjecutadas++;
+
+	log_debug(myArchivoDeLog,"cantidad de instrucciones ejecutadas: %d\n",
+			entrenador->instruccionesEjecutadas);
 
 }
 

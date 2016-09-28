@@ -32,7 +32,7 @@ enum enviosMapa{
 	ganasteBatalla = 23,
 	perdisteBatalla = 24,
 	ubicacionMedallaMapa = 25,
-	otorgarTurno = 26
+	pedirPokenest = 26
 };
 
 

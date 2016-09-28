@@ -25,18 +25,21 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 
 	if (paquete->header == 0) {
 		//desconexion
-		printf("se desconecto alguien\n");
-		printf("Elimine el numerode socket: %d\n", socket_recepcion);
+		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
+				socket_recepcion);
+
 		desconectarEntrenador(socket_recepcion);
+
 		close(socket_recepcion);
+
 		FD_CLR(socket_recepcion, &sockets_activos);
+
 		if (socket_recepcion == socketMasGrande) {
 			socketMasGrande = 0;
 			int fd2 = 0;
 			for (fd2 = socket_recepcion - 1; fd2 >= 0; fd2--) {
 				if (FD_ISSET(fd2, &sockets_activos)) {
 					socketMasGrande = fd2;
-					printf("el socket mas grande ahora es:%d\n",fd2);
 					break;
 
 				}
@@ -46,8 +49,7 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 }
 
 void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
-	//	t_mapa * mapa = data;
-
+	t_mapa * mapa = data;
 
 	//hago lo que tenga que hacer cuando se conecte un entrenador
 	t_data * paquete;
@@ -58,24 +60,22 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 	switch (paquete->header) {
 	case peticionPokenest:
 		;
-		char * identificadorPokenest = paquete->data;
-		printf("El identificador de la pokenest es: %c\n",
-				*identificadorPokenest);
-
 
 		int coordenadaEnX = -1;		//inicializo en fantasma
 		int coordenadaEnY = -1;		//inicializo en fantasma
-		if ( dondeQuedaEstaPokeNest (data, paquete->data, &coordenadaEnX, &coordenadaEnY) )		// Aca esta la magia, si no devolvio error entonces lo ejecuto.
-		{
-			log_debug(myArchivoDeLog, "atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : %s;%s", string_itoa(coordenadaEnX), string_itoa(coordenadaEnY));
-			if ( (coordenadaEnX != -1) && (coordenadaEnY != -1) )
-			{
+		if (dondeQuedaEstaPokeNest(data, paquete->data, &coordenadaEnX,
+				&coordenadaEnY))// Aca esta la magia, si no devolvio error entonces lo ejecuto.
+				{
+			log_debug(myArchivoDeLog,
+					"atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : %s;%s",
+					string_itoa(coordenadaEnX), string_itoa(coordenadaEnY));
+			if ((coordenadaEnX != -1) && (coordenadaEnY != -1)) {
 				void * buffer = malloc(sizeof(int) * 2);
 				memcpy(buffer, &coordenadaEnX, sizeof(int));
 				memcpy(buffer + sizeof(int), &coordenadaEnY, sizeof(int));
 
-				t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest, sizeof(int) * 2,
-						buffer);
+				t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest,
+						sizeof(int) * 2, buffer);
 
 				common_send(i, nuevoPaquete);
 
@@ -83,15 +83,16 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 				free(nuevoPaquete);
 
+				sleep(mapa->metadata->retardo);
+
 				sem_post(&entrenador_listo);
 
-				break;	//con esto salvamos que tire error cuando fue una ejecucion valida.
+				break;//con esto salvamos que tire error cuando fue una ejecucion valida.
 			}
 		}
 
 		//TODO: romper el entrenador
 		printf("error en dondeQuedaEstaPokeNest");
-
 
 		break;
 	case movimientoEntrenador:
@@ -106,45 +107,50 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 		//memcpy(&coordenadasEnY, paquete->data + sizeof(int), sizeof(int));
 
-
-		log_debug(myArchivoDeLog, "atenderConexion / movimientoEntrenador / X;Y = %s;%s", string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
-		if ( (coordenadasEnX != -1) && (coordenadasEnY != -1) )
-		{
+		log_debug(myArchivoDeLog,
+				"atenderConexion / movimientoEntrenador / X;Y = %s;%s",
+				string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
+		if ((coordenadasEnX != -1) && (coordenadasEnY != -1)) {
 			//TODO: Lucas, como se quien me mando el paquete??
-			moverEntrenador( data->items, '@', coordenadasEnX, coordenadasEnY);
+			t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
+
+			moverEntrenador(data->items, entrenador->simbolo, coordenadasEnX,
+					coordenadasEnY);
+
 			//TODO: (emi) validar si el entrenador se pudo mover correctamente.
-
-
 
 			consumirQuantum(i);
 
 			//free(nuevoPaquete);
 
+			sleep(mapa->metadata->retardo);
+
 			sem_post(&entrenador_listo);
+
 			break;
 		}
 
 		//TODO: romper el entrenador
 		printf("error en dondeQuedaEstaPokeNest");
 
-
 		break;
 	case capturarPokemon:
 		;
 
-		t_entrenador * entrenador = list_remove(colaListos, 0);
+		t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
+
+		quitarDeColaDeListos(entrenador);
 
 		agregarAColaDeBloqueados(entrenador);
 
 		consumirQuantum(i);
 
+		sleep(mapa->metadata->retardo);
+
 		sem_post(&entrenador_bloqueado);
 
 		sem_post(&entrenador_listo);
 
-		break;
-	case objetivosCumplidos:
-		//TODO: liberar recursos y desconectar entrenador
 		break;
 	case mejorPokemon:
 		//TODO: recibe al mejor pokemon para... batalla pokemon?
@@ -162,8 +168,6 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 		t_entrenador *unEntrenador = generarEntrenador(socket_nueva_conexion,
 				paquete->data);
 
-		printf("el entrenador tiene socket: %d", unEntrenador->nroDesocket);
-
 		agregarAColaDeListos(unEntrenador);
 
 		//TODO: tenemos que resolver como hacemos las delegaciones, pero asi cargamos el entrenador..
@@ -171,24 +175,29 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 			cargarEntrenador(mapa->items, unEntrenador->simbolo);
 		//-------
 
+		log_debug(myArchivoDeLog,
+				"Se creo un entrenador con simbolo: %c, y con numero de socket: %d\n",
+				unEntrenador->simbolo, unEntrenador->nroDesocket);
+
 		sem_post(&entrenador_listo);
+
 	} else {
 
-		printf("No se pudo conectar, fallo el handshake\n");
+		log_error(myArchivoDeLog,"No se pudo conectar, fallo el handshake\n");
 		exit(EXIT_FAILURE);
 	}
 }
 
 int atenderConexiones(void * data) {
-//	t_mapa * mapa = data;
+	t_mapa * mapa = data;
 
 	int socketEscucha;
 
 	fd_set sockets_para_revisar, sockets_activos;
 
-	socketEscucha = setup_listen("localhost", "8001");
+	socketEscucha = setup_listen("localhost", mapa->metadata->puerto);
 
-	printf("escucha: %d\n", socketEscucha);
+	log_debug(myArchivoDeLog,"Se crea el socket escucha con numero: %d\n", socketEscucha);
 
 	listen(socketEscucha, 1024);
 
