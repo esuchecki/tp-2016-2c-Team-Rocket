@@ -182,6 +182,23 @@ void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa);
  * @DESC: El int que devuelte es 0 en caso de error, 1 en caso de todo ok. La pos la devuelve en pos_x y en pos_y.
  */
 int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int * pos_y);
+
+/*
+ * @NAME: inicializarCantDePokemonesEnPokeNest
+ * @DESC: **fc de uso interno ** carga en el mapa, los pokemones de una pokenest y los inicializa asignados a '\0'.
+ * Devuelve la cantidad total de recursos que tiene la pokenest.
+ */
+int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa, char identificador);
+
+/*
+ * @NAME: ejecutarLogicaContarPokemons
+ * @DESC: **fc de uso interno ** ejecuta la logica de inicializarCantDePokemonesEnPokeNest;
+ * Devuelve la cantidad total de recursos que tiene la pokenest.
+ */
+int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio, t_mapa * nuevoMapa, char identificador);
+
+
+
 //------------------------------------------//
 
 

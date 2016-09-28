@@ -88,6 +88,9 @@ t_mapa * inicializarEstructurasDelMapa (char *nombreMapa, char *directorioPokeDe
 	t_list* itemsVisiblesEnMapa = list_create();
 	nuevoMapa->items = itemsVisiblesEnMapa;
 
+	t_list* pokemonesDisponibles = list_create();
+	nuevoMapa->pokeNest = pokemonesDisponibles;
+
 
 	leerMetadataDelMapa (nuevoMapa);
 	leerRecursivamenteLasPokenest (nuevoMapa);
@@ -133,8 +136,8 @@ void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 	int pos_x = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[0] );
 	int pos_y = atoi ((string_split(pos_pokenest, __separadorEnConfigPosicionPokeNest))[1] );
 
-	//TODO: levantar dinamico este valor.
-	int cant_de_pokemones_en_pokenest = 4;	// -> Hay que contar cuantos archivos hay exeptuando el de metadata.
+
+	int cant_de_pokemones_en_pokenest = inicializarCantDePokemonesEnPokeNest(configPokeNest->path, nuevoMapa, metadataIdentificador);
 
 
 
@@ -308,7 +311,6 @@ void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
 
 	sprintf(directorioMapa, "/%s/%s", nombreDirectorio, __ubicacionMetadataPokeNest);
 
-
 	t_config * metadataPokenest = _mapa_newConfigType(directorioMapa, nuevoMapa, (void *) finalizarGui);
 	cargarPokeNests(metadataPokenest, nuevoMapa);
 
@@ -408,4 +410,90 @@ int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int
 	}
 	return 0;
 
+}
+
+int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa, char identificador)
+{
+	/*
+	 * Como este metodo recibe un directorio del tipo /Mapas/prueba1/PokeNests/pikachu/metadata
+	 * Le borro el /metadata, luego
+	 * Lo que primero hago es conocer el nombre de la pokenest (en este caso pikachu)
+	 *
+	 * Para eso 1º voy a dar vuelta el string:
+	 * 	"uhcakip/..."
+	 *
+	 * 	Luego, trunco el string con el token / y me quedo solo con la primera parte
+	 * 	Y lo vuelvo a dar vuelta al string, resultando
+	 * 	"pikachu"
+	 *
+	 * 	En una segunda instancia, hago la logica para recorrer los pokemones de la pokenest.
+	 */
+
+	log_info(myArchivoDeLog, "Voy a contar la cantidad de pokemones en una pokenest");
+	//log_debug(myArchivoDeLog,"%s", nombreDirectorio);
+	char * nombrePokeNest = malloc ( (sizeof (char)) * PATH_MAX +1);
+	nombrePokeNest = string_duplicate(nombreDirectorio);
+
+	if (nombrePokeNest != NULL)
+	{
+		//este es el path de *1
+		nombrePokeNest = string_substring(nombrePokeNest,0, (string_length(nombrePokeNest) - sizeof(__ubicacionMetadataMapas))+1 );		//el +1 es xq hay 2 contrabarras.
+		nombrePokeNest = string_reverse(nombrePokeNest);
+
+		nombrePokeNest = (string_n_split(nombrePokeNest, 2, "/"))[0];
+		nombrePokeNest = string_reverse(nombrePokeNest);
+
+		//log_debug(myArchivoDeLog,"%s", nombrePokeNest);
+
+		//le paso el path de *1
+		int aux = ejecutarLogicaContarPokemons (nombrePokeNest, string_substring(nombreDirectorio,0, (string_length(nombreDirectorio) - sizeof(__ubicacionMetadataMapas))+1 ), nuevoMapa, identificador);
+
+		free(nombrePokeNest);
+		return aux;
+	}
+
+	return 0;
+}
+
+int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio, t_mapa * nuevoMapa, char identificador)
+{
+	/* *************************************** */
+	/* Logica para conocer cuantos pokemon hay */
+
+	t_pokeNest * pokemonesEnEstaPokeNest = malloc (sizeof(t_pokeNest));
+	pokemonesEnEstaPokeNest->identificador = identificador;
+	pokemonesEnEstaPokeNest->pokemones = list_create();
+	list_add(nuevoMapa->pokeNest, pokemonesEnEstaPokeNest);
+
+	char * pokemonNNNdat;
+	pokemonNNNdat = malloc ( (sizeof (char)) * PATH_MAX +1);
+
+
+	//esta funcion me compara si el archivo actual es un archivo llamado pokemonNNNdat. Si es asi, sumo +1.
+	void _funcionOrdenSuperiorQueQuieroEjecutar (const char * d_name, const char * nombreDirectorio)
+	{
+		//El archivo actual esta en "nombreDirectorio/d_name"
+		if ( (strcmp (d_name, pokemonNNNdat )) == 0 )
+		{
+			log_debug(myArchivoDeLog,"%s", d_name);
+			t_pokemon * pokemon = malloc (sizeof(t_pokemon));
+			pokemon->capturadoPorEntrenador = '\0';				//lo inicializo como vacio.
+			list_add(pokemonesEnEstaPokeNest->pokemones, pokemon);
+		}
+	}
+
+	int i = __valorInicialPokemonesPokenest;
+	while (i <= __valorFinalPokemonesPokenest)
+	{
+		sprintf(pokemonNNNdat, __ubicacionPokemonesPokeNest,nombrePokeNest, i);
+		//consulto si devolvio 0.
+		if ( ( encontrarEnUnDirectorio (nombreDirectorio,  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
+		{
+			log_error(myArchivoDeLog, "problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'");
+			finalizarGui(nuevoMapa);
+		}
+		i++;
+	}
+	free(pokemonNNNdat);
+	return list_size(pokemonesEnEstaPokeNest->pokemones);
 }

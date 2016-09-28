@@ -26,6 +26,10 @@
 #define __ubicacionDirPokenest "/PokeNests/"
 #define __ubicacionMetadataPokeNest "/metadata"
 
+#define __ubicacionPokemonesPokeNest "%s%03d.dat"	//  1º %s NombrePokeNest | 2º %03d = NNN (Actual) - Muestra 3 enteros con 0s.
+#define __valorInicialPokemonesPokenest (1)
+#define __valorFinalPokemonesPokenest (999)
+
 
 #define __nombreEnConfig_Deadlock "TiempoChequeoDeadlock"
 #define __nombreEnConfig_Batalla "Batalla"
