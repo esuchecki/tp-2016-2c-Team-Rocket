@@ -1,0 +1,10 @@
+Crear un directorio vacio.
+Iniciar este proceso pasandole por argumento ese directorio vacio.
+
+Ej (como quedaria en la consola):
+=================================
+
+cree un directorio vacio en "/tmp" con el nombre "asd", y se los paso como argumento a nuestro proceso.
+
+utnso@utnso40:~/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/Debug$ ./PROC_POKEDEX_CLIENTE /tmp/asd
+
