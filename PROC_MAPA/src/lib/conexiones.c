@@ -21,14 +21,14 @@
 #include <stdlib.h>
 
 void detectarDesconexion(t_data * paquete, int socket_recepcion,
-		fd_set sockets_activos) {
+		fd_set sockets_activos,t_mapa * mapa) {
 
 	if (paquete->header == 0) {
 		//desconexion
 		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 				socket_recepcion);
 
-		desconectarEntrenador(socket_recepcion);
+		desconectarEntrenador(socket_recepcion,mapa);
 
 		close(socket_recepcion);
 
@@ -54,7 +54,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 	t_data * paquete;
 	paquete = leer_paquete(i);
 
-	detectarDesconexion(paquete, i, sockets_activos);
+	detectarDesconexion(paquete, i, sockets_activos,mapa);
 
 	switch (paquete->header) {
 	case peticionPokenest:
@@ -141,6 +141,10 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		//TODO: paquete->data tendra el identificador del pokemon a atrapar
 
 		t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
+
+		char *identificador = paquete->data;
+
+		entrenador->pokemonSolicitado = *identificador;
 
 		quitarDeColaDeListos(entrenador);
 
@@ -243,7 +247,7 @@ int atenderConexiones(void * data) {
 					}
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
-					atenderConexion(i, sockets_activos, data);
+					atenderConexion(i, sockets_activos, mapa);
 
 				}
 			}

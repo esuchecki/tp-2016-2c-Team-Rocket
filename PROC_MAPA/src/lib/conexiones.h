@@ -25,6 +25,6 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * unMap
 
 void atenderConexion(int i, fd_set sockets_activos, t_mapa * unMapa);
 
-void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos);
+void detectarDesconexion(t_data * paquete,int socket_recepcion,fd_set sockets_activos,t_mapa * mapa);
 
 #endif /* LIB_CONEXIONES_H_ */

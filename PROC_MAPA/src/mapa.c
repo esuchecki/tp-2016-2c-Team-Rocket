@@ -44,7 +44,7 @@ int main( int argc, char *argv[] )
 	pthread_t hiloPlanificador,hiloConexiones,hiloBloqueados;
 	inicializar_estructuras_planificador();
 	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, (void *)mapa);
-	pthread_create(&hiloBloqueados,NULL,manejarEntrenadoresBloqueados,NULL);
+	pthread_create(&hiloBloqueados,NULL,manejarEntrenadoresBloqueados,(void *)mapa);
 	pthread_create(&hiloConexiones,NULL, (void *)atenderConexiones, (void *)mapa);
 
 	//TODO: Lucas soy emi, creo que despues va a haber que darle otro tratamiento a los sockets para que no impriman msjs en pantalla (medio hacen lio con la gui).

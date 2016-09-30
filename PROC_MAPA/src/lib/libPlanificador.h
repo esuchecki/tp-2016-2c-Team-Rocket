@@ -11,11 +11,12 @@
 #include <commons/collections/list.h>
 #include <semaphore.h>
 #include <so/libSockets.h>
+#include "estructurasMapa.h"
 
 
 t_list *colaListos;
 t_list *colaBloqueados;
-t_list *colaEjecucion;
+t_list *colaFinalizados;
 sem_t entrenador_listo,entrenador_bloqueado;
 pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
 
@@ -24,26 +25,35 @@ typedef struct{
 	char simbolo;
 	int instruccionesEjecutadas;
 	int distanciaAProximaPokenest;
+	char pokemonSolicitado;
 	//TODO: ver que otros datos poner aca
 }t_entrenador;
 
 void inicializar_estructuras_planificador();
 
-void * ejecutarPlanificador(void * data);
-
-void agregarAColaDeListos(t_entrenador *unEntrenador);
-
-void * manejarEntrenadoresBloqueados();
-
-t_entrenador * desbloquearEntrenador();
-
-void agregarAColaDeBloqueados(t_entrenador *unEntrenador);
-
 t_entrenador * generarEntrenador(int i,void * data);
+
+void * ejecutarPlanificador(void * data);
 
 t_entrenador * ejecutar_algoritmo(char * algoritmo,int quantum);
 
-void desconectarEntrenador(int nroDesocket );
+void agregarAColaDeListos(t_entrenador *unEntrenador);
+
+void quitarDeColaDeListos(t_entrenador * entrenador);
+
+void * manejarEntrenadoresBloqueados(void * datos);
+
+void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) ;
+
+void desbloquearEntrenador(t_mapa * mapa);
+
+void agregarAColaDeBloqueados(t_entrenador *unEntrenador);
+
+void desconectarEntrenador(int nroDesocket ,t_mapa * mapa);
+
+void liberarRecursos(t_entrenador *entrenador);
+
+void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar);
 
 int obtenerCoordenadasPokenest(char identificadorPokenest);
 
@@ -54,8 +64,6 @@ t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket);
 t_entrenador * buscarDesconocedorPokenest();
 
 t_entrenador * buscarCercaniaAPokenest();
-
-void quitarDeColaDeListos(t_entrenador * entrenador);
 
 void setearDistanciaPokenest(int nroDeSocket);
 
