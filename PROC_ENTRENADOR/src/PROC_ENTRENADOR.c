@@ -160,9 +160,9 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 			case pedirPokenest:
 				;
 				//TODO:Obtener de la lista de objetivos el identificador de
-				//la pokenest, si lla tiene la pokenest no la pide
+				//la pokenest, si la tiene la pokenest no la pide
 				char identificadorPokenest = 'P';//lo hardcodeo ahora
-				t_data * paquete = pedirPaquete(peticionPokenest, sizeof(int),
+				t_data * paquete = pedirPaquete(peticionPokenest, sizeof(char),
 						&identificadorPokenest);
 
 				common_send(socketConexion, paquete);

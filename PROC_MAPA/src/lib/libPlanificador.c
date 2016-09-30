@@ -118,6 +118,9 @@ void agregarAColaDeListos(t_entrenador *unEntrenador) {
 			unEntrenador->simbolo);
 
 	loguearColasDePlanificacion(colaListos, "Listos");
+	loguearColasDePlanificacion(colaBloqueados, "Bloqueados");
+	loguearColasDePlanificacion(colaFinalizados, "Finalizados");
+
 
 	pthread_mutex_unlock(&mutex_listos);
 }
@@ -136,11 +139,12 @@ void quitarDeColaDeListos(t_entrenador * entrenador) {
 
 	list_remove_by_condition(colaListos, mismoSocket);
 
-	log_info(myArchivoDeLog,
-			"Se quita de la cola de Listos al entrenador: %c",
+	log_info(myArchivoDeLog, "Se quita de la cola de Listos al entrenador: %c",
 			entrenador->simbolo);
 
 	loguearColasDePlanificacion(colaListos, "Listos");
+	loguearColasDePlanificacion(colaBloqueados, "Bloqueados");
+	loguearColasDePlanificacion(colaFinalizados, "Finalizados");
 
 	pthread_mutex_unlock(&mutex_listos);
 
@@ -217,7 +221,9 @@ void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 			"Se agrega a la cola de bloqueados al entrenador: %c",
 			unEntrenador->simbolo);
 
-	loguearColasDePlanificacion(colaListos, "Bloqueados");
+	loguearColasDePlanificacion(colaListos, "Listos");
+	loguearColasDePlanificacion(colaBloqueados, "Bloqueados");
+	loguearColasDePlanificacion(colaFinalizados, "Finalizados");
 
 	pthread_mutex_unlock(&mutex_bloqueados);
 
@@ -241,13 +247,15 @@ void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
 			"Se quita de la cola de Bloqueados al entrenador: %c",
 			entrenador->simbolo);
 
-	loguearColasDePlanificacion(colaListos, "Bloqueados");
+	loguearColasDePlanificacion(colaListos, "Listos");
+	loguearColasDePlanificacion(colaBloqueados, "Bloqueados");
+	loguearColasDePlanificacion(colaFinalizados, "Finalizados");
 
 	pthread_mutex_unlock(&mutex_bloqueados);
 
 }
 
-void desconectarEntrenador(int nroDesocket, t_mapa * mapa) {
+void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos,int socketMasGrande) {
 	bool seDesconecto(void * data) {
 		t_entrenador * alguno = data;
 		return alguno->nroDesocket == nroDesocket;
@@ -260,10 +268,28 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa) {
 				seDesconecto);
 	}
 
+	close(nroDesocket);
+
+	FD_CLR(nroDesocket, &sockets_activos);
+
+	if (nroDesocket == socketMasGrande) {
+		socketMasGrande = 0;
+		int fd2 = 0;
+		for (fd2 = nroDesocket - 1; fd2 >= 0; fd2--) {
+			if (FD_ISSET(fd2, &sockets_activos)) {
+				socketMasGrande = fd2;
+				break;
+
+			}
+		}
+	}
+
 	agregarAColaDeFinalizados(entrenadorAEliminar);
+
 	liberarRecursos(entrenadorAEliminar);
 
 	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
+
 	free(entrenadorAEliminar);
 }
 
@@ -277,9 +303,13 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
 
 	list_add(colaFinalizados, entrenadorAEliminar);
 
-	log_info(myArchivoDeLog,"Se finaliza el entrenador: %c",entrenadorAEliminar->simbolo);
+	log_info(myArchivoDeLog, "Se finaliza el entrenador: %c",
+			entrenadorAEliminar->simbolo);
 
-	loguearColasDePlanificacion(colaFinalizados,"Finalizados");
+	loguearColasDePlanificacion(colaListos, "Listos");
+	loguearColasDePlanificacion(colaBloqueados, "Bloqueados");
+	loguearColasDePlanificacion(colaFinalizados, "Finalizados");
+
 }
 
 int obtenerCoordenadasPokenest(char identificadorPokenest) {
@@ -345,20 +375,19 @@ t_entrenador * buscarCercaniaAPokenest() {
 
 }
 
-void setearDistanciaPokenest(int nroDeSocket, t_mapa * self) {
+void setearDistanciaPokenest(int nroDeSocket, t_mapa * self,char pokenest) {
 	t_entrenador *entrenador = reconocerEntrenadorSegunSocket(nroDeSocket);
 	//Lucas: Necesito conocer al mapa para saber la posicion :S
 	// Estoy suponiendo que pokemonSolicitado es el char de la pokenest. Ej: 'P'.
 	// La unica condicion es que el entrenador ya tiene que estar en el mapa cargado!!
 
-	int aux = distanciaEntrenadorPokenest(entrenador->simbolo, self, entrenador->pokemonSolicitado);
+	int aux = distanciaEntrenadorPokenest(entrenador->simbolo, self,
+			pokenest);
 
-	if (aux <= 0)
-	{
+	if (aux <= 0) {
 		//problemas al calcular la distancia
-	}
-	else
-	{
+		printf("hubo algun error\n");
+	} else {
 		entrenador->distanciaAProximaPokenest = aux;
 	}
 

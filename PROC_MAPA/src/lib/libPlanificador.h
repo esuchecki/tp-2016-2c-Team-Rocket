@@ -26,6 +26,7 @@ typedef struct{
 	int instruccionesEjecutadas;
 	int distanciaAProximaPokenest;
 	char pokemonSolicitado;
+	char pokenest;
 	//TODO: ver que otros datos poner aca
 }t_entrenador;
 
@@ -51,7 +52,7 @@ void agregarAColaDeBloqueados(t_entrenador *unEntrenador);
 
 void quitarDeColaDeBloqueados(t_entrenador *entrenador);
 
-void desconectarEntrenador(int nroDesocket ,t_mapa * mapa);
+void desconectarEntrenador(int nroDesocket ,t_mapa * mapa,fd_set sockets_activos,int socketMasGrande);
 
 void liberarRecursos(t_entrenador *entrenador);
 
@@ -67,7 +68,7 @@ t_entrenador * buscarDesconocedorPokenest();
 
 t_entrenador * buscarCercaniaAPokenest();
 
-void setearDistanciaPokenest(int nroDeSocket, t_mapa * self);
+void setearDistanciaPokenest(int nroDeSocket, t_mapa * self,char  pokenest);
 
 void loguearColasDePlanificacion(t_list *lista, char *nombreLista);
 

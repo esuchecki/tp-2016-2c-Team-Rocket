@@ -381,7 +381,7 @@ void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa)
 
 int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int * pos_y)
 {
-	ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(unMapa, &idPokeNest[0]);
+	ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(unMapa, *idPokeNest);
 
 	if (resultado != NULL)
 	{
@@ -486,6 +486,7 @@ int distanciaEntrenadorPokenest (char simboloEntrenador, t_mapa * self, char pok
 	if (pokeNest == '\0')
 	{
 		log_error(myArchivoDeLog, "me pidieron una distancia con una pokenest invalida [P=%c | E= %c]", pokeNest, simboloEntrenador);
+		printf("error de por aca?");
 		return -1;
 	}
 

@@ -28,23 +28,9 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 				socket_recepcion);
 
-		desconectarEntrenador(socket_recepcion,mapa);
+		desconectarEntrenador(socket_recepcion,mapa,sockets_activos,socketMasGrande);
 
-		close(socket_recepcion);
 
-		FD_CLR(socket_recepcion, &sockets_activos);
-
-		if (socket_recepcion == socketMasGrande) {
-			socketMasGrande = 0;
-			int fd2 = 0;
-			for (fd2 = socket_recepcion - 1; fd2 >= 0; fd2--) {
-				if (FD_ISSET(fd2, &sockets_activos)) {
-					socketMasGrande = fd2;
-					break;
-
-				}
-			}
-		}
 	}
 }
 
@@ -59,6 +45,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 	switch (paquete->header) {
 	case peticionPokenest:
 		;
+
 		int coordenadaEnX = -1;		//inicializo en fantasma
 		int coordenadaEnY = -1;		//inicializo en fantasma
 		if (dondeQuedaEstaPokeNest(data, paquete->data, &coordenadaEnX,
@@ -75,15 +62,19 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 				t_data * nuevoPaquete = pedirPaquete(ubicacionPokenest,
 						sizeof(int) * 2, buffer);
 
+				t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
+
+				entrenador->pokenest = *(char*)paquete->data;
+
 				common_send(i, nuevoPaquete);
 
 				consumirQuantum(i);
 
-				setearDistanciaPokenest(i, mapa);
+				setearDistanciaPokenest(i, mapa,entrenador->pokenest);
 
 				free(nuevoPaquete);
 
-				usleep(mapa->metadata->retardo);
+				usleep(5000);
 				//sleep(mapa->metadata->retardo);
 
 				sem_post(&entrenador_listo);
@@ -124,7 +115,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 			//free(nuevoPaquete);
 
-			setearDistanciaPokenest(i, mapa);
+			setearDistanciaPokenest(i, mapa,entrenador->pokenest);
 
 			usleep(mapa->metadata->retardo);
 			//sleep(mapa->metadata->retardo);
