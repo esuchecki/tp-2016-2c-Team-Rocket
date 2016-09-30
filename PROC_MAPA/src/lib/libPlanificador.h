@@ -67,7 +67,7 @@ t_entrenador * buscarDesconocedorPokenest();
 
 t_entrenador * buscarCercaniaAPokenest();
 
-void setearDistanciaPokenest(int nroDeSocket);
+void setearDistanciaPokenest(int nroDeSocket, t_mapa * self);
 
 void loguearColasDePlanificacion(t_list *lista, char *nombreLista);
 

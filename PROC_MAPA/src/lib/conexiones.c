@@ -79,11 +79,12 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 				consumirQuantum(i);
 
-				setearDistanciaPokenest(i);
+				setearDistanciaPokenest(i, mapa);
 
 				free(nuevoPaquete);
 
-				sleep(mapa->metadata->retardo);
+				usleep(mapa->metadata->retardo);
+				//sleep(mapa->metadata->retardo);
 
 				sem_post(&entrenador_listo);
 
@@ -111,7 +112,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 				"atenderConexion / movimientoEntrenador / X;Y = %s;%s",
 				string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
 		if ((coordenadasEnX != -1) && (coordenadasEnY != -1)) {
-			//TODO: Lucas, como se quien me mando el paquete??
+
 			t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
 			moverEntrenador(data->items, entrenador->simbolo, coordenadasEnX,
@@ -123,9 +124,10 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 			//free(nuevoPaquete);
 
-			setearDistanciaPokenest(i);
+			setearDistanciaPokenest(i, mapa);
 
-			sleep(mapa->metadata->retardo);
+			usleep(mapa->metadata->retardo);
+			//sleep(mapa->metadata->retardo);
 
 			sem_post(&entrenador_listo);
 
@@ -150,7 +152,8 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 		agregarAColaDeBloqueados(entrenador);
 
-		sleep(mapa->metadata->retardo);
+		usleep(mapa->metadata->retardo);
+		//sleep(mapa->metadata->retardo);
 
 		sem_post(&entrenador_bloqueado);
 

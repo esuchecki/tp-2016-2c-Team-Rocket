@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 
 
@@ -197,8 +198,29 @@ int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuev
  */
 int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio, t_mapa * nuevoMapa, char identificador);
 
+/*
+ * @NAME: distanciaEntrenadorPokenest
+ * @DESC: Funcion utilizada por el planificador para conocer la distancia de un entrenador a una pokenest (SRDF).
+ */
+int distanciaEntrenadorPokenest (char simboloEntrenador, t_mapa * self, char pokeNest);
 
+/*
+ * @NAME: distanciaEntreObjetos
+ * @DESC: fc auxiliar para calcular el modulo de la diferencia entre x1 y x2 -->> | x1 - x2 |
+ */
+int distanciaEntreObjetos (int pos_x1, int pos_x2);
 
+/*
+ * @NAME: encontrameEsteIdEnLaLista
+ * @DESC: fc auxiliar. Es utilizada como closure para encontrar un ID en una lista. Devuelve un item.
+ */
+ITEM_NIVEL* encontrameEsteIdEnLaLista (t_mapa * self, char id);
+
+/*
+ * @NAME: borrarEntrenadorDelMapa
+ * @DESC: fc utilizada por el planificador para borrar un entrenador del mapa.
+ */
+void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador);
 //------------------------------------------//
 
 

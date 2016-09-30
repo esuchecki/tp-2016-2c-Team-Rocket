@@ -32,6 +32,7 @@ void dibujarMapa (t_mapa * mapa)
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) finalizarGui, (void* ) accionDelMapaAnteSIGUSR2 );
 		nivel_gui_dibujar(mapa->items, mapa->nombre);
 
+		usleep(10000);	//como para poner un tiempo..
 /*
 		int key = getch();
 
@@ -207,18 +208,9 @@ int estaDentroDelMargenDelMapa(int pos_x, int pos_y)
 
 int estosObjetosEstanEspaciados(int pos_x1, int pos_y1, int pos_x2, int pos_y2, int espaciado_x, int espaciado_y)
 {
-	int dif_x = (pos_x1 - pos_x2);
-	int dif_y = (pos_y1 - pos_y2);
-
-	if (dif_x < 0 )
-		dif_x = (pos_x2 - pos_x1);
-
-	if (dif_y < 0 )
-			dif_y = (pos_y2 - pos_y1);
-
 	//hice |X1-X2|=d1 y |Y1-Y2|=d2
 	//ahora reviso si: d1 > distanciaMinima (idem d2).
-	if (dif_x > espaciado_x && dif_y > espaciado_y)
+	if ( distanciaEntreObjetos(pos_x1, pos_x2) > espaciado_x && distanciaEntreObjetos(pos_y1, pos_y2) > espaciado_y)
 	{
 		return 1;
 	}
@@ -389,18 +381,8 @@ void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa)
 
 int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int * pos_y)
 {
-	ITEM_NIVEL * resultado;
+	ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(unMapa, &idPokeNest[0]);
 
-	bool _coincideElIdconEsteElemento(ITEM_NIVEL* item)
-	{
-		if (item->id == idPokeNest[0])	//sabemos que idPokeNest es un char.
-		{
-			return 1;	//Este es el ID que busco
-		 }
-		return 0;
-	}
-
-	resultado = list_find(unMapa->items, (void *) _coincideElIdconEsteElemento);
 	if (resultado != NULL)
 	{
 		*pos_x = resultado->posx;
@@ -496,4 +478,71 @@ int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio
 	}
 	free(pokemonNNNdat);
 	return list_size(pokemonesEnEstaPokeNest->pokemones);
+}
+
+
+int distanciaEntrenadorPokenest (char simboloEntrenador, t_mapa * self, char pokeNest)
+{
+	if (pokeNest == '\0')
+	{
+		log_error(myArchivoDeLog, "me pidieron una distancia con una pokenest invalida [P=%c | E= %c]", pokeNest, simboloEntrenador);
+		return -1;
+	}
+
+
+
+	ITEM_NIVEL* itemPokeNest = encontrameEsteIdEnLaLista (self, pokeNest);
+	if (itemPokeNest == NULL)
+	{
+		log_error(myArchivoDeLog, "me pidieron una distancia con una pokenest invalida [P=%c | E= %c]", pokeNest, simboloEntrenador);
+		return -1;
+	}
+
+
+
+	ITEM_NIVEL* myEntrenador = encontrameEsteIdEnLaLista(self, simboloEntrenador);
+	if (myEntrenador != NULL)
+	{
+		int aux = 0;
+		aux = aux + distanciaEntreObjetos(itemPokeNest->posx, myEntrenador->posx);
+		aux = aux + distanciaEntreObjetos(itemPokeNest->posy, myEntrenador->posy);
+		return aux;
+	}
+
+	//devuelvo -1  xq fallo.
+	return -1;
+}
+
+
+
+int distanciaEntreObjetos (int pos_x1, int pos_x2)
+{
+	int dif_x = (pos_x1 - pos_x2);
+
+	if (dif_x < 0 )
+		dif_x = (pos_x2 - pos_x1);
+
+	//hice |X1-X2|=d1
+	return dif_x;
+}
+
+ITEM_NIVEL* encontrameEsteIdEnLaLista (t_mapa * self, char id)
+{
+
+	bool encontrameEstaPokeNest (ITEM_NIVEL* item)
+	{
+		if (item->id == id)	//sabemos que idDelItem es un char.
+		{
+			return 1;	//Encontre el id
+		}
+		return 0;
+	}
+
+	return list_find(self->items, (void*) encontrameEstaPokeNest);
+}
+
+void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador)
+{
+	BorrarItem(unMapa->items, simboloEntrenador);
+	//TODO: liberar memoria??
 }

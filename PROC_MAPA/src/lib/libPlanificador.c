@@ -114,7 +114,7 @@ void agregarAColaDeListos(t_entrenador *unEntrenador) {
 
 	list_add(colaListos, unEntrenador);
 
-	log_info(myArchivoDeLog, "Se Mueve a cola de listos al entrenador: %c\n",
+	log_info(myArchivoDeLog, "Se Mueve a cola de listos al entrenador: %c",
 			unEntrenador->simbolo);
 
 	loguearColasDePlanificacion(colaListos, "Listos");
@@ -137,7 +137,7 @@ void quitarDeColaDeListos(t_entrenador * entrenador) {
 	list_remove_by_condition(colaListos, mismoSocket);
 
 	log_info(myArchivoDeLog,
-			"Se quita de la cola de Listos al entrenador: %c\n",
+			"Se quita de la cola de Listos al entrenador: %c",
 			entrenador->simbolo);
 
 	loguearColasDePlanificacion(colaListos, "Listos");
@@ -214,7 +214,7 @@ void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 	agregarAColaDeBloqueados(unEntrenador);
 
 	log_info(myArchivoDeLog,
-			"Se agrega a la cola de bloqueados al entrenador: %c\n",
+			"Se agrega a la cola de bloqueados al entrenador: %c",
 			unEntrenador->simbolo);
 
 	loguearColasDePlanificacion(colaListos, "Bloqueados");
@@ -238,7 +238,7 @@ void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
 	list_remove_by_condition(colaBloqueados, mismoSocket);
 
 	log_info(myArchivoDeLog,
-			"Se quita de la cola de Bloqueados al entrenador: %c\n",
+			"Se quita de la cola de Bloqueados al entrenador: %c",
 			entrenador->simbolo);
 
 	loguearColasDePlanificacion(colaListos, "Bloqueados");
@@ -261,9 +261,9 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa) {
 	}
 
 	agregarAColaDeFinalizados(entrenadorAEliminar);
-
 	liberarRecursos(entrenadorAEliminar);
 
+	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
 	free(entrenadorAEliminar);
 }
 
@@ -277,7 +277,7 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
 
 	list_add(colaFinalizados, entrenadorAEliminar);
 
-	log_info(myArchivoDeLog,"Se finaliza el entrenador: %c\n",entrenadorAEliminar->simbolo);
+	log_info(myArchivoDeLog,"Se finaliza el entrenador: %c",entrenadorAEliminar->simbolo);
 
 	loguearColasDePlanificacion(colaFinalizados,"Finalizados");
 }
@@ -295,7 +295,7 @@ void consumirQuantum(int i) {
 
 	entrenador->instruccionesEjecutadas++;
 
-	log_debug(myArchivoDeLog, "cantidad de instrucciones ejecutadas: %d\n",
+	log_debug(myArchivoDeLog, "cantidad de instrucciones ejecutadas: %d",
 			entrenador->instruccionesEjecutadas);
 
 }
@@ -345,8 +345,22 @@ t_entrenador * buscarCercaniaAPokenest() {
 
 }
 
-void setearDistanciaPokenest(int nroDeSocket) {
-	//t_entrenador *entrenador = reconocerEntrenadorSegunSocket(nroDeSocket);
+void setearDistanciaPokenest(int nroDeSocket, t_mapa * self) {
+	t_entrenador *entrenador = reconocerEntrenadorSegunSocket(nroDeSocket);
+	//Lucas: Necesito conocer al mapa para saber la posicion :S
+	// Estoy suponiendo que pokemonSolicitado es el char de la pokenest. Ej: 'P'.
+	// La unica condicion es que el entrenador ya tiene que estar en el mapa cargado!!
+
+	int aux = distanciaEntrenadorPokenest(entrenador->simbolo, self, entrenador->pokemonSolicitado);
+
+	if (aux <= 0)
+	{
+		//problemas al calcular la distancia
+	}
+	else
+	{
+		entrenador->distanciaAProximaPokenest = aux;
+	}
 
 	//TODO: ver si el entrenador tiene que mandarme su posicion actual para poder
 	//calcular la distancia a la pokenest
@@ -358,7 +372,7 @@ void loguearColasDePlanificacion(t_list *lista, char *nombreLista) {
 	int j;
 	if (list_size(lista) == 0) {
 
-		log_info(myArchivoDeLog, "La cola de planificacion de %s esta vacía\n",
+		log_info(myArchivoDeLog, "La cola de planificacion de %s esta vacía",
 				nombreLista);
 
 	} else {
@@ -366,7 +380,7 @@ void loguearColasDePlanificacion(t_list *lista, char *nombreLista) {
 		for (j = 0; j < list_size(lista); j++) {
 			t_entrenador * entrenador = list_get(lista, j);
 
-			log_info(myArchivoDeLog, "Cola de %s: %c\n", nombreLista,
+			log_info(myArchivoDeLog, "Cola de %s: %c", nombreLista,
 					entrenador->simbolo);
 
 		}
