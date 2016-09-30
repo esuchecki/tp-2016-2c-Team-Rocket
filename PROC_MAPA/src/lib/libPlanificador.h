@@ -49,6 +49,8 @@ void desbloquearEntrenador(t_mapa * mapa);
 
 void agregarAColaDeBloqueados(t_entrenador *unEntrenador);
 
+void quitarDeColaDeBloqueados(t_entrenador *entrenador);
+
 void desconectarEntrenador(int nroDesocket ,t_mapa * mapa);
 
 void liberarRecursos(t_entrenador *entrenador);
@@ -66,5 +68,7 @@ t_entrenador * buscarDesconocedorPokenest();
 t_entrenador * buscarCercaniaAPokenest();
 
 void setearDistanciaPokenest(int nroDeSocket);
+
+void loguearColasDePlanificacion(t_list *lista, char *nombreLista);
 
 #endif /* LIBPLANIFICADOR_H_ */

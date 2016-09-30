@@ -114,6 +114,11 @@ void agregarAColaDeListos(t_entrenador *unEntrenador) {
 
 	list_add(colaListos, unEntrenador);
 
+	log_info(myArchivoDeLog, "Se Mueve a cola de listos al entrenador: %c\n",
+			unEntrenador->simbolo);
+
+	loguearColasDePlanificacion(colaListos, "Listos");
+
 	pthread_mutex_unlock(&mutex_listos);
 }
 
@@ -130,6 +135,12 @@ void quitarDeColaDeListos(t_entrenador * entrenador) {
 	}
 
 	list_remove_by_condition(colaListos, mismoSocket);
+
+	log_info(myArchivoDeLog,
+			"Se quita de la cola de Listos al entrenador: %c\n",
+			entrenador->simbolo);
+
+	loguearColasDePlanificacion(colaListos, "Listos");
 
 	pthread_mutex_unlock(&mutex_listos);
 
@@ -165,13 +176,15 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 	t_pokeNest * pokeNest = list_find(mapa->pokeNest, igualIdentificador);
 
 	t_pokemon * pokemon = list_find(pokeNest->pokemones, noEstaAtrapado);
-	if (pokemon != NULL){
+	if (pokemon != NULL) {
 
 		pokemon->capturadoPorEntrenador = entrenador->simbolo;
 
 		entrenador->distanciaAProximaPokenest = -1;
 
 		entrenador->instruccionesEjecutadas = 0;
+
+		quitarDeColaDeBloqueados(entrenador);
 
 		agregarAColaDeListos(entrenador);
 
@@ -193,13 +206,42 @@ void desbloquearEntrenador(t_mapa *mapa) {
 
 	}
 
-
 }
 
 void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 	pthread_mutex_lock(&mutex_bloqueados);
 
 	agregarAColaDeBloqueados(unEntrenador);
+
+	log_info(myArchivoDeLog,
+			"Se agrega a la cola de bloqueados al entrenador: %c\n",
+			unEntrenador->simbolo);
+
+	loguearColasDePlanificacion(colaListos, "Bloqueados");
+
+	pthread_mutex_unlock(&mutex_bloqueados);
+
+}
+
+void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
+
+	pthread_mutex_lock(&mutex_bloqueados);
+
+	bool mismoSocket(void * datos) {
+
+		t_entrenador * elegido = datos;
+
+		return elegido->nroDesocket == entrenador->nroDesocket;
+
+	}
+
+	list_remove_by_condition(colaBloqueados, mismoSocket);
+
+	log_info(myArchivoDeLog,
+			"Se quita de la cola de Bloqueados al entrenador: %c\n",
+			entrenador->simbolo);
+
+	loguearColasDePlanificacion(colaListos, "Bloqueados");
 
 	pthread_mutex_unlock(&mutex_bloqueados);
 
@@ -232,7 +274,12 @@ void liberarRecursos(t_entrenador *entrenador) {
 }
 
 void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
+
 	list_add(colaFinalizados, entrenadorAEliminar);
+
+	log_info(myArchivoDeLog,"Se finaliza el entrenador: %c\n",entrenadorAEliminar->simbolo);
+
+	loguearColasDePlanificacion(colaFinalizados,"Finalizados");
 }
 
 int obtenerCoordenadasPokenest(char identificadorPokenest) {
@@ -305,5 +352,25 @@ void setearDistanciaPokenest(int nroDeSocket) {
 	//calcular la distancia a la pokenest
 	//para poder setear la siguiente variable entrenador->distanciaAProximaPokenest
 
+}
+
+void loguearColasDePlanificacion(t_list *lista, char *nombreLista) {
+	int j;
+	if (list_size(lista) == 0) {
+
+		log_info(myArchivoDeLog, "La cola de planificacion de %s esta vacía\n",
+				nombreLista);
+
+	} else {
+
+		for (j = 0; j < list_size(lista); j++) {
+			t_entrenador * entrenador = list_get(lista, j);
+
+			log_info(myArchivoDeLog, "Cola de %s: %c\n", nombreLista,
+					entrenador->simbolo);
+
+		}
+
+	}
 }
 
