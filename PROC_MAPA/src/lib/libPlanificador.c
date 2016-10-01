@@ -388,6 +388,7 @@ void setearDistanciaPokenest(int nroDeSocket, t_mapa * self,char pokenest) {
 		//problemas al calcular la distancia
 		printf("hubo algun error\n");
 	} else {
+		log_debug(myArchivoDeLog, "distancia a pokenest = %s", string_itoa((aux)));
 		entrenador->distanciaAProximaPokenest = aux;
 	}
 

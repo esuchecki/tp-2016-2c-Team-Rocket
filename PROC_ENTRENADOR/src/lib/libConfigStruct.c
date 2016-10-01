@@ -123,13 +123,12 @@ void inicializarHojaDeViaje (t_config *metadataEntrenador, t_entrenadorFisico * 
 	int i = 0;
 	while (aQueMapasMeTengoQueConectar[i] != NULL)
 	{
-		//printf("%s\n", aQueMapasMeTengoQueConectar[i]);
-		//TODO: validar que si hay 2 pokenest del mismo tipo seguidas es un error sintactico.
 		list_add(hojaDeViaje, crearNuevoNodo(aQueMapasMeTengoQueConectar[i], metadataEntrenador, miEntrenador));
 		i++;
 	}
 
 	miEntrenador->metadata->hojaDeViaje = hojaDeViaje;
+	log_info(myArchivoDeLog,"Se valido que no hubiera pokemones consecutivos duplciados.");
 	//free(aQueMapasMeTengoQueConectar);
 
 }
@@ -148,6 +147,7 @@ t_mapa * crearNuevoNodo (char * aQueMapasMeTengoQueConectar, t_config *metadataE
 
 	nuevoNodo->objetivosDelMapa = objetivoDeEsteMapa;
 
+	hayAlgunObjetivoDuplicado(objetivoDeEsteMapa, miEntrenador, nuevoNodo);
 	//free (keyObjMapa);
 
 	return nuevoNodo;
@@ -170,4 +170,18 @@ void loguearHojaDeViajeDeUnMapa (t_mapa * nodoActual)
 	}
 	log_info(myArchivoDeLog,"\t\t[%s]", objetivosConcatenados);
 	free(objetivosConcatenados);
+}
+
+void hayAlgunObjetivoDuplicado (char ** objetivoDeEsteMapa, t_entrenadorFisico * miEntrenador, t_mapa * nodoActual)
+{
+	int i =0;
+	while (objetivoDeEsteMapa[i+1] !=NULL)
+	{
+		if (*objetivoDeEsteMapa[i] == *objetivoDeEsteMapa[i+1])
+		{
+			log_error(myArchivoDeLog,"Hay 2 pokemones consecutivos identicos en los objetivos del mapa %s, objetivo %c", nodoActual->nombreMapa, *objetivoDeEsteMapa[i]);
+			finalizarEntrenador(miEntrenador);
+		}
+		i++;
+	}
 }

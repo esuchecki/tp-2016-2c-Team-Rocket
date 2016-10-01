@@ -68,6 +68,13 @@ t_mapa * crearNuevoNodo (char * aQueMapasMeTengoQueConectar, t_config *metadataE
  */
 void loguearHojaDeViajeDeUnMapa (t_mapa * nodoActual);
 
+/*
+ * @NAME: hayAlgunObjetivoDuplicado
+ * @DESC: Valida si en los objetivos de un mapa pasa esto:
+ * 		obj[Mapa8]=[P,P,F] (error!)
+ * 		obj[Mapa8]=[P,F,P,F,P,F] (ok!)
+ */
+void hayAlgunObjetivoDuplicado (char ** objetivoDeEsteMapa, t_entrenadorFisico * miEntrenador, t_mapa * nodoActual);
 //------------------------------------------//
 
 

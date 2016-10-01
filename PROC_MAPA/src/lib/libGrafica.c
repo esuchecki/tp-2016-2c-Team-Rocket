@@ -156,36 +156,34 @@ void cargarPokeNests (t_config * configPokeNest, t_mapa * nuevoMapa)
 }
 
 
-void cargarEntrenador (t_list* items, char simbolo)
+int cargarEntrenador (t_list* items, char simbolo)
 {
 	if (estaDentroDelMargenDelMapa(__entrenadorPosInicialEnX,__entrenadorPosInicialEnY) ==1 && esUnicoEsteIdentificador(items, simbolo))
 	{
 		CrearPersonaje(items, simbolo, __entrenadorPosInicialEnX, __entrenadorPosInicialEnY);
 		log_info(myArchivoDeLog,"Se conecto un entrenador: [ %c ]", simbolo);
-		return;
+		return 0;	//No se mando ninguno moco al moverse
 	}
 	else
 	{
 		log_error(myArchivoDeLog, "error se conecto un entrenador con un simbolo ya existente o se quiso cargar al entrenador en una posicion inicial fuera del area del mapa. Simbolo: [ %c ]", simbolo);
-		//TODO: deberia finalizar la gui? Enrealidad deberia finalizar al entrenador....
-		finalizarGui(NULL);
+		return 1;	//Se mando algun moco
 	}
 }
 
 
-void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
+int moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
 {
 	if (estaDentroDelMargenDelMapa(newPos_x,newPos_y) ==1 )
 	{
 		log_debug(myArchivoDeLog, "movi al entrenador");
 		MoverPersonaje(items, simbolo, newPos_x, newPos_y);
-		return;
+		return 0;	//No se mando ninguno moco al moverse
 	}
 	else
 	{
 		log_error(myArchivoDeLog, "errorSintacticoSemantico el entrenador se movio fuera del mapa.");
-		//TODO: deberia finalizar la gui? Enrealidad deberia finalizar al entrenador....
-		finalizarGui(NULL);
+		return 1;	//Se mando algun moco
 	}
 }
 
@@ -398,7 +396,7 @@ int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuev
 {
 	/*
 	 * Como este metodo recibe un directorio del tipo /Mapas/prueba1/PokeNests/pikachu/metadata
-	 * Le borro el /metadata, luego
+	 * Le borro el /metadata (y chequeo que dps de pikachu no quede ninguna otra '/'), luego
 	 * Lo que primero hago es conocer el nombre de la pokenest (en este caso pikachu)
 	 *
 	 * Para eso 1º voy a dar vuelta el string:
@@ -419,9 +417,18 @@ int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuev
 	if (nombrePokeNest != NULL)
 	{
 		//este es el path de *1
-		nombrePokeNest = string_substring(nombrePokeNest,0, (string_length(nombrePokeNest) - sizeof(__ubicacionMetadataMapas))+1 );		//el +1 es xq hay 2 contrabarras.
-		nombrePokeNest = string_reverse(nombrePokeNest);
+		nombrePokeNest = string_substring(nombrePokeNest,0, (string_length(nombrePokeNest) - sizeof(__ubicacionMetadataMapas)) );
 
+		//Aca voy a validar que el substring se haya hecho bien, y no hayan quedado alguna contrabarra en medio.
+		int i =0;
+		while ( ((*nombrePokeNest)*i) != '/')
+		{
+			nombrePokeNest = string_substring(nombrePokeNest,1, string_length(nombrePokeNest));
+			i++;
+		}
+
+
+		nombrePokeNest = string_reverse(nombrePokeNest);
 		nombrePokeNest = (string_n_split(nombrePokeNest, 2, "/"))[0];
 		nombrePokeNest = string_reverse(nombrePokeNest);
 

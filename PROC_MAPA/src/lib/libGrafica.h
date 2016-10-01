@@ -102,15 +102,15 @@ int esValidoElEspaciadoDePokeNest(t_list* items, int newPos_x, int newPos_y);
 
 /*
  * @NAME: cargarEntrenador
- * @DESC: Crea un nuevo entrenador.
+ * @DESC: Crea un nuevo entrenador. Devuelve 1 (true) en caso de que hubiera algun error..
  */
-void cargarEntrenador (t_list* items, char simbolo);
+int cargarEntrenador (t_list* items, char simbolo);
 
 /*
  * @NAME: moverEntrenador
- * @DESC: mueve un Entrenador a una nueva posicion del mapa.
+ * @DESC: mueve un Entrenador a una nueva posicion del mapa. Si se mando algun moco devuelve 1 (true).
  */
-void moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
+int moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
 
 /*
  * @NAME: metadata_inicializar
