@@ -106,15 +106,18 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 			t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
-			moverEntrenador(data->items, entrenador->simbolo, coordenadasEnX,
-					coordenadasEnY);
+			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
+			if ( moverEntrenador(data->items, entrenador->simbolo, coordenadasEnX, coordenadasEnY) )
+			{
+				log_info(myArchivoDeLog, "Desconecte a %c xq se movio mal", entrenador->simbolo);
+				desconectarEntrenador(i,data, sockets_activos,socketMasGrande);
+				break;
+				//TODO: le tengo que avisar al entrenador que hizo algo mal??
+			}
 
-			//TODO: (emi) validar si el entrenador se pudo mover correctamente.
 
 			consumirQuantum(i);
-
 			//free(nuevoPaquete);
-
 			setearDistanciaPokenest(i, mapa,entrenador->pokenest);
 
 			usleep(mapa->metadata->retardo);
@@ -171,7 +174,17 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 
 		//TODO: tenemos que resolver como hacemos las delegaciones, pero asi cargamos el entrenador..
 		if (unEntrenador->simbolo != '\0')
-			cargarEntrenador(mapa->items, unEntrenador->simbolo);
+		{
+			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
+			if ( cargarEntrenador(mapa->items, unEntrenador->simbolo) )
+			{
+				log_info(myArchivoDeLog, "Desconecte a %c xq no lo pude cargar", unEntrenador->simbolo);
+				log_error(myArchivoDeLog,"No se pudo conectar, fallo el handshake\n");
+				desconectarEntrenador(socket_nueva_conexion,mapa, sockets_activos,socketMasGrande);
+				return;
+				//TODO: le tengo que avisar al entrenador que hizo algo mal??
+			}
+		}
 		//-------
 
 		log_debug(myArchivoDeLog,
@@ -183,6 +196,7 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 	} else {
 
 		log_error(myArchivoDeLog,"No se pudo conectar, fallo el handshake\n");
+		//TODO: este exit_failure esta raro aca!!
 		exit(EXIT_FAILURE);
 	}
 }
