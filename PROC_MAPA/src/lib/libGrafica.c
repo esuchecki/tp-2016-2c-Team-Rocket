@@ -486,7 +486,6 @@ int distanciaEntrenadorPokenest (char simboloEntrenador, t_mapa * self, char pok
 	if (pokeNest == '\0')
 	{
 		log_error(myArchivoDeLog, "me pidieron una distancia con una pokenest invalida [P=%c | E= %c]", pokeNest, simboloEntrenador);
-		printf("error de por aca?");
 		return -1;
 	}
 
