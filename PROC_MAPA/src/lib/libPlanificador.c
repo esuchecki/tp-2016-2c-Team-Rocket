@@ -59,7 +59,7 @@ void * ejecutarPlanificador(void * datos) {
 
 		int null_data = 0;
 
-		t_data *turno = pedirPaquete(pedirPokenest, sizeof(int), &null_data);
+		t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
 
 		common_send(proximoEntrenador->nroDesocket, turno);
 

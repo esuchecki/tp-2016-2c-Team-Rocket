@@ -22,7 +22,8 @@ enum enviosEntrenador{
 	movimientoEntrenador = 11,//ver si subdividirlo en 4 diferentes
 	capturarPokemon = 12,
 	objetivosCumplidos = 13,
-	mejorPokemon = 14
+	mejorPokemon = 14,
+	otorgarTurno = 15
 } ;
 
 enum enviosMapa{
@@ -31,8 +32,7 @@ enum enviosMapa{
 	dameMejorPokemon = 22,
 	ganasteBatalla = 23,
 	perdisteBatalla = 24,
-	ubicacionMedallaMapa = 25,
-	pedirPokenest = 26
+	ubicacionMedallaMapa = 25
 };
 
 

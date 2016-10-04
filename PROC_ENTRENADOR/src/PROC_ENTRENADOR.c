@@ -38,8 +38,7 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador);
 void accionDelMapaAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelMapaAnteSIGTERM(t_entrenadorFisico * unEntrenador);
 
-
-void enviarMsjFantasmaParaMoverse (int socketConection, t_data * info);
+void enviarMsjFantasmaParaMoverse(int socketConection, t_data * info);
 
 //------------------------------------------//
 
@@ -157,17 +156,23 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 			info = leer_paquete(socketConexion);
 
 			switch (info->header) {
-			case pedirPokenest:
+			case otorgarTurno:
 				;
 				//TODO:Obtener de la lista de objetivos el identificador de
 				//la pokenest, si la tiene la pokenest no la pide
-				char identificadorPokenest = 'P';//lo hardcodeo ahora
-				t_data * paquete = pedirPaquete(peticionPokenest, sizeof(char),
-						&identificadorPokenest);
+				if (nuevoEntrenador->directorioPokeDex == NULL) {
+					char identificadorPokenest = 'P';		//lo hardcodeo ahora
+					t_data * paquete = pedirPaquete(peticionPokenest,
+							sizeof(char), &identificadorPokenest);
 
-				common_send(socketConexion, paquete);
+					common_send(socketConexion, paquete);
 
-				free(paquete);
+					free(paquete);
+				}else {
+
+					//TODO: tengo la pokenest.. tengo que moverme
+
+				}
 
 				break;
 
@@ -219,13 +224,10 @@ void accionDelMapaAnteSIGTERM(t_entrenadorFisico * unEntrenador) {
 	//TODO: Validar si me quede sin vidas me muero =(
 }
 
-
-
-void enviarMsjFantasmaParaMoverse (int socketConection, t_data * info)
-{
-	puts ("entro");
+void enviarMsjFantasmaParaMoverse(int socketConection, t_data * info) {
+	puts("entro");
 	//char * mensaje = info->data;
-	int * mensaje = malloc (sizeof(int)) ;
+	int * mensaje = malloc(sizeof(int));
 	//strcpy(mensaje, "6");
 	//printf("%s\n", mensaje);
 	*mensaje = 6;	//solo movete 1 pos.
