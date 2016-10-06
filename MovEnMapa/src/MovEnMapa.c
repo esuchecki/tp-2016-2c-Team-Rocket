@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <commons/collections/list.h>
 
+
 typedef struct estadoEntrenador {
 	int e_posX;
 	int e_posY;
