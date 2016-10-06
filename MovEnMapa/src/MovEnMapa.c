@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <commons/collections/list.h>
 
@@ -21,9 +22,8 @@ typedef struct estadoEntrenador {
 } t_estadoEntrenador;
 
 typedef struct hitos {
-	int p_posX;
-	int p_posY;
-	char* p_nombre;
+	char p_nombre;
+	char m_nombre[20];
 } t_hitos;
 
 enum actividad {
@@ -34,6 +34,9 @@ enum actividad {
 	moverAbajo = 4,
 	noActividad = 5
 };
+
+int posX = 3;
+int posY = 5;
 
 /**
  *
@@ -87,16 +90,12 @@ int queHago(t_estadoEntrenador* estado) {
 	return respuesta;
 }
 
-void capturarPoke() {
-	//TODO.. todo jaj
-}
-
 void actualizarEstado(t_estadoEntrenador* estado, int respuesta) {
 
 	switch (respuesta) {
 	case destino:
 		//TODO: falta implementar la func...
-		capturarPoke();
+
 		break;
 	case moverDerecha:
 		estado->e_posX++;
@@ -123,68 +122,124 @@ void actualizarEstado(t_estadoEntrenador* estado, int respuesta) {
 	}
 }
 
-int main(void) {
-	t_list* listaPokeCapturados = list_create();
-	t_estadoEntrenador* estado = malloc(sizeof(t_estadoEntrenador));
-	/*Seteo los valores ahora a mano, luego los traemos del config*/
-	estado->e_posX = 0;
-	estado->e_posY = 0;
-	//TODO: CREO la lista de pokes asi voy agregando la estructura que cree
-	//		y despues la recorremos asi va a buscar varios pokes
+void actualizarPosicionPoke() {
+	posX = posX + 3;
+	posY = posX + 1;
+	printf("posicion x: %i ", posX);
+	printf("posicion y: %i\n", posY);
+}
 
-	t_list* listaPoke = list_create();
-	int itera = 0;
-	char* nombre = 'a';
-	int px = 2;
-	int py = 3;
-	while (itera < 4) {
+void inicializar(t_list* listaDePokeACapturar) {
+	int mapa = 1;
+	while (mapa <= 3) {
+		int poke;
+		poke = 1;
+		char pokeActual = 'a';
+		while (poke <= 4) {
+			t_hitos* pokeHitos = malloc(sizeof(t_hitos));
 
-		t_hitos* hitos = malloc(sizeof(t_hitos));
-		hitos->p_nombre = nombre;
-		hitos->p_posX = px;
-		hitos->p_posY = py;
-		itera++;
-		nombre++;
-		px += 3;
-		py += 4;
-		list_add(listaPoke, hitos);
+			if (mapa == 1) {
+				strcpy(pokeHitos->m_nombre, "primer mapa");
+			} else if (mapa == 2) {
+				strcpy(pokeHitos->m_nombre, "segundo mapa");
+			} else {
+				strcpy(pokeHitos->m_nombre, "tercer mapa");
+			}
+
+			pokeHitos->p_nombre = pokeActual;
+			list_add(listaDePokeACapturar, pokeHitos);
+			printf("mapa: %d\n", mapa);
+			printf("agrego pokemon: %c\n", pokeActual);
+			poke = poke + 1;
+			//printf("pokemon nro : %i\n", *poke);
+			pokeActual++;
+
+		}
+		mapa++;
 	}
 
-	/*
-	 *
-	 * esto lo voy a cambiar cuando ande la lista de hitos... entonces
-	 * voy a recorrer esa lista buscando las posiciones donde estan los pokes
-	 */
+}
 
-	bool juego = true;
-	int posicion=0;
-	while (juego) {
-		t_hitos* hitos = list_get(listaPoke,posicion);
+void soyMaestroPoke() {
+	puts("SOY MAESTRO POKE EMI, SOY MAESTRO POKEEEEEEEEEEEEE");
+}
 
-		estado->p_posX = hitos->p_posX;
-		estado->p_posY = hitos->p_posY;
-		char* letraPoke = hitos->p_nombre;
+void buscarUnPokemon(t_hitos* pokeActual, t_estadoEntrenador* estado,
+		t_list* listaPokeCapturados) {
+	printf("tengo que buscar a: %c \n", pokeActual->p_nombre);
 
-		int act = 99;
-		int iteracion = 0;
-		while (act > 0) {
+	estado->p_posX = posX;
+	estado->p_posY = posY;
+	int respuesta = 99;
+	while (respuesta > 0) {
 
-			printf("iteracion %i \n", iteracion);
-			int respuesta = queHago(estado);
-			printf("devuelve %i \n", respuesta);
-			actualizarEstado(estado, respuesta);
-			iteracion++;
-			if (respuesta == 0) {
-				act = 0;
-				list_add(listaPokeCapturados, letraPoke);
-				printf("TOMA POKEMON!!!!!  \n");
-			} else if (respuesta == -1) {
-				act = -1;
-				printf("SE FUE DEL MAPA, O ALGUN ERROR PASO! \n");
-			}
+		respuesta = queHago(estado);
+		printf("devuelve %i \n", respuesta);
+		actualizarEstado(estado, respuesta);
+
+		if (respuesta == 0) {
+
+			//agregar pokemon a la lista de capturados
+			agregarPokemonACapturados(listaPokeCapturados, pokeActual);
+			actualizarPosicionPoke();
+			printf("TOMA POKEMON!!!!!  \n");
+		} else if (respuesta == -1) {
+
+			printf("SE FUE DEL MAPA, O ALGUN ERROR PASO! \n");
 		}
 	}
+
+}
+void agregarPokemonACapturados(t_list* listaPokeCapturados, t_hitos* pokeActual) {
+
+	list_add(listaPokeCapturados, pokeActual);
+}
+
+void desarrollarJuego(t_list* listaDePokeACapturar, t_list* listaPokeCapturados,
+		t_estadoEntrenador* estado) {
+	//MAXIS... VOY A USAR UN ITERADOR MIO, SOLO PORQUE TENGO LOS MAPAS EN LA MISMA LISTA...
+	// DESPUES DESCOMENTAMOS LA LISTA DE ABAJO Y CORREGIMOS
+	//list_iterate(listaDePokeACapturar, &buscarUnPokemon);
+	bool seguir = true;
+	actualizarPosicionPoke();
+	int posicion = 0;
+	t_hitos* pokeActual = list_get(listaDePokeACapturar, posicion);
+	while (pokeActual != NULL && seguir) {
+		buscarUnPokemon(pokeActual, estado, listaPokeCapturados);
+		posicion++;
+		pokeActual = list_get(listaDePokeACapturar, posicion);
+	}
+soyMaestroPoke();
+}
+
+int main(void) {
+	/*
+	 *
+	 * 29092016...revisar este comentario...
+	 * -- tendria que tener dos arrays que simulen dos "mapas" cuando termina con uno, sigue con otro.
+	 * lo que tengo que hacer es...
+	 * 1- pido posicion de pokemon
+	 * 2- la guardo  en mi estado
+	 * 3- itero hasta llegar a la posicion del pokemon
+	 * 4- lo almaceno en una "lista" de poke capturados
+	 * 5- sigo con otro pokemon
+	 *
+	 */
+	t_list* listaDePokeACapturar = list_create();
+	inicializar(listaDePokeACapturar);
+
+	t_list* listaPokeCapturados = list_create();
+	t_estadoEntrenador* estado = malloc(sizeof(t_estadoEntrenador));
+
+	/*Seteo los valores ahora a mano, luego los traemos del config*/
+	estado->e_posX = 1;
+	estado->e_posY = 1;
+
+	desarrollarJuego(listaDePokeACapturar, listaPokeCapturados, estado);
+
 	free(estado);
+	free(listaDePokeACapturar);
+	free(listaPokeCapturados);
 	return EXIT_SUCCESS;
 }
 
