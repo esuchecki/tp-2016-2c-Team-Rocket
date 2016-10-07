@@ -75,7 +75,6 @@ char ** configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50])
 int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const char *, const char *)  )
 {
 
-
 	DIR * d;
     d = opendir (nombreDirectorio);
 	//Reviso si lo pudo abrir

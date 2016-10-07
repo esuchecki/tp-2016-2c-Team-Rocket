@@ -13,7 +13,7 @@
 int calcularRecursosAsignados(t_entrenador *entrenadorBloqueado,
 		t_pokeNest *pokenest) {
 	bool entrenadorAtrapoPokemon(void * nodo) {
-		return ((t_pokemon *) nodo)->capturadoPorEntrenador
+		return ((t_pokemonEnPokeNest *) nodo)->capturadoPorEntrenador
 				== entrenadorBloqueado->simbolo;
 	}
 

@@ -29,6 +29,11 @@
 #include "lib/seniales.h"
 #include "so/constantes.h"
 
+/*
+ *
+ */
+#include "lib/batallaPkmn.h"
+
 //------------------------------------------//
 /* ********************************************	*/
 //----------- Sector Funciones -------------//
@@ -44,13 +49,16 @@ void enviarMsjFantasmaParaMoverse(int socketConection, t_data * info);
 
 int main(int argc, char *argv[]) {
 
+
 	validarArgumentos(argc, argv);
 	inicializarLogEntrenador(argv);
 
 	t_entrenadorFisico * miEntrenador;
 	miEntrenador = inicializarEstructurasDelEntrenador(argv[1], argv[2]);
 
-	//*******************************************************
+
+
+	// *******************************************************
 	//TODO: en la fc que ejecuta la logica del entrenador, agergar este llamado:
 	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
 	//TODO: por ahora contaria solo el tiempo que estuvo boludiando con los sockets y otras cosas...
@@ -60,9 +68,9 @@ int main(int argc, char *argv[]) {
 	//TODO: cuando se convirtio en maestro pokemon hay que llamar a este metodo
 	mostrarTiempoTotalAventura(&miEntrenador->misEstadisticas);
 	//TODO: y otros a implementar...
-	//*******************************************************
+	// *******************************************************
 
-	//*******************************************************
+	// *******************************************************
 	//TODO: esto deberia ir en el while de movimientos de un entrenador..
 	inicializarSenialesMapa(miEntrenador, (void *) finalizarEntrenador);
 
@@ -71,9 +79,17 @@ int main(int argc, char *argv[]) {
 	funcionesQueQuieroEjecutarSegunLaSenial(miEntrenador,
 			(void *) finalizarEntrenador, (void*) accionDelMapaAnteSIGUSR1,
 			(void*) accionDelMapaAnteSIGTERM);
-	//*******************************************************
+	// *******************************************************
 
 	inicializarSocketEntrenador(miEntrenador);
+
+
+
+
+
+
+
+
 
 	finalizarEntrenador(miEntrenador);
 	return EXIT_SUCCESS;
@@ -195,6 +211,10 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 				break;
 			case dameMejorPokemon:
 				//TODO: enviar pokemon mas fuerte. realizar esta funcion
+
+				//En caso de deadlock llamar a esta fc
+				//elegirMejorPokemon(miEntrenador,(void*) finalizarEntrenador);
+
 				break;
 			case ganasteBatalla:
 				//TODO: hacer lo que tenga que hacer

@@ -47,10 +47,7 @@ int main( int argc, char *argv[] )
 	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, (void *)mapa);
 	pthread_create(&hiloBloqueados,NULL,manejarEntrenadoresBloqueados,(void *)mapa);
 	pthread_create(&hiloConexiones,NULL, (void *)atenderConexiones, (void *)mapa);
-	pthread_create(&hiloDeadlock,NULL,deteccionDeadlock,(void *)mapa);
-
-	//TODO: Lucas soy emi, creo que despues va a haber que darle otro tratamiento a los sockets para que no impriman msjs en pantalla (medio hacen lio con la gui).
-	//dps mirate en libTeamRocket/so/metodos_a_implementar_sockets que me parece que estan todos los metodos que vamos a tener que llamar entre entrenador y mapa!.
+	//pthread_create(&hiloDeadlock,NULL,deteccionDeadlock,(void *)mapa);
 
 	#warning ("cuando hay un error abortivo hay que cerrar correctamente el gui")
 

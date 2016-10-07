@@ -465,7 +465,7 @@ int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio
 		if ( (strcmp (d_name, pokemonNNNdat )) == 0 )
 		{
 			log_debug(myArchivoDeLog,"%s", d_name);
-			t_pokemon * pokemon = malloc (sizeof(t_pokemon));
+			t_pokemonEnPokeNest * pokemon = malloc (sizeof(t_pokemonEnPokeNest));
 			pokemon->capturadoPorEntrenador = '\0';				//lo inicializo como vacio.
 			list_add(pokemonesEnEstaPokeNest->pokemones, pokemon);
 		}

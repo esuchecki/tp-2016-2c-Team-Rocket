@@ -76,16 +76,48 @@ char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPr
 	}
 	else
 	{
-		char ** aux2 = malloc (sizeof(aux1));
-		//aux2 = string_duplicate(aux1);
 		int i = 0;
 		while (aux1[i] != NULL)
 		{
-			aux2[i] = string_duplicate (aux1[i]);
+			i++;	//cuantos objetos tiene?
+		}
+
+		char** aux2 = malloc((sizeof(char**)) * (i+1));
+		if (!aux2)
+		{
+		    return NULL;
+		}
+
+		//char ** aux2;
+		i = 0;
+		while (aux1[i] != NULL)
+		{
+			char* pCurrent = aux1[i];
+			size_t currentLength = strlen(pCurrent);
+			aux2[i] = malloc(currentLength + 1);
+			if (!aux2[i])
+			{
+				//goto Error;
+			}
+			strcpy(aux2[i], aux1[i]);
 			i++;
 		}
+
+		//char ** aux2 = NULL;
+		//aux2 = string_duplicate(aux1);
+		//char ** aux2 = malloc (sizeof(aux1));
+		//aux2 = string_duplicate(aux1);
+
+		//memcpy(aux2, aux1, string_length(*aux1));
+		//int i = 0;
+		//while (aux1[i] != NULL)
+		//{
+		//	memcpy(*(aux2[i]), *(aux1[i]), sizeof(aux1));
+			//aux2[i] = string_duplicate (aux1[i]);
+		//	i++;
+		//}
 		aux2[i]=NULL;	//Luego de que termino la ultima iteracion, le copio el NULL al final
-		free (aux1);
+		//free (aux1);
 		return aux2;
 	}
 }

@@ -46,6 +46,8 @@
 #define __separadorEnConfigPosicionPokeNest ";"
 
 
+#define __nombreEnConfigNivelPkmn "Nivel"
+
 //-------------------------------------//
 
 
@@ -60,6 +62,7 @@
 
 #define __ubicacionEntrenadores "/Entrenadores/"
 #define __ubicacionMetadataEntrenadores "/metadata"
+#define __ubicacionDirDeBill "/Dir de Bill/"
 
 #define __nombreEnConfig_Vidas "vidas"
 #define __nombreEnConfig_Reintentos "reintentos"

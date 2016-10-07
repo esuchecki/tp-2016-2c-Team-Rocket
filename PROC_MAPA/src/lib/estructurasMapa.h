@@ -35,7 +35,7 @@ typedef struct
 	char capturadoPorEntrenador;	//simbolo del entrenador para identificar quien lo tiene ('\0' para ninguno)
 	//TODO: revisar si agregar un campo NNN, para saber que archivo es este pokemon.
 	//entiendo que la correspondencia entre el NNN y el int (index) es NNN=index-1.
-} t_pokemon;
+} t_pokemonEnPokeNest;
 
 
 typedef struct

@@ -173,13 +173,13 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 	}
 
 	bool noEstaAtrapado(void * datos) {
-		t_pokemon * pokemon = datos;
+		t_pokemonEnPokeNest * pokemon = datos;
 		return pokemon->capturadoPorEntrenador == '\0';
 	}
 
 	t_pokeNest * pokeNest = list_find(mapa->pokeNest, igualIdentificador);
 
-	t_pokemon * pokemon = list_find(pokeNest->pokemones, noEstaAtrapado);
+	t_pokemonEnPokeNest * pokemon = list_find(pokeNest->pokemones, noEstaAtrapado);
 	if (pokemon != NULL) {
 
 		pokemon->capturadoPorEntrenador = entrenador->simbolo;
