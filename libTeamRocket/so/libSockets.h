@@ -35,6 +35,15 @@ enum enviosMapa{
 	ubicacionMedallaMapa = 25
 };
 
+//MAXIS: son los mensajes "internos" para que el entrenador se mueva.
+enum actividad {
+	destino = 0,
+	moverDerecha = 1,
+	moverArriba = 2,
+	moverIzquierda = 3,
+	moverAbajo = 4,
+	noActividad = 5
+};
 
 /*
  * @NAME: common_setup

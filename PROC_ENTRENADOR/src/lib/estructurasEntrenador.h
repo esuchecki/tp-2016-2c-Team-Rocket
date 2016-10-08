@@ -50,7 +50,16 @@ typedef struct
 } t_entrenadorFisico;
 
 
-
+//MAXIS-> aca voy a guardar el estado activo del entrenador
+typedef struct estadoEntrenador {
+	int e_posX;
+	int e_posY;
+	int p_posX;
+	int p_posY;
+	char ultimoMov;
+	int respuesta;
+	int objetivoPkmb;
+} t_estadoEntrenador;
 
 //Esto es para cuando hago "estructurasMapa.h", si la variable de log ya estaba declarada, la hace declarar como extern. (xq ya estaba inicializada)
 #ifndef LIB_ESTRUCTURASENTRENADOR_H_
