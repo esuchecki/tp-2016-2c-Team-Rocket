@@ -13,15 +13,19 @@
 #include <stdlib.h>
 #include <commons/collections/list.h>
 
-
 typedef struct estadoEntrenador {
 	int e_posX;
 	int e_posY;
 	int p_posX;
 	int p_posY;
 	char ultimoMov;
+	int respuesta;
+	int objetivoPkmb;
 } t_estadoEntrenador;
 
+
+
+//TODO:Cambiar por t_list * hojaDeViaje;
 typedef struct hitos {
 	char p_nombre;
 	char m_nombre[20];
@@ -210,7 +214,7 @@ void desarrollarJuego(t_list* listaDePokeACapturar, t_list* listaPokeCapturados,
 		posicion++;
 		pokeActual = list_get(listaDePokeACapturar, posicion);
 	}
-soyMaestroPoke();
+	soyMaestroPoke();
 }
 
 int main(void) {
@@ -229,12 +233,13 @@ int main(void) {
 	t_list* listaDePokeACapturar = list_create();
 	inicializar(listaDePokeACapturar);
 
+	//TODO: lista pokemon capturados no va, inicializar tampoco..
 	t_list* listaPokeCapturados = list_create();
 	t_estadoEntrenador* estado = malloc(sizeof(t_estadoEntrenador));
 
 	/*Seteo los valores ahora a mano, luego los traemos del config*/
-	estado->e_posX = 1;
-	estado->e_posY = 1;
+	estado->e_posX = 1;	//__entrenadorPosInicialEnX en libTeamRocket/so/constantes.h
+	estado->e_posY = 1;	//__entrenadorPosInicialEnY en libTeamRocket/so/constantes.h
 
 	desarrollarJuego(listaDePokeACapturar, listaPokeCapturados, estado);
 
