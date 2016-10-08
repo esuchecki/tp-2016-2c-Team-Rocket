@@ -23,7 +23,7 @@ typedef struct
 	char * batalla;
 	char * algoritmo;
 	uint16_t quantum;
-	uint16_t retardo;
+	uint16_t retardo;	//Valor en milisegundos
 	char * ip;
 	char * puerto;
 } t_metadataMapa ;

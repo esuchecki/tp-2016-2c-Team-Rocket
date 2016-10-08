@@ -14,7 +14,7 @@
 MAPA_NAME="prueba1"
 
 # declare POKEDEX variable
-POKEDEX="~/git/tp-2016-2c-Team-Rocket/PROC_MAPA/test_files"
+POKEDEX="~/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/test_files"
 
 # declare EXEC variable
 EXEC="~/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa"

@@ -6,7 +6,7 @@
 ENTRENADOR_NAME="Ash"
 
 # declare POKEDEX variable
-POKEDEX="~/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/test_files"
+POKEDEX="~/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/test_files"
 
 # declare EXEC variable
 EXEC="~/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador"

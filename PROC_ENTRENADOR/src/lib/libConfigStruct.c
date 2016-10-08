@@ -8,6 +8,65 @@
 
 #include "libConfigStruct.h"
 
+
+/*
+ * @NAME: borrarEntrenador
+ * @DESC: libera de memoria la estructura de un entrenador (uso interno)
+ */
+void borrarEntrenador ();
+
+/*
+ * @NAME: leerMetadataDelEntrenador
+ * @DESC: Cargar la parte de t_metadata de un entrenador (uso interno)
+ */
+void leerMetadataDelEntrenador (t_entrenadorFisico * nuevoEntrenador);
+
+/*
+ * @NAME: config_create_for_metadataEntrenador
+ * @DESC: Crea el archivo de config de un entrenador (uso interno)
+ */
+t_config *config_create_for_metadataEntrenador(t_entrenadorFisico * nuevoEntrenador);
+
+/*
+ * @NAME: inicializarHojaDeViaje
+ * @DESC: Se encarga de cargar la hoja de viaje en memoria (uso interno)
+ */
+void inicializarHojaDeViaje (t_config *metadataEntrenador, t_entrenadorFisico * miEntrenador);
+
+/*
+ * @NAME: crearNuevoNodo
+ * @DESC: Funcion auxiliar para inicializar la hoja de viajes.  (uso interno)
+ */
+t_mapa * crearNuevoNodo (char * aQueMapasMeTengoQueConectar, t_config *metadataEntrenador, t_entrenadorFisico * miEntrenador);
+
+/*
+ * @NAME: loguearHojaDeViajeDeUnMapa
+ * @DESC: Loguea exclusivamente la hoja de viajes en un log
+ */
+void loguearHojaDeViajeDeUnMapa (t_mapa * nodoActual);
+
+/*
+ * @NAME: hayAlgunObjetivoDuplicado
+ * @DESC: Valida si en los objetivos de un mapa pasa esto:
+ * 		obj[Mapa8]=[P,P,F] (error!)
+ * 		obj[Mapa8]=[P,F,P,F,P,F] (ok!)
+ */
+void hayAlgunObjetivoDuplicado (char ** objetivoDeEsteMapa, t_entrenadorFisico * miEntrenador, t_mapa * nodoActual);
+
+/*
+ * @NAME: config_create_for_metadataMapa
+ * @DESC: Crea el archivo de config de un mapa (uso interno para leer IPs y Puertos)
+ */
+t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador, char * nombreMapa);
+//------------------------------------------//
+
+
+
+
+
+
+
+
 void borrarEntrenador (t_entrenadorFisico * nuevoEntrenador)
 {
 	if (nuevoEntrenador == NULL)
@@ -185,3 +244,62 @@ void hayAlgunObjetivoDuplicado (char ** objetivoDeEsteMapa, t_entrenadorFisico *
 		i++;
 	}
 }
+
+
+void cualEsLaIpDeEsteMapa (t_entrenadorFisico * miEntrenador, char * nombreMapa, char * returnedIp, char * returnedPort)
+{
+	log_info(myArchivoDeLog,"Voy a averiguar la IP y Puerto del mapa: %s", nombreMapa);
+	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
+	metadataMapa = config_create_for_metadataMapa(miEntrenador, nombreMapa);
+
+	returnedIp= NULL;
+	returnedPort = NULL;
+
+	returnedIp = _entrenador_configLeerString(metadataMapa, __nombreEnConfig_IP, miEntrenador, (void *) finalizarEntrenador);
+	returnedPort = _entrenador_configLeerString(metadataMapa, __nombreEnConfig_Puerto, miEntrenador, (void *) finalizarEntrenador);
+
+	log_info(myArchivoDeLog,"IP= %s   | Puerto= %s", returnedIp, returnedPort);
+	metadata_finalizar (metadataMapa);
+}
+
+
+t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador, char * nombreMapa)
+{
+	char * directorioMapa;
+	directorioMapa = malloc ( (sizeof (char)) * PATH_MAX +1);
+
+	sprintf(directorioMapa, "/%s/%s/%s/%s", miEntrenador->directorioPokeDex, __ubicacionMapas, nombreMapa, __ubicacionMetadataMapas);
+
+
+	t_config * metadataMapa = _entrenador_newConfigType(directorioMapa, miEntrenador, (void *) finalizarEntrenador);
+	free (directorioMapa);
+
+
+	return metadataMapa;
+}
+
+/*
+char * iterarEnBusquedaDelMapa ()
+{
+
+
+	//esta funcion me compara si el archivo actual es un archivo llamado __nombreMetadataPokeNest. Si es asi, levanto la config de este archivo.
+	//esto es debido a que recorre recursivamente subdirectorios..
+	void _funcionOrdenSuperiorQueQuieroEjecutar (const char * d_name, const char * nombreDirectorio)
+	{
+		//reviso que este directorio que contiene las pokenest, tenga un archivo de "metadata"
+	 	//El archivo actual esta en "nombreDirectorio/d_name"
+	 	if ( (strcmp (d_name, __ubicacionMetadataMapas )) == 0 )
+	 		levantarConfigPokeNest( (char *)nombreDirectorio, nuevoMapa );
+
+	}
+
+
+	if ( ( encontrarEnUnDirectorio ( ubicacionDirDeBill(unEntrenador),  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
+	{
+		log_error(myArchivoDeLog, "problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'");
+		(*fc_abortar)(unEntrenador);	//finalizaElEntrenador
+	}
+
+}
+*/
