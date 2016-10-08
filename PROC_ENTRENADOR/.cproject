@@ -56,7 +56,7 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.385210198.1722268656" name="PROC_ENTRENADOR.c" rcbsApplicability="disable" resourcePath="src/PROC_ENTRENADOR.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.493429714.145929379">
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.385210198.1722268656" name="PROC_ENTRENADOR.c" rcbsApplicability="disable" resourcePath="src/entrenador.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.493429714.145929379">
 						<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.493429714.145929379" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.493429714">
 							<option id="gnu.c.compiler.option.include.paths.2050908129" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 								<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libTeamRocket}&quot;"/>
