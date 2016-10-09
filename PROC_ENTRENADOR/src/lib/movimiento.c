@@ -17,6 +17,8 @@ bool conozcoLaPosicionDeLaPokeNest(t_entrenadorFisico * unEntrenador);
 void pedirPorSocketLaPosicionDeLaPokeNestProxima (t_entrenadorFisico * unEntrenador, int socketConexion);
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketConexion);
 void soyMaestroPokemon(t_entrenadorFisico * unEntrenador);
+void enviarMensajeCapturarPkmn(t_entrenadorFisico * unEntrenador, int socketConection);
+
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador);
@@ -64,7 +66,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador)
 	inicializarEstadoEntrenador(unEntrenador);
 	//int indexMapaActual = 0;
 	//Me conecto al primer mapa y sigo asi conectandome recursivamente..
-	while (unEntrenador->metadata->hojaDeViaje->elements_count >= unEntrenador->moverseEnMapa->indexMapaActual)
+	while (unEntrenador->metadata->hojaDeViaje->elements_count > unEntrenador->moverseEnMapa->indexMapaActual)
 	{
 		t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje, unEntrenador->moverseEnMapa->indexMapaActual);
 		log_info(myArchivoDeLog, "Me voy a conectar al mapa: %s", mapaActual->nombreMapa);
@@ -88,8 +90,9 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador)
 
 		free(mapaActual_Ip);
 		free(mapaActual_Puerto);
-		free(mapaActual);
+		//free(mapaActual);
 		unEntrenador->moverseEnMapa->indexMapaActual ++;
+		log_info(myArchivoDeLog, "Termine mis tareas en el mapa actual.");
 	}
 
 	//En teoria aca se convirtio en maestro pokemon..
@@ -101,6 +104,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador)
 void soyMaestroPokemon(t_entrenadorFisico * unEntrenador)
 {
 	//TODO: completar con lo demas...
+	puts ("Soy maestro pokemon");
 	mostrarTiempoTotalAventura(&unEntrenador->misEstadisticas);
 }
 
@@ -147,18 +151,27 @@ int queHago(t_estadoEntrenador* estado) {
 
 
 void enviarMensajeMovimiento(t_entrenadorFisico * unEntrenador, int socketConection){
-	puts("aca mandamos al mapa en base a lo que respondio!");
+	//puts("aca mandamos al mapa en base a lo que respondio!");
 	t_data * paquete = pedirPaquete(movimientoEntrenador, sizeof(enum actividad), &unEntrenador->moverseEnMapa->respuesta);
 	common_send(socketConection, paquete);
 	free(paquete);
 }
 
+void enviarMensajeCapturarPkmn(t_entrenadorFisico * unEntrenador, int socketConection){
+	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje, unEntrenador->moverseEnMapa->indexMapaActual);
+	char identificadorPokeNest = *(mapaActual->objetivosDelMapa[unEntrenador->moverseEnMapa->indexObjetivoPkmn]);
+
+
+	t_data * paquete = pedirPaquete(capturarPokemon, sizeof(char), &identificadorPokeNest);
+	common_send(socketConection, paquete);
+	free(paquete);
+}
 
 void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection) {
 
 	switch (unEntrenador->moverseEnMapa->respuesta) {
 	case destino:
-		//TODO: falta implementar la func... enviar mensaje para capturar poke
+		enviarMensajeCapturarPkmn(unEntrenador, socketConection);
 		return;
 		break;
 	case moverDerecha:
@@ -236,20 +249,6 @@ void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador) {
 	//TODO: Validar si me quede sin vidas me muero =(
 }
 
-/*
-void enviarMsjFantasmaParaMoverse(int socketConection, t_data * info) {
-	puts("entro");
-	//char * mensaje = info->data;
-	int * mensaje = malloc(sizeof(int));
-	//strcpy(mensaje, "6");
-	//printf("%s\n", mensaje);
-	*mensaje = 6;	//solo movete 1 pos.
-	t_data * paquete = pedirPaquete(movimientoEntrenador, sizeof(int), mensaje);
-	common_send(socketConection, paquete);
-	free(mensaje);
-	free(paquete);
-}
-*/
 
 bool conozcoLaPosicionDeLaPokeNest(t_entrenadorFisico * unEntrenador)
 {
@@ -274,8 +273,10 @@ void pedirPorSocketLaPosicionDeLaPokeNestProxima (t_entrenadorFisico * unEntrena
 
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketConexion)
 {
+	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje, unEntrenador->moverseEnMapa->indexMapaActual);
 	while (1)
 	{
+		//TODO: abrir un hilo aparte para esto??
 		funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador,(void *) &finalizarEntrenador, (void*) &accionDelEntrenadorAnteSIGUSR1, (void*) &accionDelEntrenadorAnteSIGTERM);
 
 		//Primero chequea que no le haya llegado ninguna señal...
@@ -293,6 +294,7 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketC
 				 * para donde moverse o avisa que quiere capturar un pokemon.
 				 *
 				 */
+				puts("me otorgaron turno");
 				if ( !conozcoLaPosicionDeLaPokeNest(unEntrenador) )
 				{
 					pedirPorSocketLaPosicionDeLaPokeNestProxima(unEntrenador, socketConexion);
@@ -314,17 +316,16 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketC
 				memcpy(&coordenadasEnX, info->data, sizeof(int));
 				memcpy(&coordenadasEnY, info->data + sizeof(int), sizeof(int));
 
-				//MAXIS: inicializo la posicion del poknest
 				unEntrenador->moverseEnMapa->p_posX=coordenadasEnX;
 				unEntrenador->moverseEnMapa->p_posY=coordenadasEnY;
 				printf("Las coordenadas de la pokenest son: %d , %d\n",
 						coordenadasEnX, coordenadasEnY);
 
-				//enviarMsjFantasmaParaMoverse(socketConexion, info);
-				//sleep(5);
 
 				break;
 			case capturastePokemon:
+				puts("Capture un pokemon");
+				//TODO: recibir path.
 				//TODO: hacer lo que tengo que hacer
 				inicializarEstadoEntrenador(unEntrenador);	//Con esta linea avanza al proximo objetivo pokemon. Chequear que pasa si termino los objetivos del mapa.
 				break;
@@ -348,6 +349,10 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketC
 		free(info->data);
 		free(info);
 
+		//Si llego al ultimo objetivo del mapa, sale!
+		//TODO: ver que pasa con la medalla, de momento no informa que gano el mapa!!
+		if ( (mapaActual->objetivosDelMapa[unEntrenador->moverseEnMapa->indexObjetivoPkmn]) == NULL)
+			break;
 
 	}
 }

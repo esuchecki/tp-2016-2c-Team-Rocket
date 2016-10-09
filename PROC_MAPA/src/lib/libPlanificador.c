@@ -137,7 +137,7 @@ void quitarDeColaDeListos(t_entrenador * entrenador) {
 
 	}
 
-	list_remove_by_condition(colaListos, mismoSocket);
+	list_remove_by_condition(colaListos, &mismoSocket);
 
 	log_info(myArchivoDeLog, "Se quita de la cola de Listos al entrenador: %c",
 			entrenador->simbolo);
@@ -155,11 +155,11 @@ void * manejarEntrenadoresBloqueados(void * datos) {
 	while (1) {
 		sem_wait(&entrenador_bloqueado);
 
-		pthread_mutex_lock(&mutex_bloqueados);
+		//pthread_mutex_lock(&mutex_bloqueados);
 
 		desbloquearEntrenador(mapa);
 
-		pthread_mutex_unlock(&mutex_bloqueados);
+		//pthread_mutex_unlock(&mutex_bloqueados);
 
 	}
 
@@ -184,14 +184,22 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 
 		pokemon->capturadoPorEntrenador = entrenador->simbolo;
 
-		entrenador->distanciaAProximaPokenest = -1;
+		//restar un recurso a ese pokemon.
+		ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(mapa, entrenador->pokemonSolicitado);
+		resultado->quantity--;
 
+		entrenador->distanciaAProximaPokenest = -1;
 		entrenador->instruccionesEjecutadas = 0;
 
+		log_debug(myArchivoDeLog,"le asigne al entrenador %c, el pokemon: %c", entrenador->simbolo, pokeNest->identificador);
+		//TODO: pasarle path con la ubicacion del pokemon!
+		int null_data = 0;
+		t_data *capturaPkmn = pedirPaquete(capturastePokemon, sizeof(int), &null_data);
+		common_send(entrenador->nroDesocket, capturaPkmn);
+		free(capturaPkmn);
+
 		quitarDeColaDeBloqueados(entrenador);
-
 		agregarAColaDeListos(entrenador);
-
 		sem_post(&entrenador_listo);
 
 	}
@@ -204,7 +212,10 @@ void desbloquearEntrenador(t_mapa *mapa) {
 	int i;
 	for (i = 0; i < list_size(colaBloqueados); i++) {
 
+
+		pthread_mutex_lock(&mutex_bloqueados);
 		t_entrenador * entrenador = list_get(colaBloqueados, i);
+		pthread_mutex_unlock(&mutex_bloqueados);
 
 		asignarPokemonAEntrenador(mapa, entrenador);
 
@@ -215,7 +226,7 @@ void desbloquearEntrenador(t_mapa *mapa) {
 void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 	pthread_mutex_lock(&mutex_bloqueados);
 
-	agregarAColaDeBloqueados(unEntrenador);
+	list_add(colaBloqueados, unEntrenador);
 
 	log_info(myArchivoDeLog,
 			"Se agrega a la cola de bloqueados al entrenador: %c",
@@ -230,7 +241,7 @@ void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 }
 
 void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
-
+	log_debug(myArchivoDeLog,	"entroo...");
 	pthread_mutex_lock(&mutex_bloqueados);
 
 	bool mismoSocket(void * datos) {
@@ -241,7 +252,7 @@ void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
 
 	}
 
-	list_remove_by_condition(colaBloqueados, mismoSocket);
+	list_remove_by_condition(colaBloqueados, &mismoSocket);
 
 	log_info(myArchivoDeLog,
 			"Se quita de la cola de Bloqueados al entrenador: %c",
@@ -285,16 +296,23 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 	}
 
 	agregarAColaDeFinalizados(entrenadorAEliminar);
-
+	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
 	liberarRecursos(entrenadorAEliminar);
 
-	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
+
 
 	free(entrenadorAEliminar);
 }
 
 void liberarRecursos(t_entrenador *entrenador) {
 	//TODO: manejar el tema de los recursos del entrenador
+
+	//TODO: aparte de liberarlos en las estructuras administrativas, tambien actualizar los recursos en la gui!
+
+
+	//Creo que este metodo esta demas, ya me esoy encargando de esas cosas en borrarEntrenadorDelMapa!
+
+
 
 	//sem_post(&entrenador_bloqueado);
 }
@@ -386,7 +404,8 @@ void setearDistanciaPokenest(int nroDeSocket, t_mapa * self,char pokenest) {
 
 	if (aux <= 0) {
 		//problemas al calcular la distancia
-		printf("hubo algun error\n");
+		log_debug(myArchivoDeLog, "Hubo algun error al calcular la distancia de #Socket: %s", string_itoa((nroDeSocket)));
+		//printf("hubo algun error\n");
 	} else {
 		log_debug(myArchivoDeLog, "distancia a pokenest = %s", string_itoa((aux)));
 		entrenador->distanciaAProximaPokenest = aux;

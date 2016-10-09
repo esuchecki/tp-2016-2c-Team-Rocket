@@ -36,7 +36,7 @@ void dibujarMapa (t_mapa * mapa)
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) &finalizarGui, (void* ) &accionDelMapaAnteSIGUSR2 );
 		nivel_gui_dibujar(mapa->items, mapa->nombre);
 
-		usleep(10000);	//como para poner un tiempo..
+		usleep(mapa->metadata->retardo);	//como para poner un tiempo..
 /*
 		int key = getch();
 
@@ -590,4 +590,34 @@ void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador)
 {
 	BorrarItem(unMapa->items, simboloEntrenador);
 	//TODO: liberar memoria??
+
+/*
+	bool estaAtrapadoPorEl(void * datos) {
+				t_pokemonEnPokeNest * pokemon = datos;
+				return pokemon->capturadoPorEntrenador == simboloEntrenador;
+	}
+*/
+	int j=0;
+	int cant =0;
+	int i= 0;
+	for (i=0; i< unMapa->pokeNest->elements_count; i++)
+	{
+		t_pokeNest * pokeNest = list_get(unMapa->pokeNest, i);
+		for (j=0; j< pokeNest->pokemones->elements_count; j++)
+		{
+			t_pokemonEnPokeNest * pokemon = list_get(pokeNest->pokemones, j);
+
+			if ( pokemon->capturadoPorEntrenador == simboloEntrenador)
+			{
+				cant++;
+				pokemon->capturadoPorEntrenador = '\0';
+			}
+		}
+		ITEM_NIVEL* pokenestActual = encontrameEsteIdEnLaLista(unMapa,pokeNest->identificador);
+		pokenestActual->quantity = pokenestActual->quantity + cant;
+		cant =0;
+	}
+
+
+
 }

@@ -65,20 +65,15 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 				t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
 				entrenador->pokenest = *(char*)paquete->data;
-
 				common_send(i, nuevoPaquete);
-
 				consumirQuantum(i);
 
 				setearDistanciaPokenest(i, mapa,entrenador->pokenest);
 
+
 				free(nuevoPaquete);
-
-				usleep(5000);
-				//sleep(mapa->metadata->retardo);
-
+				usleep(mapa->metadata->retardo);
 				sem_post(&entrenador_listo);
-
 				break;//con esto salvamos que tire error cuando fue una ejecucion valida.
 			}
 		}
@@ -92,18 +87,11 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		;
 
 		int respuesta = -1;
-		//int coordenadasEnY = 6;		//por ahora este valor hardcode.
-		//int coordenadasEnY = -1;
-
 		memcpy(&respuesta, paquete->data, sizeof(enum actividad));
 
-		//memcpy(&coordenadasEnY, paquete->data + sizeof(int), sizeof(int));
 
-		//log_debug(myArchivoDeLog,	"atenderConexion / movimientoEntrenador / X;Y = %s;%s",	string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
-		//if ((coordenadasEnX != -1) && (coordenadasEnY != -1)) {
 		if ( respuesta != -1) {
 			t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
-
 
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
 			if ( moverEntrenador(data, entrenador->simbolo, respuesta) )
@@ -114,15 +102,10 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 				//TODO: le tengo que avisar al entrenador que hizo algo mal??
 			}
 
-			sleep(1);
 
 			consumirQuantum(i);
-			//free(nuevoPaquete);
 			setearDistanciaPokenest(i, mapa,entrenador->pokenest);
-
 			usleep(mapa->metadata->retardo);
-			//sleep(mapa->metadata->retardo);
-
 			sem_post(&entrenador_listo);
 
 			break;
@@ -134,7 +117,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		break;
 	case capturarPokemon:
 		;
-		//TODO: paquete->data tendra el identificador del pokemon a atrapar
+		//paquete->data tendra el identificador del pokemon a atrapar
 
 		t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
@@ -147,12 +130,8 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		agregarAColaDeBloqueados(entrenador);
 
 		usleep(mapa->metadata->retardo);
-		//sleep(mapa->metadata->retardo);
-
 		sem_post(&entrenador_bloqueado);
-
-		sem_post(&entrenador_listo);
-
+		//sem_post(&entrenador_listo);
 		break;
 	case mejorPokemon:
 		//TODO: recibe al mejor pokemon para... batalla pokemon?
@@ -197,7 +176,8 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 
 		log_error(myArchivoDeLog,"No se pudo conectar, fallo el handshake\n");
 		//TODO: este exit_failure esta raro aca!!
-		exit(EXIT_FAILURE);
+		//exit(EXIT_FAILURE);
+		finalizarGui(mapa);
 	}
 }
 

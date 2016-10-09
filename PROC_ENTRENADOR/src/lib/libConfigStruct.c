@@ -76,8 +76,7 @@ void borrarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 
 	//list_clean(nuevoEntrenador->metadata->hojaDeViaje);
 	if (nuevoEntrenador->metadata->hojaDeViaje != NULL)
-		list_clean_and_destroy_elements(nuevoEntrenador->metadata->hojaDeViaje,
-				free);
+		list_clean_and_destroy_elements(nuevoEntrenador->metadata->hojaDeViaje, &free);
 	//list_destroy(nuevoEntrenador->metadata->hojaDeViaje);
 
 	free(nuevoEntrenador->metadata);
