@@ -35,6 +35,7 @@
 #include "seniales.h"
 #include "estructurasMapa.h"
 #include "so/constantes.h"
+#include "so/libSockets.h"
 
 
 //------------------------------------------//
@@ -110,7 +111,7 @@ int cargarEntrenador (t_list* items, char simbolo);
  * @NAME: moverEntrenador
  * @DESC: mueve un Entrenador a una nueva posicion del mapa. Si se mando algun moco devuelve 1 (true).
  */
-int moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y);
+int moverEntrenador (t_mapa * mapa, char simbolo, int respuesta);
 
 /*
  * @NAME: metadata_inicializar

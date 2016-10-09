@@ -91,23 +91,22 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		//TODO: registrar movimiento del entrenador, descartar quantum
 		;
 
-		int coordenadasEnX = -1;
-		int coordenadasEnY = 6;		//por ahora este valor hardcode.
+		int respuesta = -1;
+		//int coordenadasEnY = 6;		//por ahora este valor hardcode.
 		//int coordenadasEnY = -1;
 
-		memcpy(&coordenadasEnX, paquete->data, sizeof(int));
+		memcpy(&respuesta, paquete->data, sizeof(enum actividad));
 
 		//memcpy(&coordenadasEnY, paquete->data + sizeof(int), sizeof(int));
 
-		log_debug(myArchivoDeLog,
-				"atenderConexion / movimientoEntrenador / X;Y = %s;%s",
-				string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
-		if ((coordenadasEnX != -1) && (coordenadasEnY != -1)) {
-
+		//log_debug(myArchivoDeLog,	"atenderConexion / movimientoEntrenador / X;Y = %s;%s",	string_itoa(coordenadasEnX), string_itoa(coordenadasEnY));
+		//if ((coordenadasEnX != -1) && (coordenadasEnY != -1)) {
+		if ( respuesta != -1) {
 			t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
+
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
-			if ( moverEntrenador(data->items, entrenador->simbolo, coordenadasEnX, coordenadasEnY) )
+			if ( moverEntrenador(data, entrenador->simbolo, respuesta) )
 			{
 				log_info(myArchivoDeLog, "Desconecte a %c xq se movio mal", entrenador->simbolo);
 				desconectarEntrenador(i,data, sockets_activos,socketMasGrande);
@@ -115,6 +114,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 				//TODO: le tengo que avisar al entrenador que hizo algo mal??
 			}
 
+			sleep(1);
 
 			consumirQuantum(i);
 			//free(nuevoPaquete);

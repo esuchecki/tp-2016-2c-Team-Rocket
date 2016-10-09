@@ -63,6 +63,13 @@ t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador,
 		char * nombreMapa);
 //------------------------------------------//
 
+
+
+
+
+
+
+
 void borrarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 	if (nuevoEntrenador == NULL)
 		return;
@@ -87,21 +94,14 @@ t_entrenadorFisico * inicializarEstructurasDelEntrenador(char *nombreEntrenador,
 	nuevoEntrenador->nombre = nombreEntrenador;
 	nuevoEntrenador->directorioPokeDex = directorioPokeDex;
 	nuevoEntrenador->metadata = NULL;
+	nuevoEntrenador->moverseEnMapa = NULL;
 
 	leerMetadataDelEntrenador(nuevoEntrenador);
 
 	return nuevoEntrenador;
 }
 
-t_estadoEntrenador * inicializarEstadoEntrenador() {
-	t_estadoEntrenador * estadoEntrenador = malloc(sizeof(t_estadoEntrenador));	//pedir mmem
-	estadoEntrenador->e_posX = __entrenadorPosInicialEnX;
-	estadoEntrenador->e_posY = __entrenadorPosInicialEnY;
-	estadoEntrenador->ultimoMov = 'Y'; //solo para que empieza hacia un costado...
-	estadoEntrenador->objetivoPkmb=0;
 
-	return estadoEntrenador;
-}
 
 void finalizarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 	log_info(myArchivoDeLog, "voy a finalizar al entrenador");
@@ -257,22 +257,23 @@ void hayAlgunObjetivoDuplicado(char ** objetivoDeEsteMapa,
 }
 
 void cualEsLaIpDeEsteMapa(t_entrenadorFisico * miEntrenador, char * nombreMapa,
-		char * returnedIp, char * returnedPort) {
+		char ** returnedIp, char ** returnedPort)
+{
 	log_info(myArchivoDeLog, "Voy a averiguar la IP y Puerto del mapa: %s",
 			nombreMapa);
 	t_config *metadataMapa;		//tiene info sobre el archivo config "metadata".
 	metadataMapa = config_create_for_metadataMapa(miEntrenador, nombreMapa);
 
-	returnedIp = NULL;
-	returnedPort = NULL;
+	//returnedIp = NULL;
+	//returnedPort = NULL;
 
-	returnedIp = _entrenador_configLeerString(metadataMapa, __nombreEnConfig_IP,
+	*returnedIp = _entrenador_configLeerString(metadataMapa, __nombreEnConfig_IP,
 			miEntrenador, (void *) finalizarEntrenador);
-	returnedPort = _entrenador_configLeerString(metadataMapa,
+	*returnedPort = _entrenador_configLeerString(metadataMapa,
 			__nombreEnConfig_Puerto, miEntrenador,
 			(void *) finalizarEntrenador);
 
-	log_info(myArchivoDeLog, "IP= %s   | Puerto= %s", returnedIp, returnedPort);
+	log_info(myArchivoDeLog, "IP= %s   | Puerto= %s", *returnedIp, *returnedPort);
 	metadata_finalizar(metadataMapa);
 }
 
@@ -291,28 +292,4 @@ t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador,
 	return metadataMapa;
 }
 
-/*
- char * iterarEnBusquedaDelMapa ()
- {
 
-
- //esta funcion me compara si el archivo actual es un archivo llamado __nombreMetadataPokeNest. Si es asi, levanto la config de este archivo.
- //esto es debido a que recorre recursivamente subdirectorios..
- void _funcionOrdenSuperiorQueQuieroEjecutar (const char * d_name, const char * nombreDirectorio)
- {
- //reviso que este directorio que contiene las pokenest, tenga un archivo de "metadata"
- //El archivo actual esta en "nombreDirectorio/d_name"
- if ( (strcmp (d_name, __ubicacionMetadataMapas )) == 0 )
- levantarConfigPokeNest( (char *)nombreDirectorio, nuevoMapa );
-
- }
-
-
- if ( ( encontrarEnUnDirectorio ( ubicacionDirDeBill(unEntrenador),  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
- {
- log_error(myArchivoDeLog, "problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'");
- (*fc_abortar)(unEntrenador);	//finalizaElEntrenador
- }
-
- }
- */

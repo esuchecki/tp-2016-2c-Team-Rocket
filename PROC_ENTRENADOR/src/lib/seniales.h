@@ -29,7 +29,7 @@
  *
  * NOTA: si llamas a este metodo, tu proxima linea deberia ser funcionesQueQuieroEjecutarSegunLaSenial!!!
  */
-void inicializarSenialesMapa (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
+void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
 
 /*
  * @NAME: funcionesQueQuieroEjecutarSegunLaSenial

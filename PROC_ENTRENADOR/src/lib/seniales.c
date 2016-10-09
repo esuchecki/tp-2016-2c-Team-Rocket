@@ -6,7 +6,7 @@
  */
 #include "seniales.h"
 
-void inicializarSenialesMapa (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
+void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
 {
 	_SIGINT_flag = 0;	//reseteo el flag.
 	_SIGTERM_flag = 0;	//reseteo el flag.

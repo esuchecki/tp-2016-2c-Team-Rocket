@@ -40,7 +40,7 @@ int main( int argc, char *argv[] )
 	nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
-	inicializarSenialesMapa (mapa, (void *) finalizarGui );
+	inicializarSenialesMapa (mapa, (void *) &finalizarGui );
 
 	pthread_t hiloPlanificador,hiloConexiones,hiloBloqueados,hiloDeadlock;
 	inicializar_estructuras_planificador();

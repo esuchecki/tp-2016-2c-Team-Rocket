@@ -8,6 +8,10 @@
 #include "libGrafica.h"
 
 
+void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y);
+
+
+
 void dibujarMapa (t_mapa * mapa)
 {
 
@@ -29,7 +33,7 @@ void dibujarMapa (t_mapa * mapa)
 	{
 		//TODO: esto no deberia ir aca...??
 		//Nota: es un ejemplo de uso!! darle bola
-		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) finalizarGui, (void* ) accionDelMapaAnteSIGUSR2 );
+		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) &finalizarGui, (void* ) &accionDelMapaAnteSIGUSR2 );
 		nivel_gui_dibujar(mapa->items, mapa->nombre);
 
 		usleep(10000);	//como para poner un tiempo..
@@ -172,20 +176,54 @@ int cargarEntrenador (t_list* items, char simbolo)
 }
 
 
-int moverEntrenador (t_list* items, char simbolo, int newPos_x, int newPos_y)
+int moverEntrenador (t_mapa * mapa, char simbolo, int respuesta)
 {
-	if (estaDentroDelMargenDelMapa(newPos_x,newPos_y) ==1 )
+	int newPos_x=0;
+	int newPos_y=0;
+	ITEM_NIVEL* myEntrenador = encontrameEsteIdEnLaLista(mapa, simbolo);
+	actualizarEstadoEntrenador(respuesta, &newPos_x, &newPos_y);
+
+	if ( (newPos_x !=0) || (newPos_y!= 0))
 	{
-		log_debug(myArchivoDeLog, "movi al entrenador");
-		MoverPersonaje(items, simbolo, newPos_x, newPos_y);
-		return 0;	//No se mando ninguno moco al moverse
+		newPos_x = newPos_x + myEntrenador->posx;
+		newPos_y = newPos_y + myEntrenador->posy;
+
+		//free (myEntrenador);
+
+		if (estaDentroDelMargenDelMapa(newPos_x,newPos_y) ==1 )
+		{
+
+			log_debug(myArchivoDeLog, "movi al entrenador");
+			log_debug(myArchivoDeLog, "simbolo: %c, %s, %s", simbolo, string_itoa(newPos_x), string_itoa(newPos_y));
+			MoverPersonaje(mapa->items, simbolo, newPos_x, newPos_y);
+			return 0;	//No se mando ninguno moco al moverse
+		}
 	}
-	else
-	{
-		log_error(myArchivoDeLog, "errorSintacticoSemantico el entrenador se movio fuera del mapa.");
-		return 1;	//Se mando algun moco
+
+	log_error(myArchivoDeLog, "errorSintacticoSemantico el entrenador se movio fuera del mapa. O era otra la respuesta.");
+	free (myEntrenador);
+	return 1;	//Se mando algun moco
+}
+
+
+void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y) {
+
+	switch (respuesta) {
+	case moverDerecha:
+		*newPos_x = *newPos_x + 1;
+		break;
+	case moverArriba:
+		*newPos_y = *newPos_y - 1;
+		break;
+	case moverIzquierda:
+		*newPos_x = *newPos_x - 1;
+		break;
+	case moverAbajo:
+		*newPos_y = *newPos_y + 1;
+		break;
 	}
 }
+
 
 
 

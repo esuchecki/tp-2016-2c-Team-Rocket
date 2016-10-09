@@ -40,7 +40,7 @@ void loguearEstructuraDelEntrenador(t_entrenadorFisico * nuevoEntrenador);
  * 		-> Los devuelve inicializados, con la metadata del mapa (nombreMapa).
  * 		-> Si hubo algun lio los devuelve en NULL.
  */
-void cualEsLaIpDeEsteMapa (t_entrenadorFisico * miEntrenador, char * nombreMapa, char * returnedIp, char * returnedPort);
+void cualEsLaIpDeEsteMapa (t_entrenadorFisico * miEntrenador, char * nombreMapa, char ** returnedIp, char ** returnedPort);
 //------------------------------------------//
 
 
