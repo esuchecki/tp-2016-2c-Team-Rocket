@@ -292,3 +292,22 @@ t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador,
 }
 
 
+void borrarDirectorioDeBill(t_entrenadorFisico * unEntrenador)
+{
+	log_info(myArchivoDeLog, "Voy a vaciar el dir de bill");
+	char * directorioDeBill;
+	directorioDeBill = malloc((sizeof(char)) * PATH_MAX + 1);
+
+	sprintf(directorioDeBill, "/%s/%s/%s/%s", unEntrenador->directorioPokeDex,__ubicacionEntrenadores, unEntrenador->nombre, __ubicacionDirDeBill);
+
+	if ( deleteDirectoryContent(directorioDeBill) )	//Lo borro. Si hubo algun error lo handleo
+	{
+		log_warning(myArchivoDeLog, "%s", directorioDeBill);
+		free(directorioDeBill);
+		log_warning(myArchivoDeLog,"Quise borrar el dir de bill y rm me dijo que finalizo incorrectamente.");
+		finalizarEntrenador(unEntrenador);	//lo esta borrando igual, asi que por ahora lo comento!
+		//TODO: revisar que aca aveces dice que no finalizo correctamente..
+		return;
+	}
+	free(directorioDeBill);
+}

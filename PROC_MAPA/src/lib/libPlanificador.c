@@ -183,19 +183,27 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 	if (pokemon != NULL) {
 
 		pokemon->capturadoPorEntrenador = entrenador->simbolo;
-
 		//restar un recurso a ese pokemon.
 		ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(mapa, entrenador->pokemonSolicitado);
 		resultado->quantity--;
-
 		entrenador->distanciaAProximaPokenest = -1;
 		entrenador->instruccionesEjecutadas = 0;
 
+
 		log_debug(myArchivoDeLog,"le asigne al entrenador %c, el pokemon: %c", entrenador->simbolo, pokeNest->identificador);
+		log_debug(myArchivoDeLog, "nombre del archivo: %s", pokemon->pokemonNNNdat);
+		//char * directorioPkmn;
+		//directorioPkmn = malloc ( (sizeof (char)) * PATH_MAX +1);
+		//sprintf(directorioPkmn, "/%s/%s/%s/%s/%s", mapa->directorioPokeDex, __ubicacionMapas, mapa->nombre , __ubicacionDirPokenest, pokemon->pokemonNNNdat);
+//TODO: me falto pasarle el nombre de la pokenest antes del pokemonNNN.dat
+
 		//TODO: pasarle path con la ubicacion del pokemon!
-		int null_data = 0;
-		t_data *capturaPkmn = pedirPaquete(capturastePokemon, sizeof(int), &null_data);
+		//int null_data = 0;
+		//t_data *capturaPkmn = pedirPaquete(capturastePokemon, (sizeof (char)) * PATH_MAX +1 , directorioPkmn);
+		t_data *capturaPkmn = pedirPaquete(capturastePokemon, (sizeof (char)) * PATH_MAX +1 , pokemon->pokemonNNNdat);
 		common_send(entrenador->nroDesocket, capturaPkmn);
+		log_debug(myArchivoDeLog,"%s", pokemon->pokemonNNNdat);
+		//free(directorioPkmn);
 		free(capturaPkmn);
 
 		quitarDeColaDeBloqueados(entrenador);

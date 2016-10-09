@@ -10,45 +10,31 @@
 
 void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y);
 
+/*
+ * @NAME: decimeComoSeLlamaEstaPokeNest
+ * @DESC: Recibe la ubicacion actual de una pokenest.
+ * 		Ej: /Mapas/prueba1/PokeNests/pikachu/metadata
+ *
+ * 		y regresa el nombre de la pokenest: pikachu.
+ *
+ * 	Nota: Hay que hacer free del char * que devuelve, (y llegado el caso de ubicacionActual tambien).
+ */
+char * decimeComoSeLlamaEstaPokeNest (char * ubicacionActual);
+
+//------------------------------------------//
+
+
+
 
 
 void dibujarMapa (t_mapa * mapa)
 {
-
-	//TODO: esto en cualquier momento se va...
-	//entrenador de prueba por el momento
-	//cargarEntrenador(mapa->items, '#');
-	//cargarEntrenador(mapa->items, '$');
-	//cargarEntrenador(mapa->items, '@');
-
-	//moverEntrenador(mapa->items, '#', 5,5);
-
-
-	//log_info(myArchivoDeLog, "voy a tratar de dibujar el mapa ");
-
-	//nivel_gui_dibujar(mapa->items, mapa->nombre);
-	//TODO: se deberia redibujar el nivel ante cada cambio...
-
 	while ( 1 )
 	{
-		//TODO: esto no deberia ir aca...??
-		//Nota: es un ejemplo de uso!! darle bola
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) &finalizarGui, (void* ) &accionDelMapaAnteSIGUSR2 );
 		nivel_gui_dibujar(mapa->items, mapa->nombre);
 
 		usleep(mapa->metadata->retardo);	//como para poner un tiempo..
-/*
-		int key = getch();
-
-		switch( key )
-		{
-			case 'Q':
-			case 'q':
-				finalizarGui(mapa);
-				break;
-
-		}
-*/
 	}
 
 
@@ -432,6 +418,23 @@ int dondeQuedaEstaPokeNest (t_mapa * unMapa, char * idPokeNest, int * pos_x, int
 
 int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa, char identificador)
 {
+	log_info(myArchivoDeLog, "Voy a contar la cantidad de pokemones en una pokenest");
+	//log_debug(myArchivoDeLog,"%s", nombreDirectorio);
+	char * nombrePokeNest = decimeComoSeLlamaEstaPokeNest(nombreDirectorio);
+
+	if (nombrePokeNest != NULL)
+	{
+		int aux = ejecutarLogicaContarPokemons (nombrePokeNest, string_substring(nombreDirectorio,0, (string_length(nombreDirectorio) - sizeof(__ubicacionMetadataMapas))+1 ), nuevoMapa, identificador);
+
+		free(nombrePokeNest);
+		return aux;
+	}
+
+	return 0;
+}
+
+char * decimeComoSeLlamaEstaPokeNest (char * ubicacionActual)
+{
 	/*
 	 * Como este metodo recibe un directorio del tipo /Mapas/prueba1/PokeNests/pikachu/metadata
 	 * Le borro el /metadata (y chequeo que dps de pikachu no quede ninguna otra '/'), luego
@@ -447,11 +450,8 @@ int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuev
 	 * 	En una segunda instancia, hago la logica para recorrer los pokemones de la pokenest.
 	 */
 
-	log_info(myArchivoDeLog, "Voy a contar la cantidad de pokemones en una pokenest");
-	//log_debug(myArchivoDeLog,"%s", nombreDirectorio);
 	char * nombrePokeNest = malloc ( (sizeof (char)) * PATH_MAX +1);
-	nombrePokeNest = string_duplicate(nombreDirectorio);
-
+	nombrePokeNest = string_duplicate(ubicacionActual);
 	if (nombrePokeNest != NULL)
 	{
 		//este es el path de *1
@@ -471,16 +471,12 @@ int inicializarCantDePokemonesEnPokeNest (char * nombreDirectorio, t_mapa * nuev
 		nombrePokeNest = string_reverse(nombrePokeNest);
 
 		//log_debug(myArchivoDeLog,"%s", nombrePokeNest);
-
 		//le paso el path de *1
-		int aux = ejecutarLogicaContarPokemons (nombrePokeNest, string_substring(nombreDirectorio,0, (string_length(nombreDirectorio) - sizeof(__ubicacionMetadataMapas))+1 ), nuevoMapa, identificador);
-
-		free(nombrePokeNest);
-		return aux;
+		return nombrePokeNest;
 	}
-
-	return 0;
+	return NULL;	//algun quilombo.
 }
+
 
 int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio, t_mapa * nuevoMapa, char identificador)
 {
@@ -504,6 +500,7 @@ int ejecutarLogicaContarPokemons (char * nombrePokeNest, char * nombreDirectorio
 		{
 			log_debug(myArchivoDeLog,"%s", d_name);
 			t_pokemonEnPokeNest * pokemon = malloc (sizeof(t_pokemonEnPokeNest));
+			pokemon->pokemonNNNdat = string_from_format("%s/%s", nombreDirectorio, d_name) ;
 			pokemon->capturadoPorEntrenador = '\0';				//lo inicializo como vacio.
 			list_add(pokemonesEnEstaPokeNest->pokemones, pokemon);
 		}
@@ -591,12 +588,6 @@ void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador)
 	BorrarItem(unMapa->items, simboloEntrenador);
 	//TODO: liberar memoria??
 
-/*
-	bool estaAtrapadoPorEl(void * datos) {
-				t_pokemonEnPokeNest * pokemon = datos;
-				return pokemon->capturadoPorEntrenador == simboloEntrenador;
-	}
-*/
 	int j=0;
 	int cant =0;
 	int i= 0;

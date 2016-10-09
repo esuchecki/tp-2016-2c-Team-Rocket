@@ -41,6 +41,12 @@ void loguearEstructuraDelEntrenador(t_entrenadorFisico * nuevoEntrenador);
  * 		-> Si hubo algun lio los devuelve en NULL.
  */
 void cualEsLaIpDeEsteMapa (t_entrenadorFisico * miEntrenador, char * nombreMapa, char ** returnedIp, char ** returnedPort);
+
+/*
+ * @NAME: borrarDirectorioDeBill
+ * @DESC: Borra el contenido del directorio de bill..!
+ */
+void borrarDirectorioDeBill(t_entrenadorFisico * unEntrenador);
 //------------------------------------------//
 
 

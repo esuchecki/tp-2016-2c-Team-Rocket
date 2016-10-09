@@ -17,7 +17,6 @@
 #include <stdio.h>
 
 
-
 //agreagado de librerias utn.so
 #include <commons/config.h>
 #include <commons/string.h>
@@ -27,6 +26,8 @@
 #include <sys/types.h>
 #include <dirent.h>		/* "readdir" etc. are defined here. */
 #include <limits.h>		/* limits.h defines "PATH_MAX". */
+#include <unistd.h> 	//para el fork
+#include <sys/wait.h>	//para el waitpid
 
 
 
@@ -110,6 +111,40 @@ int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const 
 
 
 
+/*
+ * @NAME: copyFiles
+ * @DESC: Recibe un archivo origen y lo copia al destino.
+ *		//Nota, cp tiene pasado el parametro -f, para forzar el copiado
+ *		//Nota2, si dest es un directorio, mantiene el nombre.
+ * @RET:  Retorna 1 si hubo algun error. / 0 si se ejecuto ok
+ *
+ *
+ * Nota: Ejemplo de uso, copiar un pokemon del mapa al dir de bill.
+ *
+ *
+ * Se baso en estas webs:
+ * http://stackoverflow.com/questions/2180079/how-can-i-copy-a-file-on-unix-using-c
+ *
+ *
+ */
+int copyFiles(char *source, char *dest);
+
+
+/*
+ * @NAME: deleteDirectoryContent
+ * @DESC: Recibe un archivo origen y lo elimina.
+ *		Nota, cp tiene pasado el parametro -f, para forzar el copiado
+ *		Nota2, Si al final de source tenes un / *, borras solo el contenido del directorio.
+ * @RET:  Retorna 1 si hubo algun error. / 0 si se ejecuto ok
+ *
+ *
+ * Nota: Ejemplo de uso, borrar el contenido del dir de bill.
+ *
+ *
+ * Se baso en copyFiles. *
+ *
+ */
+int deleteDirectoryContent(char *source);
 //------------------------------------------//
 
 

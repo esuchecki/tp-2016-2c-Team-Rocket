@@ -31,20 +31,15 @@ typedef struct
 
 typedef struct
 {
-	//uint16_t nivel;
+	char * pokemonNNNdat;	//nombre del archivo.
 	char capturadoPorEntrenador;	//simbolo del entrenador para identificar quien lo tiene ('\0' para ninguno)
-	//TODO: revisar si agregar un campo NNN, para saber que archivo es este pokemon.
-	//entiendo que la correspondencia entre el NNN y el int (index) es NNN=index-1.
 } t_pokemonEnPokeNest;
 
 
 typedef struct
 {
 	char identificador;
-	//char tipo[20];
-	//uint16_t pos_x;
-	//uint16_t pos_y;
-	t_list * pokemones;	//a futuro esto deberia ser un array o una lista enrealidad....
+	t_list * pokemones;	//lista de t_pokemonEnPokeNest;
 } t_pokeNest;
 
 

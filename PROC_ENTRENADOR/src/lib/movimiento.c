@@ -18,7 +18,8 @@ void pedirPorSocketLaPosicionDeLaPokeNestProxima (t_entrenadorFisico * unEntrena
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketConexion);
 void soyMaestroPokemon(t_entrenadorFisico * unEntrenador);
 void enviarMensajeCapturarPkmn(t_entrenadorFisico * unEntrenador, int socketConection);
-
+void logicaDeCapturarUnPkmn (t_entrenadorFisico * unEntrenador, t_data * info);
+void logicaDeGuardarLaPosDeUnaPokenest (t_entrenadorFisico * unEntrenador, t_data * info);
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador);
@@ -309,25 +310,13 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketC
 				break;
 
 			case ubicacionPokenest:
-				//en info->data estara la posicion de la pokenest
-				;
-				int coordenadasEnX = 0;
-				int coordenadasEnY = 0;
-				memcpy(&coordenadasEnX, info->data, sizeof(int));
-				memcpy(&coordenadasEnY, info->data + sizeof(int), sizeof(int));
-
-				unEntrenador->moverseEnMapa->p_posX=coordenadasEnX;
-				unEntrenador->moverseEnMapa->p_posY=coordenadasEnY;
-				printf("Las coordenadas de la pokenest son: %d , %d\n",
-						coordenadasEnX, coordenadasEnY);
-
+				logicaDeGuardarLaPosDeUnaPokenest(unEntrenador, info);
 
 				break;
 			case capturastePokemon:
 				puts("Capture un pokemon");
-				//TODO: recibir path.
-				//TODO: hacer lo que tengo que hacer
-				inicializarEstadoEntrenador(unEntrenador);	//Con esta linea avanza al proximo objetivo pokemon. Chequear que pasa si termino los objetivos del mapa.
+				logicaDeCapturarUnPkmn(unEntrenador, info);
+
 				break;
 			case dameMejorPokemon:
 				//TODO: enviar pokemon mas fuerte. realizar esta funcion
@@ -352,7 +341,60 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketC
 		//Si llego al ultimo objetivo del mapa, sale!
 		//TODO: ver que pasa con la medalla, de momento no informa que gano el mapa!!
 		if ( (mapaActual->objetivosDelMapa[unEntrenador->moverseEnMapa->indexObjetivoPkmn]) == NULL)
+		{
+			//reseteo los objetivos del mapa, mantengo el flag de indexMapaActual
+			int aux = unEntrenador->moverseEnMapa->indexMapaActual;
+			free(unEntrenador->moverseEnMapa);
+			unEntrenador->moverseEnMapa =NULL;
+			inicializarEstadoEntrenador(unEntrenador);
+			unEntrenador->moverseEnMapa->indexMapaActual = aux;
+
+			return;
 			break;
+		}
 
 	}
+}
+
+void logicaDeCapturarUnPkmn (t_entrenadorFisico * unEntrenador, t_data * info)
+{
+	log_info(myArchivoDeLog, "Me informaron que capture un pokemon. Lo voy a copiar a mi Dir de Bill");
+	char * ubicacionPokemon = malloc ((sizeof (char)) * PATH_MAX +1);
+	memcpy(ubicacionPokemon, info->data, (sizeof (char)) * PATH_MAX +1);
+
+
+	char * directorioDeBill;
+	directorioDeBill = malloc((sizeof(char)) * PATH_MAX + 1);
+
+	sprintf(directorioDeBill, "/%s/%s/%s/%s/", unEntrenador->directorioPokeDex,__ubicacionEntrenadores, unEntrenador->nombre, __ubicacionDirDeBill);
+
+	if ( copyFiles(ubicacionPokemon, directorioDeBill) )	//Lo copio. Si hubo algun error lo handleo
+	{
+		log_debug(myArchivoDeLog, "%s", ubicacionPokemon);
+		log_debug(myArchivoDeLog, "%s", directorioDeBill);
+		free(directorioDeBill);
+		free(ubicacionPokemon);
+		log_error(myArchivoDeLog,"Quise copiarme un pokemon y lo hice mal.");
+		finalizarEntrenador(unEntrenador);
+	}
+	free(ubicacionPokemon);
+	free(directorioDeBill);
+	inicializarEstadoEntrenador(unEntrenador);	//Con esta linea avanza al proximo objetivo pokemon. Chequear que pasa si termino los objetivos del mapa.
+
+}
+
+void logicaDeGuardarLaPosDeUnaPokenest (t_entrenadorFisico * unEntrenador, t_data * info)
+{
+	//en info->data estara la posicion de la pokenest
+	;
+	int coordenadasEnX = 0;
+	int coordenadasEnY = 0;
+	memcpy(&coordenadasEnX, info->data, sizeof(int));
+	memcpy(&coordenadasEnY, info->data + sizeof(int), sizeof(int));
+
+	unEntrenador->moverseEnMapa->p_posX=coordenadasEnX;
+	unEntrenador->moverseEnMapa->p_posY=coordenadasEnY;
+	printf("Las coordenadas de la pokenest son: %d , %d\n",
+			coordenadasEnX, coordenadasEnY);
+
 }

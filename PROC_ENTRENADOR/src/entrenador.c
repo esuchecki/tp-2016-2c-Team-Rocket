@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
 
 	t_entrenadorFisico * miEntrenador;
 	miEntrenador = inicializarEstructurasDelEntrenador(argv[1], argv[2]);
+	borrarDirectorioDeBill(miEntrenador);
 	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
 	inicializarSenialesEntrenador(miEntrenador, (void *) &finalizarEntrenador);
 

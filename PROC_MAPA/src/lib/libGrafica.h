@@ -222,6 +222,7 @@ ITEM_NIVEL* encontrameEsteIdEnLaLista (t_mapa * self, char id);
  * @DESC: fc utilizada por el planificador para borrar un entrenador del mapa.
  */
 void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador);
+
 //------------------------------------------//
 
 
