@@ -4,24 +4,32 @@
  *  Created on: 12/9/2016
  *      Author: utnso
  */
-#include "osada.h"
+#include "osada-utils/osada.h"
 #include "OSADA_Constants.h"
 #include <stdio.h>
 #include <sys/mman.h>
 #include <fuse.h>
 #include <commons/bitarray.h>
 
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
 int TAMANIO_BYTES;
 struct stat osadaStat;
-osada_block* primer_bloque;
+osada_block* bloques_archivo;
 osada_header* header;
 
-void establecerTamanio(int tamanio) { //Bytes
-	TAMANIO_BYTES = tamanio;
-}
+//void establecerTamanio(int tamanio) { //Bytes
+//	TAMANIO_BYTES = tamanio;
+//}
 
 int totalBloques() {
-	return TAMANIO_BYTES / __tamanioBloque;
+	return header->fs_blocks;
 }
 
 int calcularBloques(int estructura) {
@@ -71,32 +79,50 @@ void abrirArchivo(){
 	int fd_osada;
 	fd_osada= open(__pathArchivo,O_RDWR);
 	fstat(fd_osada,&osadaStat);
-	primer_bloque= mmap(0, osadaStat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_osada, 0);
+	bloques_archivo= mmap(0, osadaStat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_osada, 0);
 }
 
 osada_header* obtenerHeader(){
-	header = (osada_header*)primer_bloque;
+	header = (osada_header*)bloques_archivo;
 	return header;
 }
 
 t_bitarray* obtenerBitmap(){
-	t_bitarray* bitmap = (t_bitarray*)primer_bloque[1];
+	osada_header* header = obtenerHeader();
+	t_bitarray* bitmap = bitarray_create(bloques_archivo[1],header->bitmap_blocks);
 	return bitmap;
 }
 
 osada_file* obtenerTablaArchivos(){
-	osada_file* tablaArchivos = (osada_file*)primer_bloque[1 + header->bitmap_blocks];
+	obtenerHeader();
+	osada_file* tablaArchivos = (osada_file*)bloques_archivo[1 + header->bitmap_blocks];
 	return tablaArchivos;
 }
 
-osada_block* obtenerTablaAsignaciones(){
-	osada_block* tablaAsignaciones = primer_bloque[1 + header->bitmap_blocks + header->fs_blocks];
+int* obtenerTablaAsignaciones(){
+	int* tablaAsignaciones = bloques_archivo[1 + header->bitmap_blocks + 1024];
 	return tablaAsignaciones;
 }
 
 osada_block* obtenerBloqueDatos(){
-	osada_block* bloqueDatos = primer_bloque[1 + header->bitmap_blocks + header->fs_blocks + header->allocations_table_offset];
+	osada_block* bloqueDatos = bloques_archivo[1 + header->bitmap_blocks + header->fs_blocks + header->allocations_table_offset];
 	return bloqueDatos;
+}
+
+void imprimirEstructuraArchivos(){
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	int j = 1;
+	int i,k;
+	char* guion = "-";
+	for ( i = 0 ; j>0 ; i++ ) {
+	   j = tablaArchivos[i].state;
+	   k = tablaArchivos[i].parent_directory;
+	   while(k<2048){
+		   printf("%s", guion);
+		   k = tablaArchivos[k].parent_directory;
+	   }
+	   printf("%s\n", tablaArchivos[i].fname);
+	}
 }
 
 

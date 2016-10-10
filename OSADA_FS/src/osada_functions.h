@@ -4,7 +4,7 @@
  *  Created on: 12/9/2016
  *      Author: utnso
  */
-#include "osada.h"
+#include "osada-utils/osada.h"
 #include <commons/bitarray.h>
 
 #ifndef OSADA_FUNCTIONS_H_
@@ -30,8 +30,10 @@ t_bitarray* obtenerBitmap();
 
 osada_file* obtenerTablaArchivos();
 
-osada_block* obtenerTablaAsignaciones();
+int* obtenerTablaAsignaciones();
 
 osada_block* obtenerBloqueDatos();
+
+void imprimirEstructuraArchivos();
 
 #endif /* OSADA_FUNCTIONS_H_ */
