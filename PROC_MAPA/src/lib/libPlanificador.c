@@ -178,7 +178,6 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 	}
 
 	t_pokeNest * pokeNest = list_find(mapa->pokeNest, igualIdentificador);
-
 	t_pokemonEnPokeNest * pokemon = list_find(pokeNest->pokemones, noEstaAtrapado);
 	if (pokemon != NULL) {
 
@@ -282,14 +281,16 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 
 	t_entrenador * entrenadorAEliminar = list_remove_by_condition(colaListos,
 			seDesconecto);
+
 	if (entrenadorAEliminar == NULL) {
 		entrenadorAEliminar = list_remove_by_condition(colaBloqueados,
 				seDesconecto);
 	}
 
-	close(nroDesocket);
 
 	FD_CLR(nroDesocket, &sockets_activos);
+
+	close(nroDesocket);
 
 	if (nroDesocket == socketMasGrande) {
 		socketMasGrande = 0;
@@ -304,10 +305,10 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 	}
 
 	agregarAColaDeFinalizados(entrenadorAEliminar);
+
 	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
+
 	liberarRecursos(entrenadorAEliminar);
-
-
 
 	free(entrenadorAEliminar);
 }

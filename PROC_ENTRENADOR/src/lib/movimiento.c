@@ -233,7 +233,6 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador, char * ma
 		jugarEnElMapa (nuevoEntrenador, info, socketConexion);
 
 	}
-
 	close(socketConexion);
 }
 

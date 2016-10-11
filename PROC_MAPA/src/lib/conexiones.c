@@ -23,7 +23,7 @@
 void detectarDesconexion(t_data * paquete, int socket_recepcion,
 		fd_set sockets_activos,t_mapa * mapa) {
 
-	if (paquete->header == 0) {
+	if (paquete->header <= 0) {
 		//desconexion
 		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 				socket_recepcion);
@@ -72,7 +72,8 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 
 				free(nuevoPaquete);
-				usleep(mapa->metadata->retardo);
+				//usleep(mapa->metadata->retardo);
+				sleep(3);
 				sem_post(&entrenador_listo);
 				break;//con esto salvamos que tire error cuando fue una ejecucion valida.
 			}
@@ -105,7 +106,8 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 			consumirQuantum(i);
 			setearDistanciaPokenest(i, mapa,entrenador->pokenest);
-			usleep(mapa->metadata->retardo);
+			//usleep(mapa->metadata->retardo);
+			sleep(3);
 			sem_post(&entrenador_listo);
 
 			break;
@@ -129,7 +131,9 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 		agregarAColaDeBloqueados(entrenador);
 
-		usleep(mapa->metadata->retardo);
+		//usleep(mapa->metadata->retardo);
+		sleep(3);
+
 		sem_post(&entrenador_bloqueado);
 		//sem_post(&entrenador_listo);
 		break;
@@ -199,13 +203,13 @@ int atenderConexiones(void * data) {
 	FD_SET(socketEscucha, &sockets_activos);
 
 	while (1) {
-		labelSelect: sockets_para_revisar = sockets_activos;
+		sockets_para_revisar = sockets_activos;
 
 		int retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
 		NULL, NULL, NULL);
 
 		if (retornoSelect == -1) {
-			goto labelSelect;
+
 		}
 		int i;
 
@@ -222,7 +226,7 @@ int atenderConexiones(void * data) {
 							(struct sockaddr *) &remoteaddr, &addrlen);
 					if (socket_nueva_conexion == -1) {
 						//se desconecto o no conecto alguno
-						printf("error al asignar socket a la nueva conexion");
+						puts("error al asignar socket a la nueva conexion");
 
 					} else {
 						//Ponemos al socket nuevo en el set de sockets activos
