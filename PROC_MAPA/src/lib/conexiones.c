@@ -10,7 +10,7 @@
 #include "libPlanificador.h"
 
 #include <so/libSockets.h>
-
+#include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -21,26 +21,30 @@
 #include <stdlib.h>
 
 void detectarDesconexion(t_data * paquete, int socket_recepcion,
-		fd_set sockets_activos,t_mapa * mapa) {
+		fd_set sockets_activos, t_mapa * mapa) {
 
-	if (paquete->header <= 0) {
+	if (paquete->header == 0) {
 		//desconexion
+		puts("se desconecto");
+		desconectarEntrenador(socket_recepcion, mapa,sockets_activos,
+				socketMasGrande);
+
 		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 				socket_recepcion);
 
-		desconectarEntrenador(socket_recepcion,mapa,sockets_activos,socketMasGrande);
-
-
+	}else if (paquete->header < 0){
+		puts("error recv");
 	}
+
 }
 
-void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
-	t_mapa * mapa = data;
+
+int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 
 	t_data * paquete;
 	paquete = leer_paquete(i);
 
-	detectarDesconexion(paquete, i, sockets_activos,mapa);
+//	detectarDesconexion(paquete, i, sockets_activos, mapa);
 
 	switch (paquete->header) {
 	case peticionPokenest:
@@ -48,7 +52,7 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 		int coordenadaEnX = -1;		//inicializo en fantasma
 		int coordenadaEnY = -1;		//inicializo en fantasma
-		if (dondeQuedaEstaPokeNest(data, paquete->data, &coordenadaEnX,
+		if (dondeQuedaEstaPokeNest(mapa, paquete->data, &coordenadaEnX,
 				&coordenadaEnY))// Aca esta la magia, si no devolvio error entonces lo ejecuto.
 				{
 			log_debug(myArchivoDeLog,
@@ -64,17 +68,19 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 
 				t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
-				entrenador->pokenest = *(char*)paquete->data;
+				entrenador->pokenest = *(char*) paquete->data;
+
+				//usleep(mapa->metadata->retardo);
+				sleep(2);
+
 				common_send(i, nuevoPaquete);
-				consumirQuantum(i);
 
-				setearDistanciaPokenest(i, mapa,entrenador->pokenest);
+				consumirQuantum(i, mapa->metadata->quantum);
 
+				setearDistanciaPokenest(i, mapa, entrenador->pokenest);
 
 				free(nuevoPaquete);
-				//usleep(mapa->metadata->retardo);
-				sleep(3);
-				sem_post(&entrenador_listo);
+
 				break;//con esto salvamos que tire error cuando fue una ejecucion valida.
 			}
 		}
@@ -90,25 +96,25 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		int respuesta = -1;
 		memcpy(&respuesta, paquete->data, sizeof(enum actividad));
 
-
-		if ( respuesta != -1) {
+		if (respuesta != -1) {
 			t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
-			if ( moverEntrenador(data, entrenador->simbolo, respuesta) )
-			{
-				log_info(myArchivoDeLog, "Desconecte a %c xq se movio mal", entrenador->simbolo);
-				desconectarEntrenador(i,data, sockets_activos,socketMasGrande);
+			if (moverEntrenador(mapa, entrenador->simbolo, respuesta)) {
+				log_info(myArchivoDeLog, "Desconecte a %c xq se movio mal",
+						entrenador->simbolo);
+				//desconectarEntrenador(i, mapa, sockets_activos,
+				//		socketMasGrande);
 				break;
 				//TODO: le tengo que avisar al entrenador que hizo algo mal??
 			}
 
-
-			consumirQuantum(i);
-			setearDistanciaPokenest(i, mapa,entrenador->pokenest);
 			//usleep(mapa->metadata->retardo);
-			sleep(3);
-			sem_post(&entrenador_listo);
+			sleep(2);
+
+			consumirQuantum(i, mapa->metadata->quantum);
+
+			setearDistanciaPokenest(i, mapa, entrenador->pokenest);
 
 			break;
 		}
@@ -132,17 +138,26 @@ void atenderConexion(int i, fd_set sockets_activos, t_mapa * data) {
 		agregarAColaDeBloqueados(entrenador);
 
 		//usleep(mapa->metadata->retardo);
-		sleep(3);
+		sleep(2);
+
+		sem_post(&mapa_libre);
 
 		sem_post(&entrenador_bloqueado);
-		//sem_post(&entrenador_listo);
+
 		break;
 	case mejorPokemon:
 		//TODO: recibe al mejor pokemon para... batalla pokemon?
 		break;
 	case 0:
+		desconectarEntrenador(i, mapa,sockets_activos,
+				socketMasGrande);
+
+		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
+				i);
+		return 1;
 		break;
 	}
+	return  0;
 }
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa) {
@@ -156,14 +171,15 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 		agregarAColaDeListos(unEntrenador);
 
 		//TODO: tenemos que resolver como hacemos las delegaciones, pero asi cargamos el entrenador..
-		if (unEntrenador->simbolo != '\0')
-		{
+		if (unEntrenador->simbolo != '\0') {
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
-			if ( cargarEntrenador(mapa->items, unEntrenador->simbolo) )
-			{
-				log_info(myArchivoDeLog, "Desconecte a %c xq no lo pude cargar", unEntrenador->simbolo);
-				log_error(myArchivoDeLog,"No se pudo conectar, fallo el handshake\n");
-				desconectarEntrenador(socket_nueva_conexion,mapa, sockets_activos,socketMasGrande);
+			if (cargarEntrenador(mapa->items, unEntrenador->simbolo)) {
+				log_info(myArchivoDeLog, "Desconecte a %c xq no lo pude cargar",
+						unEntrenador->simbolo);
+				log_error(myArchivoDeLog,
+						"No se pudo conectar, fallo el handshake\n");
+				desconectarEntrenador(socket_nueva_conexion, mapa,
+						sockets_activos, socketMasGrande);
 				return;
 				//TODO: le tengo que avisar al entrenador que hizo algo mal??
 			}
@@ -178,7 +194,7 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 
 	} else {
 
-		log_error(myArchivoDeLog,"No se pudo conectar, fallo el handshake\n");
+		log_error(myArchivoDeLog, "No se pudo conectar, fallo el handshake\n");
 		//TODO: este exit_failure esta raro aca!!
 		//exit(EXIT_FAILURE);
 		finalizarGui(mapa);
@@ -194,7 +210,8 @@ int atenderConexiones(void * data) {
 
 	socketEscucha = setup_listen("localhost", mapa->metadata->puerto);
 
-	log_debug(myArchivoDeLog,"Se crea el socket escucha con numero: %d\n", socketEscucha);
+	log_debug(myArchivoDeLog, "Se crea el socket escucha con numero: %d\n",
+			socketEscucha);
 
 	listen(socketEscucha, 1024);
 
@@ -204,8 +221,9 @@ int atenderConexiones(void * data) {
 
 	while (1) {
 		sockets_para_revisar = sockets_activos;
+		int retornoSelect;
 
-		int retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
+		select: retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
 		NULL, NULL, NULL);
 
 		if (retornoSelect == -1) {
@@ -239,8 +257,9 @@ int atenderConexiones(void * data) {
 					}
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
-					atenderConexion(i, sockets_activos, mapa);
-
+					int resultado =
+					atenderConexion(i, mapa,sockets_activos);
+					if(resultado == 1){goto select;}
 				}
 			}
 		}

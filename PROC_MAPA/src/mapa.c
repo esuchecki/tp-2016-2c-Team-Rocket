@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
 	pthread_create(&hiloPlanificador, NULL, ejecutarPlanificador, (void *)mapa);
 	pthread_create(&hiloBloqueados,NULL,manejarEntrenadoresBloqueados,(void *)mapa);
 	pthread_create(&hiloConexiones,NULL, (void *)atenderConexiones, (void *)mapa);
-	//pthread_create(&hiloDeadlock,NULL,deteccionDeadlock,(void *)mapa);
+//	pthread_create(&hiloDeadlock,NULL,deteccionDeadlock,(void *)mapa);
 
 	#warning ("cuando hay un error abortivo hay que cerrar correctamente el gui")
 

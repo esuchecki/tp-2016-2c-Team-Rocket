@@ -8,7 +8,7 @@
 #include "libPlanificador.h"
 #include "estructurasMapa.h"
 #include "libGrafica.h"
-
+#include "conexiones.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -23,6 +23,8 @@
 void inicializar_estructuras_planificador() {
 	sem_init(&entrenador_listo, 1, 0);
 	sem_init(&entrenador_bloqueado, 1, 0);
+	sem_init(&mapa_libre,1,0);
+	sem_post(&mapa_libre);
 	pthread_mutex_init(&mutex_listos, NULL);
 	pthread_mutex_init(&mutex_algoritmo, NULL);
 	pthread_mutex_init(&mutex_bloqueados, NULL);
@@ -48,6 +50,9 @@ void * ejecutarPlanificador(void * datos) {
 	t_mapa *mapa = datos;
 
 	while (1) {
+
+		sem_wait(&mapa_libre);
+
 		sem_wait(&entrenador_listo);
 
 		pthread_mutex_lock(&mutex_algoritmo);
@@ -65,6 +70,8 @@ void * ejecutarPlanificador(void * datos) {
 
 		free(turno);
 
+		//reestructuracion de sockets
+		//atenderConexion(proximoEntrenador->nroDesocket,mapa);
 	}
 
 	return NULL;
@@ -74,9 +81,10 @@ t_entrenador * ejecutar_algoritmo(char * algoritmo, int quantum) {
 	if (strcmp(algoritmo, "RR") == 0) {
 
 		t_entrenador * elProximo = list_get(colaListos, 0);
-
-		if (elProximo->instruccionesEjecutadas < quantum) {
-
+		log_debug(myArchivoDeLog,"Algoritmo elige a: %c",elProximo->simbolo);
+		return elProximo;
+		/*if (elProximo->instruccionesEjecutadas < quantum) {
+			log_debug(myArchivoDeLog,"El Algoritmo - entrenador : %c",elProximo->simbolo);
 			return elProximo;
 
 		} else {
@@ -86,10 +94,13 @@ t_entrenador * ejecutar_algoritmo(char * algoritmo, int quantum) {
 
 			list_add(colaListos, elProximo);
 
+			//sem_post(&mapa_libre);
 			elProximo = list_get(colaListos, 0);
 
+			log_debug(myArchivoDeLog,"El Algoritmo - entrenador : %c",elProximo->simbolo);
+
 			return elProximo;
-		}
+		}*/
 
 	} else {
 		//algoritmo entrenador mas cercano a pokedex
@@ -155,11 +166,7 @@ void * manejarEntrenadoresBloqueados(void * datos) {
 	while (1) {
 		sem_wait(&entrenador_bloqueado);
 
-		//pthread_mutex_lock(&mutex_bloqueados);
-
 		desbloquearEntrenador(mapa);
-
-		//pthread_mutex_unlock(&mutex_bloqueados);
 
 	}
 
@@ -206,7 +213,9 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 		free(capturaPkmn);
 
 		quitarDeColaDeBloqueados(entrenador);
+
 		agregarAColaDeListos(entrenador);
+
 		sem_post(&entrenador_listo);
 
 	}
@@ -219,9 +228,10 @@ void desbloquearEntrenador(t_mapa *mapa) {
 	int i;
 	for (i = 0; i < list_size(colaBloqueados); i++) {
 
-
 		pthread_mutex_lock(&mutex_bloqueados);
+
 		t_entrenador * entrenador = list_get(colaBloqueados, i);
+
 		pthread_mutex_unlock(&mutex_bloqueados);
 
 		asignarPokemonAEntrenador(mapa, entrenador);
@@ -298,6 +308,7 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 		for (fd2 = nroDesocket - 1; fd2 >= 0; fd2--) {
 			if (FD_ISSET(fd2, &sockets_activos)) {
 				socketMasGrande = fd2;
+				log_debug(myArchivoDeLog,"el socket mas grande cambia a: %d",socketMasGrande);
 				break;
 
 			}
@@ -308,7 +319,11 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 
 	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
 
-	liberarRecursos(entrenadorAEliminar);
+	//liberarRecursos(entrenadorAEliminar);
+
+	sem_post(&entrenador_bloqueado);
+
+	sem_post(&mapa_libre);
 
 	free(entrenadorAEliminar);
 }
@@ -346,7 +361,7 @@ int obtenerCoordenadasPokenest(char identificadorPokenest) {
 	return coordenadas;
 }
 
-void consumirQuantum(int i) {
+void consumirQuantum(int i,int quantum) {
 
 	t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
@@ -354,6 +369,25 @@ void consumirQuantum(int i) {
 
 	log_debug(myArchivoDeLog, "cantidad de instrucciones ejecutadas: %d",
 			entrenador->instruccionesEjecutadas);
+
+	if(quantum <= entrenador->instruccionesEjecutadas){
+		log_debug(myArchivoDeLog,"El entrenador %c es encolado nuevamente por fin de quantum",entrenador->simbolo);
+		quitarDeColaDeListos(entrenador);
+		entrenador->instruccionesEjecutadas = 0;
+		agregarAColaDeListos(entrenador);
+		sem_post(&mapa_libre);
+		sem_post(&entrenador_listo);
+	}else{
+		int null_data = 0;
+
+		t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
+
+		common_send(entrenador->nroDesocket, turno);
+
+		free(turno);
+		//sem_post(&mapa_libre);
+		//sem_post(&entrenador_listo);
+	}
 
 }
 

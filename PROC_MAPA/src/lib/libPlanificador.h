@@ -11,13 +11,14 @@
 #include <commons/collections/list.h>
 #include <semaphore.h>
 #include <so/libSockets.h>
+#include <pkmn/factory.h>
 #include "estructurasMapa.h"
 
 
 t_list *colaListos;
 t_list *colaBloqueados;
 t_list *colaFinalizados;
-sem_t entrenador_listo,entrenador_bloqueado;
+sem_t entrenador_listo,entrenador_bloqueado,mapa_libre;
 pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
 
 typedef struct{
@@ -27,6 +28,7 @@ typedef struct{
 	int distanciaAProximaPokenest;
 	char pokemonSolicitado;
 	char pokenest;
+	t_pokemon * mejorPokemon;
 	//TODO: ver que otros datos poner aca
 }t_entrenador;
 
@@ -60,7 +62,7 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar);
 
 int obtenerCoordenadasPokenest(char identificadorPokenest);
 
-void consumirQuantum(int numeroDeSocket);
+void consumirQuantum(int numeroDeSocket,int quantum);
 
 t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket);
 

@@ -17,6 +17,7 @@
 #include <commons/log.h>
 #include <so/libSockets.h>
 #include <unistd.h>
+#include <pkmn/factory.h>
 
 #include "estadisticas.h"
 //librerias propias

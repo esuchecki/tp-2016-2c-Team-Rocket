@@ -16,7 +16,6 @@
 
 //#include "../so/libPlanificador.h"
 
-
 int setup_listen(char * IP, char * Port) {
 	struct addrinfo * serverInfo = common_setup(IP, Port);
 	if (serverInfo == NULL) {
@@ -48,7 +47,6 @@ struct addrinfo* common_setup(char * IP, char * Port) {
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
-
 
 	if (!strcmp(IP, "localhost")) {
 		hints.ai_flags = AI_PASSIVE;
@@ -127,6 +125,7 @@ void common_send(int socket, t_data * paquete) {
 	buffer = serializar(paquete);
 
 	send(socket, buffer, tamanioTotal, MSG_WAITALL);
+
 
 	free(buffer);
 }

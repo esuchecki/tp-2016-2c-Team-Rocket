@@ -22,4 +22,6 @@ t_list * detectarDeadlock(t_mapa * datosMapa);
 
 void * deteccionDeadlock(void * datos);
 
+void peticionesDePokemones(t_list * listaDeadlock) ;
+
 #endif /* LIB_DEADLOCK_H_ */

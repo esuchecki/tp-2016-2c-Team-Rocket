@@ -5,6 +5,7 @@
  *      Author: utnso
  */
 
+
 #include "movimiento.h"
 
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketConexion);
@@ -229,7 +230,6 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador, char * ma
 		common_send(socketConexion, info);
 		log_info(myArchivoDeLog, "Envie paquete handshake");
 
-
 		jugarEnElMapa (nuevoEntrenador, info, socketConexion);
 
 	}
@@ -321,7 +321,13 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info, int socketC
 				//TODO: enviar pokemon mas fuerte. realizar esta funcion
 
 				//En caso de deadlock llamar a esta fc
-				//elegirMejorPokemon(miEntrenador,(void*) finalizarEntrenador);
+				;
+				t_pokemon * elMejor = malloc(sizeof(t_pokemon));
+				elMejor = elegirMejorPokemon(unEntrenador,(void*) finalizarEntrenador);
+
+				t_data * paquete = pedirPaquete(mejorPokemon,sizeof(t_pokemon),elMejor);
+
+				common_send(socketConexion,paquete);
 
 				break;
 			case ganasteBatalla:
