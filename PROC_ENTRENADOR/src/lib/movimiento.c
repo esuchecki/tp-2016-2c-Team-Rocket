@@ -241,7 +241,6 @@ void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador) {
 
 void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
 		time_t tInicio) {
-	sleep(2);
 	//double tiempo = difftime(time(NULL), tInicio);
 	unEntrenador->misEstadisticas.bloqEnPokeNest_time =
 			unEntrenador->misEstadisticas.bloqEnPokeNest_time
