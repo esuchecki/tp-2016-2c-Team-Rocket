@@ -35,7 +35,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1790949608" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
 								<option id="gnu.c.link.option.libs.1443857527" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="libTeamRocket"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="libTeamRocket"/>
 									<listOptionValue builtIn="false" value="pkmn-battle"/>
 									<listOptionValue builtIn="false" value="commons"/>
 								</option>

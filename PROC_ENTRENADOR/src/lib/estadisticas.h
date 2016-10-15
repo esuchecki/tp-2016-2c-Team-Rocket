@@ -19,12 +19,11 @@
  */
 void inicializarTiemposDelEntrenador (t_stats * estadisticas);
 
+
 /*
- * @NAME: mostrarTiempoTotalAventura
- * @DESC: Hace la resta entre la hora actual y la hora inicial.
+ * @NAME: mostrarEstadisticas
+ * @DESC: Fc a ser llamada cuando es maestro pokemon.
  */
-void mostrarTiempoTotalAventura (t_stats * estadisticas);
-
-
+void mostrarEstadisticas(t_stats * estadisticas);
 
 #endif /* LIB_ESTADISTICAS_H_ */

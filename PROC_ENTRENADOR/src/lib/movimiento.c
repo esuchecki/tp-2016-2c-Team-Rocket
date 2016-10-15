@@ -6,7 +6,8 @@ void inicializarEstadoEntrenador(t_entrenadorFisico * unEntrenador);
 int queHago(t_estadoEntrenador* estado);
 void enviarMensajeMovimiento(t_entrenadorFisico * unEntrenador,
 		int socketConection);
-void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection);
+void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection,
+		time_t tiempo);
 void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 		char * mapaIP, char * mapaPuerto);
 bool conozcoLaPosicionDeLaPokeNest(t_entrenadorFisico * unEntrenador);
@@ -20,7 +21,8 @@ void enviarMensajeCapturarPkmn(t_entrenadorFisico * unEntrenador,
 void logicaDeCapturarUnPkmn(t_entrenadorFisico * unEntrenador, t_data * info);
 void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 		t_data * info);
-void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador);
+void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
+		time_t tiempo);
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador);
@@ -100,7 +102,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 void soyMaestroPokemon(t_entrenadorFisico * unEntrenador) {
 	//TODO: completar con lo demas...
 	puts("Soy maestro pokemon");
-	mostrarTiempoTotalAventura(&unEntrenador->misEstadisticas);
+	mostrarEstadisticas(&unEntrenador->misEstadisticas);
 }
 
 int queHago(t_estadoEntrenador* estado) {
@@ -165,11 +167,12 @@ void enviarMensajeCapturarPkmn(t_entrenadorFisico * unEntrenador,
 	free(paquete);
 }
 
-void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection) {
+void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection,
+		time_t tiempo) {
 	switch (unEntrenador->moverseEnMapa->respuesta) {
 	case destino:
 		enviarMensajeCapturarPkmn(unEntrenador, socketConection);
-		recibirRespuesta(socketConection,unEntrenador);
+		recibirRespuesta(socketConection, unEntrenador, tiempo);
 		return;
 		break;
 	case moverDerecha:
@@ -199,7 +202,7 @@ void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection) {
 		break;
 	}
 	enviarMensajeMovimiento(unEntrenador, socketConection);
-	recibirRespuesta(socketConection,unEntrenador);
+	recibirRespuesta(socketConection, unEntrenador, tiempo);
 }
 
 void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
@@ -234,12 +237,37 @@ void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador) {
 	unEntrenador->metadata->vidas++;	//sumo una vida
 }
 
+void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
+		time_t tInicio) {
+	//double tiempo = difftime(time(NULL), tInicio);
+	unEntrenador->misEstadisticas.bloqEnPokeNest_time =
+			unEntrenador->misEstadisticas.bloqEnPokeNest_time
+					+ difftime(time(NULL), tInicio);
+	;
+	//printf("bloqueo poke: %i \n",
+	//		unEntrenador->misEstadisticas.bloqEnPokeNest_time);
+
+}
+void reintentar(t_entrenadorFisico * unEntrenador) {
+	char reintentar;
+	printf("Desea reintentar?S/N \n");
+	scanf("%s", &reintentar);
+	if (reintentar == 'S' || reintentar == 's') {
+		borrarDirectorioDeBill(unEntrenador);
+		//TODO conectarse al mapa otra vez (habria que reiniciar la hoja de viaje?? y borrar medallas
+
+	}
+}
+
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador) {
 	//TODO: ¿Tengo que validar que la metadata este inicializada?
 	if (unEntrenador->metadata->vidas > 0)		//Minima cantidad de vidas es 0.
 		unEntrenador->metadata->vidas--;	//resto una vida
 
 	//TODO: Validar si me quede sin vidas me muero =(
+	if (unEntrenador->metadata->vidas == 0) {
+		reintentar(unEntrenador);
+	}
 }
 
 bool conozcoLaPosicionDeLaPokeNest(t_entrenadorFisico * unEntrenador) {
@@ -263,10 +291,24 @@ void pedirPorSocketLaPosicionDeLaPokeNestProxima(
 	free(paquete);
 }
 
+void perdioUnaVidaEntrenador(t_entrenadorFisico * unEntrenador) {
+	unEntrenador->misEstadisticas.cant_muertes++;
+	if (unEntrenador->metadata->vidas > 0)	//Minima cantidad de vidas es 0.
+		unEntrenador->metadata->vidas--;	//resto una vida
+
+	if (unEntrenador->metadata->vidas == 0) {
+		reintentar(unEntrenador);
+	} else if (unEntrenador->metadata->vidas > 0) {
+		//TODO EMI: reconectarse al mapa
+		borrarDirectorioDeBill(unEntrenador);
+	}
+}
+
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 		int socketConexion) {
 	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,
 			unEntrenador->moverseEnMapa->indexMapaActual);
+	time_t tiempoAuxPN;
 	while (1) {
 		//TODO: abrir un hilo aparte para esto??
 		funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador,
@@ -277,16 +319,17 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 		//Primero chequea que no le haya llegado ninguna señal...
 
 		if (!conozcoLaPosicionDeLaPokeNest(unEntrenador)) {
-
 			pedirPorSocketLaPosicionDeLaPokeNestProxima(unEntrenador,
 					socketConexion);
-			recibirRespuesta(socketConexion,unEntrenador);
+			recibirRespuesta(socketConexion, unEntrenador, tiempoAuxPN);
 		} else {
 			//tengo la pokenest.. tengo que moverme
 			unEntrenador->moverseEnMapa->respuesta = queHago(
 					unEntrenador->moverseEnMapa);
-			actualizarEstado(unEntrenador, socketConexion);
-
+			if (unEntrenador->moverseEnMapa->respuesta == 0) {
+				tiempoAuxPN = time(NULL); //Lo inicializo aca, por si justo arranca en una posicion pokeNest
+			}
+			actualizarEstado(unEntrenador, socketConexion, tiempoAuxPN);
 		}
 
 		//Si llego al ultimo objetivo del mapa, sale!
@@ -352,7 +395,8 @@ void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 
 }
 
-void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador) {
+void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
+		time_t tiempoAuxPN) {
 	t_data *info = leer_paquete(socketConexion);
 	switch (info->header) {
 	case otorgarTurno:
@@ -367,7 +411,7 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador) {
 	case capturastePokemon:
 		puts("Capture un pokemon");
 		logicaDeCapturarUnPkmn(unEntrenador, info);
-
+		actualizarTiempoBloqueado(unEntrenador, tiempoAuxPN);
 		break;
 	case dameMejorPokemon:
 		//TODO: enviar pokemon mas fuerte. realizar esta funcion

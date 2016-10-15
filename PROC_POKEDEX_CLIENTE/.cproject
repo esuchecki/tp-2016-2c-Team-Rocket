@@ -42,7 +42,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libTeamRocket/Debug}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.883089534" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="libTeamRocket"/>
+									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="libTeamRocket"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="fuse"/>
 								</option>

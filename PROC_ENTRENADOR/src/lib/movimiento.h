@@ -26,6 +26,8 @@
 #include "seniales.h"
 #include "so/constantes.h"
 #include "libConfigStruct.h"
+#include "estadisticas.h"
+#include "batallaPkmn.h"
 
 
 
