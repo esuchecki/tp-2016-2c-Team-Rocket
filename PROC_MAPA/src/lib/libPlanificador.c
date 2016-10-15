@@ -61,7 +61,7 @@ void * ejecutarPlanificador(void * datos) {
 				mapa->metadata->algoritmo, mapa->metadata->quantum);
 
 		pthread_mutex_unlock(&mutex_algoritmo);
-
+		/*
 		int null_data = 0;
 
 		t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
@@ -69,9 +69,9 @@ void * ejecutarPlanificador(void * datos) {
 		common_send(proximoEntrenador->nroDesocket, turno);
 
 		free(turno);
-
+		*/
 		//reestructuracion de sockets
-		//atenderConexion(proximoEntrenador->nroDesocket,mapa);
+		atenderConexion(proximoEntrenador->nroDesocket,mapa);
 	}
 
 	return NULL;

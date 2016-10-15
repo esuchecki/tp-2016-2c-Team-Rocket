@@ -39,7 +39,7 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 }
 
 
-int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
+int atenderConexion(int i, t_mapa * mapa) {
 
 	t_data * paquete;
 	paquete = leer_paquete(i);
@@ -149,12 +149,12 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		//TODO: recibe al mejor pokemon para... batalla pokemon?
 		break;
 	case 0:
-		desconectarEntrenador(i, mapa,sockets_activos,
+		/*desconectarEntrenador(i, mapa,sockets_activos,
 				socketMasGrande);
 
 		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 				i);
-		return 1;
+		return 1;*/
 		break;
 	}
 	return  0;
@@ -258,7 +258,7 @@ int atenderConexiones(void * data) {
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
 					int resultado =
-					atenderConexion(i, mapa,sockets_activos);
+					atenderConexion(i, mapa);
 					if(resultado == 1){goto select;}
 				}
 			}
