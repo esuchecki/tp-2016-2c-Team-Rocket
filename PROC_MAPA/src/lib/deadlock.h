@@ -10,6 +10,7 @@
 
 #include "libPlanificador.h"
 #include "estructurasMapa.h"
+#include "batallaPkmn.h"
 
 void cargarEstructurasDeadlock(int recursosTotales[], int recursosDisponibles[],
 		int **asignados, int **requeridos, int cantidadPokenest,
