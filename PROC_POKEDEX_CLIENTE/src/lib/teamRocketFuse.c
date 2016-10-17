@@ -56,7 +56,12 @@ static int ejemplo_getattr(const char *path, struct stat *stbuf) {
 
 static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		off_t offset, struct fuse_file_info *fi) {
+	//TODO: ver si falta el \0
+	//t_data * paquete = pedirPaquete(80,strlen(path) ,path);
 
+	//common_send(socketConexion,paquete);
+	//paquete = leer_paquete(socketConexion);
+	//TODO: parsear string respuesta y fillear
 	int res = 0;
 
 	if (strcmp(path, "/") == 0) {

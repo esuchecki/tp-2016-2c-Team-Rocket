@@ -25,7 +25,7 @@ struct stat pikachuStat;
 struct stat squirtleStat;
 struct stat bulbasaurStat;
 
-
+int socketConexion;
 int iniciarFuse(int argc,char*argv[]);
 
 
