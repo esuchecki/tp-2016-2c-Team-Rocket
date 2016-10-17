@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 #include <tad_items.h>		//contiene una lista con los items a dibujar en el mapa
-
+#include <pkmn/factory.h>	//contiene el t_pokemon utilizado para batallar pkmn
 #include <commons/log.h>
 
 //------------------------------------------//
@@ -53,7 +53,17 @@ typedef struct
 } t_mapa ;
 
 
-
+//Esto es usado por el planificador! :)
+typedef struct{
+	int nroDesocket;
+	char simbolo;
+	int instruccionesEjecutadas;
+	int distanciaAProximaPokenest;
+	char pokemonSolicitado;
+	char pokenest;
+	t_pokemon * mejorPokemon;	//Por defecto setear en Null.
+	//TODO: ver que otros datos poner aca
+}t_entrenador;
 
 
 

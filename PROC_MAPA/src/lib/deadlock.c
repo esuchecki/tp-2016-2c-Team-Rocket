@@ -194,15 +194,20 @@ void * deteccionDeadlock(void * datos) {
 					t_entrenador * entrenador1 = list_get(listaDeadlock, 0);
 					t_entrenador * entrenador2 = list_get(listaDeadlock, 1);
 
-					t_pokemon * loser = malloc(sizeof(t_pokemon));
-					loser = batallarDosPkmn(entrenador1->mejorPokemon,
-							entrenador2->mejorPokemon);
+
+					//t_entrenador * loser = malloc(sizeof(t_entrenador));
+					t_entrenador * loser;
+					loser = batallarDosEntrenadores(
+							entrenador1,
+							entrenador2);
 					//TODO: buscar el dueño del pokemon loser y eliminarlo
+					//Listo el dueño, falta eliminarlo
 
 
 				} else {
-					t_pokemon * loser = batallarListaDePkmn(listaDeadlock);
+					t_entrenador * loser = batallarListaDePkmn(listaDeadlock);
 					//TODO: buscar el dueño del pokemon loser y eliminarlo
+					//Listo el dueño, falta eliminarlo
 				}
 			}else{
 				//TODO:no hay batalla pokemon
@@ -214,6 +219,7 @@ void * deteccionDeadlock(void * datos) {
 	}
 
 	return NULL;
+
 }
 
 void peticionesDePokemones(t_list * listaDeadlock) {

@@ -11,26 +11,26 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include <pkmn/factory.h>	//si se borra el test, borrar este.
+#include <pkmn/factory.h>
 #include <pkmn/battle.h>
 #include "estructurasMapa.h"
 #include <commons/collections/list.h>
 
 
 /*
- * @NAME: batallarDosPkmn
- * @DESC: Resuelve un conflicto entre 2 pokemons.
+ * @NAME: batallarDosEntrenadores
+ * @DESC: Resuelve un conflicto entre 2 entrenadores, batallando sus pkmn.
  *      -> Si en deadlock solo hay 2 entrenadores llamar a esta fc.
  *      ->  -> Tenes que llamar a free por tu cuenta.
  *
  *
  * @RETURN: devuelve el pokemon perdedor.
  */
-t_pokemon * batallarDosPkmn(t_pokemon * pkmn1, t_pokemon * pkmn2);
+t_entrenador * batallarDosEntrenadores(t_entrenador * entrenador1, t_entrenador * entrenador2);
 
 /*
  * @NAME: batallarListaDePkmn
- * @DESC: Recibe una lista con t_pokemon cargados.
+ * @DESC: Recibe una lista con t_entrenadores cargados, los hace batallar y te dice quien es el que perdio.
  *      -> Si en deadlock hay + de 2 entrenadores, llamar a esta fc.
  *      ->  -> Tenes que llamar a free por tu cuenta.
  *
@@ -39,7 +39,7 @@ t_pokemon * batallarDosPkmn(t_pokemon * pkmn1, t_pokemon * pkmn2);
  *
  * Nota: Esta fc se puede adaptar para recibir una lista de otro tipo (p, ej, que contenga al entrenador).
  */
-t_pokemon * batallarListaDePkmn(t_list * listaPkmn);
+t_entrenador * batallarListaDePkmn(t_list * listaEntrenadores);
 
 
 /*

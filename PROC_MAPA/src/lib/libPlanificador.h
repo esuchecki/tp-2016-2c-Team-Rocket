@@ -21,16 +21,7 @@ t_list *colaFinalizados;
 sem_t entrenador_listo,entrenador_bloqueado,mapa_libre;
 pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
 
-typedef struct{
-	int nroDesocket;
-	char simbolo;
-	int instruccionesEjecutadas;
-	int distanciaAProximaPokenest;
-	char pokemonSolicitado;
-	char pokenest;
-	t_pokemon * mejorPokemon;
-	//TODO: ver que otros datos poner aca
-}t_entrenador;
+
 
 void inicializar_estructuras_planificador();
 

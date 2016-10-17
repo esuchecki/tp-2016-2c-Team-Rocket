@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #Vamos a trabajar en este directorio x default.
 mkdir ~/tp-2016-2c-Team-Rocket
 cd ~/tp-2016-2c-Team-Rocket
@@ -31,7 +33,7 @@ make && make install
 cd..
 
 #nuestro repo
-git clone https://github.com/sisoputnfrba/tp-2016-2c-Team-Rocket
+#git clone https://github.com/sisoputnfrba/tp-2016-2c-Team-Rocket
 
 #variable de entorno
 echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" >> ~/.bashrc
