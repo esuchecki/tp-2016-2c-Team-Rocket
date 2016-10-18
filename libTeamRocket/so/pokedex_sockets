@@ -1,0 +1,133 @@
+Metodos interconexion socket Pokedex Cliente y Server:
+===============================================
+
+*) Cliente:
+=========
+
+1-> Envia una solicitud de "readdir", le pasa un path.
+	* El path que le pasa comienza siempre en la raiz del filesystem osada (osea, al server no le importa donde tenga el cliente montado el pokedex).
+	* El server deberia devolver los nombres de todo lo que contiene el path que le pasaron.
+		--> Dicho de otra manera, le devuelve todos los "Nombre de Archivo" de la "Tabla de Archivos" cuyo padre es el directorio pasado.
+	* Si no encontro nada es importante saberlo!! (usar algun flag o algo, xq ejemplo le pasan un path que no existe)
+
+Ej: 
+	si yo le paso la ruta: '/'
+
+	El sv deberia devolver:
+		arboles
+		excel
+		images
+		tp-2016-2c-Team-Rocket.docx
+
+Nota: No importa si es directorio o archivo, devuelve todo.
+Nota2: Hay un #define PATH_MAX para la longitud maxima de un path (4096)
+
+-------------------------
+2-> Envia una solicitud de "getattr", le pasa un path.
+	* El path puede ser cualquier cosa, desde un directorio o un archivo.
+	* La idea es que una vez que hicieron "readdir", preguntan que es cada cosa que le respondio el sv.
+	* Pregunta de a uno (No importa que el directorio tenga 91241 archivos, el pokedex cliente le pregunta al server de a un archivo por vez).
+		--> Dicho de otra manera, pregunta por el "Estado (1/2)" de la "Tabla de Archivos" de el path que le pasaron.
+		--> En caso que Estado = 1 (Es un archivo), tmb me tienen que pasar el "Tamaño del archivo" de la "Tabla de Archivos".
+	* Si no encontro nada es importante saberlo!! (usar algun flag o algo, xq ejemplo le pasan un path que no existe)
+
+
+	-> Hay 2 tipos de respuesta:
+	--- Si es directorio
+	--- Si es un archivo (ademas, debe pasar el size).
+						/* Size of file, in bytes.  */
+
+
+
+Ej: 
+	si yo le paso la ruta: '/'
+	El sv deberia devolver:	->  ess un directorio
+
+	si yo le paso la ruta: '/arboles'
+	El sv deberia devolver:	->  ess un directorio
+
+	si yo le paso la ruta: '/tp-2016-2c-Team-Rocket.docx'
+	El sv deberia devolver:	->  ess un archivo, size: 1089800
+
+
+-------------------------
+3-> Posiblemente haya que implementar  "mkdir" (crear directorio)
+	* Le pasa el path al pokedex server.
+	* Le tienen que devolver algun valor de si lo creo ok o fallo.
+
+Nota: Los permisos quedan desestimados para nuestro f.s.
+
+-------------------------
+4-> Posiblemente haya que implementar "rmdir" (borrar directorio)
+	* Le pasa el path al pokedex server.
+	* Le tienen que devolver algun valor de si lo borro ok o fallo.
+
+Nota: Que hacer si el directorio no esta vacio? En teoria no lo tiene que borrar. **A confirmar**
+
+
+-------------------------
+5-> A confirmar si hay que implementar "open"
+	* En la mayoria de ejemplos abren un archivo, lo cierran y devuelven 0 (todo ok) o sino error.
+
+-------------------------
+6-> A confirmar si hay que implementar "open"
+	* En la mayoria de ejemplos abren un archivo, lo cierran y devuelven 0 (todo ok) o sino error.
+
+-------------------------
+7-> Implementar "read"
+	* Le pasa el path del archivo al pokedex server, la cantidad de bytes que quiere leer, y un offset ( 0 + offset) de la posicion a empezar a leer.
+	* Pokedex server le devuelve los bytes, el pokedex cliente hace memcpy a un buffer (buf).
+
+-------------------------
+8-> Implementar "write"
+	* Le pasa el path del archivo al pokedex server, la cantidad de bytes que quiere escribir, y un offset ( 0 + offset) de la posicion a empezar a escribir.
+	* Pokedex server le devuelve un ok o no ok.
+
+-------------------------
+9-> A confirmar si hay que implementar "openDir"
+
+Nota: Lo usamos, pero en una de esas fuse lo auto-implementa.
+
+-------------------------
+
+
+
+
+
+**********************************************************************
+
+*) Anexo Ejemplo:
+================
+
+--> Vamos a suponer que en '~/git/tp-2016-2c-Team-Rocket/libTeamRocket/doc' tengo la raiz del F.S. OSADA.
+osea:	'~/git/tp-2016-2c-Team-Rocket/libTeamRocket/doc' = '/'
+
+
+utnso@utnso40:~/git/tp-2016-2c-Team-Rocket/libTeamRocket/doc$ ls -lR
+.:
+total 1080
+drwxrwxr-x 	2 utnso utnso    4096		oct  7 19:18 	arboles
+drwxrwxr-x 	2 utnso utnso    4096 		oct  7 19:15 	excel
+drwxrwxr-x 	2 utnso utnso    4096 		oct  7 19:15 	images
+-rw-rw-r-- 		1 utnso utnso 1089800	oct  7 19:15 	tp-2016-2c-Team-Rocket.docx
+
+./arboles:
+total 52
+-rw-rw-r-- 		1 utnso utnso   717 		oct  7 19:15 	tree_c.asd
+-rw-rw-r-- 		1 utnso utnso 15693 		oct  7 19:18	tree_defined_in_c.zip
+-rw-rw-r-- 		1 utnso utnso   707 		oct  7 19:15 	tree_examples.asd
+-rw-rw-r-- 		1 utnso utnso 15678 		oct  7 19:18 	tree_examples.zip
+-rw-rw-r-- 		1 utnso utnso  1150	 	oct  7 19:15	tree_otros.asd
+-rw-rw-r-- 		1 utnso utnso  4802 		oct  7 19:18 	tree_otros.zip
+
+./excel:
+total 48
+-rw-rw-r-- 		1 utnso utnso 16621		oct  7 19:15 	Consultas.xlsx
+-rw-rw-r-- 		1 utnso utnso 10393 		oct  7 19:15 	defines_in_mapa.xlsx
+-rw-rw-r-- 		1 utnso utnso 16030 		oct  7 19:15 	estructuras_MAPA.xlsx
+
+./images:
+total 44
+-rw-rw-r-- 		1 utnso utnso 24249 		oct  7 19:15 	bannernew.jpg
+-rw-rw-r-- 		1 utnso utnso 11903 		oct  7 19:15 	data.jpg
+-rw-rw-r-- 		1 utnso utnso  4184 		oct  7 19:15 	index.jpg
