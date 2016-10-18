@@ -23,9 +23,15 @@ void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 		t_data * info);
 void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		time_t tiempo);
+void copiarseMedallasDelMapaActual(t_entrenadorFisico * unEntrenador, char * nombreMapa);
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador);
+
+
+
+
+
 
 void inicializarEstadoEntrenador(t_entrenadorFisico * unEntrenador) {
 	if (unEntrenador->moverseEnMapa == NULL) {
@@ -55,8 +61,7 @@ void inicializarEstadoEntrenador(t_entrenadorFisico * unEntrenador) {
 void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 	log_info(myArchivoDeLog, "Voy a iniciar mi aventura!");
 	if (unEntrenador->metadata->hojaDeViaje->elements_count < 1) {
-		log_error(myArchivoDeLog,
-				"En la hoja de viaje no habia al menos 1 mapa al que conectarse");
+		log_error(myArchivoDeLog,	"En la hoja de viaje no habia al menos 1 mapa al que conectarse");
 		finalizarEntrenador(unEntrenador);
 		return;
 	}
@@ -64,25 +69,18 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 	inicializarEstadoEntrenador(unEntrenador);
 	//int indexMapaActual = 0;
 	//Me conecto al primer mapa y sigo asi conectandome recursivamente..
-	while (unEntrenador->metadata->hojaDeViaje->elements_count
-			> unEntrenador->moverseEnMapa->indexMapaActual) {
-		t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,
-				unEntrenador->moverseEnMapa->indexMapaActual);
-		log_info(myArchivoDeLog, "Me voy a conectar al mapa: %s",
-				mapaActual->nombreMapa);
+	while (unEntrenador->metadata->hojaDeViaje->elements_count	> unEntrenador->moverseEnMapa->indexMapaActual) {
+		t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,	unEntrenador->moverseEnMapa->indexMapaActual);
+		log_info(myArchivoDeLog, "Me voy a conectar al mapa: %s",	mapaActual->nombreMapa);
 
 		char * mapaActual_Ip = NULL;
 		char * mapaActual_Puerto = NULL;
-		cualEsLaIpDeEsteMapa(unEntrenador, mapaActual->nombreMapa,
-				&mapaActual_Ip, &mapaActual_Puerto);
-
+		cualEsLaIpDeEsteMapa(unEntrenador, mapaActual->nombreMapa, &mapaActual_Ip, &mapaActual_Puerto);
 		if ((mapaActual_Ip != NULL) && (mapaActual_Puerto != NULL)) {
 			//Bueno, vamos a jugar en el primer mapa.
-			inicializarSocketEntrenador(unEntrenador, mapaActual_Ip,
-					mapaActual_Puerto);
+			inicializarSocketEntrenador(unEntrenador, mapaActual_Ip, mapaActual_Puerto);
 		} else {
-			log_error(myArchivoDeLog,
-					"Me devolvieron una ip y puerto nulo para este mapa.");
+			log_error(myArchivoDeLog, "Me devolvieron una ip y puerto nulo para este mapa.");
 			finalizarEntrenador(unEntrenador);
 			return;
 		}
@@ -90,6 +88,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 		free(mapaActual_Ip);
 		free(mapaActual_Puerto);
 		//free(mapaActual);
+		copiarseMedallasDelMapaActual(unEntrenador, mapaActual->nombreMapa);	//Antes me copio la medalla
 		unEntrenador->moverseEnMapa->indexMapaActual++;
 		log_info(myArchivoDeLog, "Termine mis tareas en el mapa actual.");
 	}
@@ -339,11 +338,9 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 		}
 
 		//Si llego al ultimo objetivo del mapa, sale!
-		//TODO: ver que pasa con la medalla, de momento no informa que gano el mapa!!
 		if ((mapaActual->objetivosDelMapa[unEntrenador->moverseEnMapa->indexObjetivoPkmn])
 				== NULL) {
 			//reseteo los objetivos del mapa, mantengo el flag de indexMapaActual
-			puts("entre aca");
 			int aux = unEntrenador->moverseEnMapa->indexMapaActual;
 			free(unEntrenador->moverseEnMapa);
 			unEntrenador->moverseEnMapa = NULL;
@@ -447,3 +444,30 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 	free(info);
 
 }
+
+
+
+void copiarseMedallasDelMapaActual(t_entrenadorFisico * unEntrenador, char * nombreMapa) {
+	log_info(myArchivoDeLog,
+			"Me informaron que finalice el mapa. Me voy a copiar la medalla");
+	char * ubicacionMedallaEnMapa = malloc((sizeof(char)) * PATH_MAX + 1);
+	char * directorioDeMedallasDelEntrenador = malloc((sizeof(char)) * PATH_MAX + 1);
+
+	char * formato = string_from_format("%s%s", "/%s/%s/%s/", __ubicacionMedallaDelMapa);
+	sprintf(ubicacionMedallaEnMapa, formato , unEntrenador->directorioPokeDex,	__ubicacionMapas, nombreMapa, nombreMapa);
+	sprintf(directorioDeMedallasDelEntrenador, "/%s/%s/%s/%s/", unEntrenador->directorioPokeDex,	__ubicacionEntrenadores, unEntrenador->nombre,	__ubicacionDirDeMedallas);
+
+	if (copyFiles(ubicacionMedallaEnMapa, directorioDeMedallasDelEntrenador))//Lo copio. Si hubo algun error lo handleo
+			{
+		log_debug(myArchivoDeLog, "%s", ubicacionMedallaEnMapa);
+		log_debug(myArchivoDeLog, "%s", directorioDeMedallasDelEntrenador);
+		free(directorioDeMedallasDelEntrenador);
+		free(ubicacionMedallaEnMapa);
+		free(formato);
+		log_error(myArchivoDeLog, "Quise copiarme la medalla y lo hice mal.");
+		finalizarEntrenador(unEntrenador);
+	}
+	free(ubicacionMedallaEnMapa);
+	free(directorioDeMedallasDelEntrenador);
+	free(formato);
+	}
