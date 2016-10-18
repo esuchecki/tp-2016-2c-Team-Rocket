@@ -27,7 +27,7 @@ endif
 all: entrenador
 
 dependents:
-	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) clean all
 
 # Tool invocations
 entrenador: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so

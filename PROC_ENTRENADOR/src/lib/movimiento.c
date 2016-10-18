@@ -224,9 +224,15 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 		t_data * info = pedirPaquete(99, sizeof(char),
 				&nuevoEntrenador->metadata->simbolo);
 		common_send(socketConexion, info);
-		log_info(myArchivoDeLog, "Envie paquete handshake");
-
-		jugarEnElMapa(nuevoEntrenador, info, socketConexion);
+		info = leer_paquete(socketConexion);
+		if(info->header == 50){
+			log_info(myArchivoDeLog,"Intercambio de mensajes Handshake realizado");
+			log_info(myArchivoDeLog,"Conexion Exitosa");
+			jugarEnElMapa(nuevoEntrenador, info, socketConexion);
+		}else{
+			log_info(myArchivoDeLog,"No se pudo conectar, cierre forzoso");
+			exit(EXIT_FAILURE);
+		}
 
 	}
 	close(socketConexion);
@@ -401,12 +407,12 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 	switch (info->header) {
 	case otorgarTurno:
 		;
-
+		puts("Me Movi Bien");
 		break;
 
 	case ubicacionPokenest:
 		logicaDeGuardarLaPosDeUnaPokenest(unEntrenador, info);
-
+		puts("Guarde la pokenest");
 		break;
 	case capturastePokemon:
 		puts("Capture un pokemon");

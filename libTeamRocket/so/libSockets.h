@@ -93,7 +93,7 @@ char * serializar(t_data * unPaquete);
  * @DESC: envia al socket pasado por parametro el paquete t_data
  */
 
-void common_send(int socket, t_data * paquete);
+int common_send(int socket, t_data * paquete);
 
 
 

@@ -6,14 +6,14 @@
  */
 
 #include "../so/libSockets.h"
-
+#include <commons/log.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-
+#include "constantes.h"
 //#include "../so/libPlanificador.h"
 
 int setup_listen(char * IP, char * Port) {
@@ -83,15 +83,21 @@ int connect_to(char* IP, char * port) {
 
 t_data * leer_paquete(int socket) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
-
-	recv(socket, &paquete_entrante->header, sizeof(int), MSG_WAITALL);
-	recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
-
+	int resultado;
+	label1: resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
+	if(resultado != 4){
+		goto label1;
+	}
+	label2: resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
+	if(resultado != 4){
+		goto label2;
+	}
 	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
-	recv(socket, paquete_entrante->data, paquete_entrante->tamanio,
-	MSG_WAITALL);
-
+	label3: resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
+	if(resultado != paquete_entrante->tamanio){
+		goto label3;
+	}
 	return paquete_entrante;
 
 }
@@ -118,15 +124,18 @@ char * serializar(t_data * unPaquete) {
 
 }
 
-void common_send(int socket, t_data * paquete) {
+int common_send(int socket, t_data * paquete) {
 	void * buffer;
 	int tamanioTotal;
 	tamanioTotal = paquete->tamanio + sizeof(int) + sizeof(int);
 	buffer = serializar(paquete);
 
-	send(socket, buffer, tamanioTotal, MSG_WAITALL);
-
-
+	int resultado;
+	label: resultado = send(socket, buffer, tamanioTotal, MSG_WAITALL);
+	if(resultado != tamanioTotal){
+		goto label;
+	}
 	free(buffer);
+	return resultado;
 }
 

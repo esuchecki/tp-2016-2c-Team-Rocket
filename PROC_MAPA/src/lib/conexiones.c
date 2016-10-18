@@ -40,10 +40,10 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 
 
 int atenderConexion(int i, t_mapa * mapa) {
-
+	int flag;
 	t_data * paquete;
-	paquete = leer_paquete(i);
-
+	proceder: paquete = leer_paquete(i);
+	log_debug(myArchivoDeLog,"Atiendo al socket %d,con el header %d ",i,paquete->header);
 //	detectarDesconexion(paquete, i, sockets_activos, mapa);
 
 	switch (paquete->header) {
@@ -75,7 +75,7 @@ int atenderConexion(int i, t_mapa * mapa) {
 
 				common_send(i, nuevoPaquete);
 
-				consumirQuantum(i, mapa->metadata->quantum);
+				flag = consumirQuantum(i, mapa->metadata->quantum);
 
 				setearDistanciaPokenest(i, mapa, entrenador->pokenest);
 
@@ -112,7 +112,7 @@ int atenderConexion(int i, t_mapa * mapa) {
 			//usleep(mapa->metadata->retardo);
 			sleep(2);
 
-			consumirQuantum(i, mapa->metadata->quantum);
+			flag = consumirQuantum(i, mapa->metadata->quantum);
 
 			setearDistanciaPokenest(i, mapa, entrenador->pokenest);
 
@@ -157,6 +157,9 @@ int atenderConexion(int i, t_mapa * mapa) {
 		return 1;*/
 		break;
 	}
+	if (flag == 0){
+		goto proceder;
+	}
 	return  0;
 }
 
@@ -187,8 +190,14 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 		//-------
 
 		log_debug(myArchivoDeLog,
-				"Se creo un entrenador con simbolo: %c, y con numero de socket: %d\n",
+				"Se creo un entrenador con simbolo: %c, y con numero de socket: %d",
 				unEntrenador->simbolo, unEntrenador->nroDesocket);
+
+		int null_data = 0;
+
+		t_data * paquete = pedirPaquete(50,sizeof(int),&null_data);
+
+		common_send(socket_nueva_conexion,paquete);
 
 		sem_post(&entrenador_listo);
 
@@ -223,7 +232,7 @@ int atenderConexiones(void * data) {
 		sockets_para_revisar = sockets_activos;
 		int retornoSelect;
 
-		select: retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
+		retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
 		NULL, NULL, NULL);
 
 		if (retornoSelect == -1) {
@@ -253,13 +262,16 @@ int atenderConexiones(void * data) {
 						if (socket_nueva_conexion > socketMasGrande) {
 							socketMasGrande = socket_nueva_conexion;
 						}
+
 						handshake(socket_nueva_conexion, sockets_activos, data);
+
 					}
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
-					int resultado =
-					atenderConexion(i, mapa);
-					if(resultado == 1){goto select;}
+					//int resultado =
+					//atenderConexion(i, mapa);
+					//if(resultado == 1){-
+					//goto select;
 				}
 			}
 		}

@@ -53,7 +53,7 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar);
 
 int obtenerCoordenadasPokenest(char identificadorPokenest);
 
-void consumirQuantum(int numeroDeSocket,int quantum);
+int consumirQuantum(int numeroDeSocket,int quantum);
 
 t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket);
 
