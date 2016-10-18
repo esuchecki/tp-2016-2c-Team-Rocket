@@ -177,27 +177,23 @@ void * deteccionDeadlock(void * datos) {
 
 	t_mapa * mapa = datos;
 
-	if (mapa->metadata->tiempoChequeadoDeadlock == 0) {
+	while (1) {
+		usleep(mapa->metadata->tiempoChequeadoDeadlock);
 
-		pthread_exit(NULL);
+		t_list * listaDeadlock = detectarDeadlock(mapa);
 
-	} else {
-		while (1) {
-			usleep(mapa->metadata->tiempoChequeadoDeadlock);
+		if (listaDeadlock == NULL) {
 
-			t_list * listaDeadlock = detectarDeadlock(mapa);
+			//No Hay Deadlock, no hago nada
 
-			if (listaDeadlock == NULL) {
-
-				//No Hay Deadlock, no hago nada
-
-			} else {
-
+		} else {
+			if(mapa->metadata->batalla == 1){
+				log_info(myArchivoDeLog,"Resolucion de deadlock por batalla");
 				peticionesDePokemones(listaDeadlock);
-
 				if (list_size(listaDeadlock) == 2) {
 					t_entrenador * entrenador1 = list_get(listaDeadlock, 0);
 					t_entrenador * entrenador2 = list_get(listaDeadlock, 1);
+
 
 					//t_entrenador * loser = malloc(sizeof(t_entrenador));
 					t_entrenador * loser;
@@ -207,16 +203,23 @@ void * deteccionDeadlock(void * datos) {
 					//TODO: buscar el dueño del pokemon loser y eliminarlo
 					//Listo el dueño, falta eliminarlo
 
+
 				} else {
 					t_entrenador * loser = batallarListaDePkmn(listaDeadlock);
 					//TODO: buscar el dueño del pokemon loser y eliminarlo
 					//Listo el dueño, falta eliminarlo
 				}
+			}else{
+				//TODO:no hay batalla pokemon
+				log_info(myArchivoDeLog,"No hay resolucion batalla pokemon");
 			}
+
+
 		}
 	}
 
 	return NULL;
+
 }
 
 void peticionesDePokemones(t_list * listaDeadlock) {
