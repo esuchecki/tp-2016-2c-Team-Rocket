@@ -155,6 +155,7 @@ void enviarMensajeMovimiento(t_entrenadorFisico * unEntrenador,
 
 void enviarMensajeCapturarPkmn(t_entrenadorFisico * unEntrenador,
 		int socketConection) {
+	puts ("solicito capturar el pkmn");
 	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,
 			unEntrenador->moverseEnMapa->indexMapaActual);
 	char identificadorPokeNest =
@@ -314,6 +315,7 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,
 			unEntrenador->moverseEnMapa->indexMapaActual);
 	time_t tiempoAuxPN;
+
 	while (1) {
 		//TODO: abrir un hilo aparte para esto??
 		funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador,

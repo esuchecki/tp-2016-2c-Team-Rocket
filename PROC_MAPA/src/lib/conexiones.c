@@ -40,7 +40,7 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 
 
 int atenderConexion(int i, t_mapa * mapa) {
-	int flag;
+	int flag=-1;
 	t_data * paquete;
 	proceder: paquete = leer_paquete(i);
 	log_debug(myArchivoDeLog,"Atiendo al socket %d,con el header %d ",i,paquete->header);
@@ -114,6 +114,11 @@ int atenderConexion(int i, t_mapa * mapa) {
 
 			flag = consumirQuantum(i, mapa->metadata->quantum);
 
+			int null_data = 0;
+			t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
+			common_send(entrenador->nroDesocket, turno);
+			free(turno);
+
 			setearDistanciaPokenest(i, mapa, entrenador->pokenest);
 
 			break;
@@ -131,7 +136,10 @@ int atenderConexion(int i, t_mapa * mapa) {
 
 		char *identificador = paquete->data;
 
-		entrenador->pokemonSolicitado = *identificador;
+		entrenador->pokemonSolicitado = identificador[0];
+
+
+		flag =1;	// le aborto el quantum!
 
 		quitarDeColaDeListos(entrenador);
 
@@ -144,6 +152,7 @@ int atenderConexion(int i, t_mapa * mapa) {
 
 		sem_post(&entrenador_bloqueado);
 
+		return 0;	//le aborto el turno
 		break;
 	case mejorPokemon:
 		//TODO: recibe al mejor pokemon para... batalla pokemon?

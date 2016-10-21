@@ -122,10 +122,6 @@ int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const 
  * Nota: Ejemplo de uso, copiar un pokemon del mapa al dir de bill.
  *
  *
- * Se baso en estas webs:
- * http://stackoverflow.com/questions/2180079/how-can-i-copy-a-file-on-unix-using-c
- *
- *
  */
 int copyFiles(char *source, char *dest);
 

@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
 	t_entrenadorFisico * miEntrenador;
 	miEntrenador = inicializarEstructurasDelEntrenador(argv[1], argv[2]);
 
+
 	crearFolderDirDeBill(miEntrenador);		//Por si no estaba creada
 	crearFolderMedallas(miEntrenador);		//Por si no estaba creada
 	borrarDirectorioDeBill(miEntrenador);
