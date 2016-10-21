@@ -37,7 +37,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libTeamRocket/Debug}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.libs.971617180" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" srcPrefixMapping="" srcRootPath="" value="libTeamRocket"/>
+									<listOptionValue builtIn="false" value="libTeamRocket"/>
+									<listOptionValue builtIn="false" value="pthread"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1242240352" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

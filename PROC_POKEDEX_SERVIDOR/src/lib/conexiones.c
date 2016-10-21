@@ -7,7 +7,7 @@
 #include "conexiones.h"
 
 #include <so/libSockets.h>
-
+#include <pthread.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -18,32 +18,111 @@
 #include <stdlib.h>
 
 
-
-void atenderConexion(int i, fd_set sockets_activos) {
+void atenderConexion(void *datos) {
 	//Me llega un mensaje del pokedex cliente
-	t_data * paquete;
-	paquete = leer_paquete(i);
+
+	hilo_t *cliente = datos;
+
+	t_data *paquete = leer_paquete(cliente->socketConexion);
+
+	//TODO: ver el tema de la sincronizacion.
+	//pense que podriamos crear una lista con los archivos que se abrieron y el modo
+	//en el que lo abrieron si para escritura o lectura cosa de que cada vez
+	//que alguien haga alguna solicitud se fije ahi si puede realizarla o no.
 
 	switch (paquete->header) {
-	default:
-			break;
+	case solicitudReadAddr:
+		;
+		//char * path = paquete->data;
+		/*
+		 * TODO:encontrar todos los nombres que contiene ese path detras de el
+		 * intercalando un centinela %
+		 *
+		 */
+		break;
+	case solicitudGetAttr:
+		;
+		char * path = paquete->data;
+		//TODO: ver si el path es directorio o archivo
+
+		/* CASO RESPUESTA ARCHIVO
+		 * size_t size;
+		 * paquete = pedirPaquete(respuestaPorArchivo,sizeof(size_t),&size);
+		 * common_send(cliente->socketConexion,paquete);
+		 *
+		 * CASO RESPUESTA DIRECTORIO
+		 * int null_data = 0;
+		 * paquete = pedirPaquete(respuestaPorDirectorio,sizeof(int),&null_data);
+		 * common_send(cliente->socketConexion,paquete);
+		 *
+		 * CASO RESPUESTA POR ERROR - NO ENCONTRO DATOS POR EL PATH
+		 * int null_data = 0;
+		 * paquete = pedirPaquete(errorGetAttr,sizeof(int),&null_data);
+		 * common_send(cliente->socketConexion,paquete);
+		 */
+		break;
+	case crearDirectorio:
+		//este no se si va a ser un mensaje que le pida el cliente
+		break;
+	case borrarDirectorio:
+		//este no se si va a ser un mensaje que le pida el cliente
+		break;
+	case abrirArchivo:
+		//este no se si va a ser un mensaje que le pida el cliente
+		break;
+	case leerArchivo:
+		;
+		//char * path = paquete->data;
+		t_data * posiciones = leer_paquete(cliente->socketConexion);
+		size_t size;
+		off_t offset;
+		memcpy(&size, &posiciones->data, sizeof(size_t));
+		memcpy(&offset, &posiciones->data + sizeof(size_t), sizeof(off_t));
+
+		//TODO: leer el archivo con path "path", tamanio size,y offset "offset"
+
+		//TODO: enviarle el archivo al cliente
+
+		break;
+	case escribirArchivo:
+		break;
 	}
+
+	free(paquete);
+	free(cliente);
 }
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
 
-}
+	t_data * paquete = leer_paquete(socket_nueva_conexion);
 
+	if (paquete->header == 70) {
+
+		int null_data = 0;
+
+		paquete = pedirPaquete(71, sizeof(int), &null_data);
+
+		common_send(socket_nueva_conexion, paquete);
+
+	} else {
+
+		printf(
+				"Error en la conexion con el proceso pokedex cliente, cierro programa");
+
+		exit(EXIT_FAILURE);
+
+	}
+}
 
 int atenderConexiones() {
 
 	int socketEscucha, socketMasGrande;
 
-	fd_set sockets_para_revisar,sockets_activos;
+	fd_set sockets_para_revisar, sockets_activos;
 
 	socketEscucha = setup_listen("localhost", "6800");
 
-	printf("%d\n",socketEscucha);
+	printf("%d\n", socketEscucha);
 
 	listen(socketEscucha, 1024);
 
@@ -52,13 +131,13 @@ int atenderConexiones() {
 	FD_SET(socketEscucha, &sockets_activos);
 
 	while (1) {
-		labelSelect: sockets_para_revisar = sockets_activos;
+		sockets_para_revisar = sockets_activos;
 
 		int retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
 		NULL, NULL, NULL);
 
 		if (retornoSelect == -1) {
-			goto labelSelect;
+
 		}
 		int i;
 
@@ -67,6 +146,7 @@ int atenderConexiones() {
 				//hay actividad
 				if (i == socketEscucha) {
 					//es una nueva conexion sobre el puerto de escucha
+
 					struct sockaddr_storage remoteaddr;
 					socklen_t addrlen;
 					addrlen = sizeof(remoteaddr);
@@ -85,15 +165,28 @@ int atenderConexiones() {
 							socketMasGrande = socket_nueva_conexion;
 						}
 						handshake(socket_nueva_conexion, sockets_activos);
+
+						pthread_t manejoCliente;
+
+						pthread_attr_t attrHilo;
+						pthread_attr_init(&attrHilo);
+						pthread_attr_setdetachstate(&attrHilo,
+						PTHREAD_CREATE_DETACHED);
+
+						hilo_t * data = malloc(sizeof(hilo_t));
+						data->socketConexion = socket_nueva_conexion;
+						data->sockets_activos = sockets_activos;
+
+						pthread_create(&manejoCliente, &attrHilo,
+								(void *) atenderConexion, (void *) data);
+
 					}
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
-					atenderConexion(i, sockets_activos);
+					//atenderConexion(i, sockets_activos);
+
 				}
 			}
 		}
 	}
 }
-
-
-

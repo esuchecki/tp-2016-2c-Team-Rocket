@@ -32,6 +32,7 @@ void inicializar_estructuras_planificador() {
 	colaListos = list_create();
 	colaBloqueados = list_create();
 	colaFinalizados = list_create();
+
 }
 
 t_entrenador * generarEntrenador(int i, void * data) {

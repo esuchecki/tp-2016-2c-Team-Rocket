@@ -22,7 +22,6 @@ sem_t entrenador_listo,entrenador_bloqueado,mapa_libre;
 pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados;
 
 
-
 void inicializar_estructuras_planificador();
 
 t_entrenador * generarEntrenador(int i,void * data);
