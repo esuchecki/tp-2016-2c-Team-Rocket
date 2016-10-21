@@ -7,7 +7,7 @@
 
 #include "entrenadorConfig.h"
 
-uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
+uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador)
 {
 	uint16_t aux;
 	bool * devolvioError = malloc (sizeof(bool));
@@ -17,7 +17,7 @@ uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPro
 	{
 		log_error(myArchivoDeLog,"Problemas en _entrenador_configLeerInt= %s", nombreDeLaPropiedad);
 		free (devolvioError);
-		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
+		finalizarEntrenador(unEntrenador);
 		return 0;
 	}
 	else
@@ -27,13 +27,13 @@ uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPro
 	}
 }
 
-char * _entrenador_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
+char * _entrenador_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador)
 {
 	if ( configLeerString (archivoConfig, nombreDeLaPropiedad) == NULL )
 	{
 		log_error(myArchivoDeLog,"Problemas en _entrenador_configLeerString= %s", nombreDeLaPropiedad);
 		//free (aux);
-		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
+		finalizarEntrenador(unEntrenador);
 		return 0;
 	}
 	else
@@ -44,7 +44,7 @@ char * _entrenador_configLeerString (t_config * archivoConfig, char nombreDeLaPr
 	}
 }
 
-t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
+t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * unEntrenador)
 {
 	t_config * aux;
 	aux = newConfigType (directorio);
@@ -53,7 +53,7 @@ t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * un
 	{
 		log_error(myArchivoDeLog,"Problemas en _entrenador_newConfigType= %s", directorio);
 		free (aux);
-		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
+		finalizarEntrenador(unEntrenador);
 		return 0;
 	}
 	else
@@ -63,7 +63,7 @@ t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * un
 	}
 }
 
-char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
+char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador)
 {
 	char ** aux1 = configLeerArray (archivoConfig, nombreDeLaPropiedad);
 
@@ -71,7 +71,7 @@ char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPr
 	{
 		log_error(myArchivoDeLog,"Problemas en _entrenador_configLeerArray= %s", nombreDeLaPropiedad);
 		free (aux1);
-		fc(unEntrenador);	//fc para finalizar el entrenador ante un error.
+		finalizarEntrenador(unEntrenador);
 		return 0;
 	}
 	else

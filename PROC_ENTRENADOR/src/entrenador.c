@@ -29,6 +29,7 @@
 #include "lib/seniales.h"
 #include "so/constantes.h"
 #include "lib/movimiento.h"
+#include "lib/abortarEntrenador.h"
 
 
 //------------------------------------------//
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]) {
 	borrarDirectorioDeBill(miEntrenador);
 
 	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
-	inicializarSenialesEntrenador(miEntrenador, (void *) &finalizarEntrenador);
+	inicializarSenialesEntrenador(miEntrenador);
 
 
 	iniciarAventura(miEntrenador);

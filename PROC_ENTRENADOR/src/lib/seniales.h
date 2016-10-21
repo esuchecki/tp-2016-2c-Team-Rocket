@@ -25,19 +25,19 @@
 
 /*
  * @NAME: inicializarSenialesMapa
- * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial.. En caso de error abortivo, cierra correctamente la gui con la fc y el parametro unEntrenador.
+ * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial.. En caso de error abortivo, finaliza al entrenador.
  *
- * NOTA: si llamas a este metodo, tu proxima linea deberia ser funcionesQueQuieroEjecutarSegunLaSenial!!!
+ * NOTA: Solo setea las seniales, para tratarlas tenes que llamar a funcionesQueQuieroEjecutarSegunLaSenial!!!
  */
-void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
+void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador);
 
 /*
  * @NAME: funcionesQueQuieroEjecutarSegunLaSenial
- * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial.. En caso de error abortivo, cierra correctamente la gui con la fc y el parametro unEntrenador.
+ * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial.. En caso de error abortivo, finaliza al entrenador.
  *
- * NOTA: si llamas a este metodo, en tu linea anterior deberias haber llamado a  revisarRecepcionDeSeniales!!!
+ * NOTA: inicializarSenialesEntrenador ya deben estar inicializadas!.
  */
-void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcAbortiva) (t_entrenadorFisico *), void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) );
+void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) );
 
 /*
  * @NAME: tratarLaSenialRecibida

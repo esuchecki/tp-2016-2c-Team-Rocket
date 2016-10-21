@@ -5,8 +5,9 @@
  *      Author: utnso
  */
 #include "seniales.h"
+#include "abortarEntrenador.h"
 
-void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *))
+void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador)
 {
 	_SIGINT_flag = 0;	//reseteo el flag.
 	_SIGTERM_flag = 0;	//reseteo el flag.
@@ -14,18 +15,18 @@ void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador, void (*fc
 
 	if (signal( SIGUSR1, tratarLaSenialRecibida ) == SIG_ERR)
 	{
-		log_error(myArchivoDeLog, "error en la senial SIGUSR1");
-		fc(unEntrenador);
+		log_error(myArchivoDeLog, "error al setear la senial SIGUSR1");
+		finalizarEntrenador(unEntrenador);
 	}
 	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
 	{
-		log_error(myArchivoDeLog, "error en la senial SIGTERM");
-		fc(unEntrenador);
+		log_error(myArchivoDeLog, "error al setear la senial SIGTERM");
+		finalizarEntrenador(unEntrenador);
 	}
 	if (signal(SIGINT, tratarLaSenialRecibida)==SIG_ERR)
 	{
-		log_error(myArchivoDeLog, "error en la senial SIGINT");
-		fc(unEntrenador);
+		log_error(myArchivoDeLog, "error al setear la senial SIGINT");
+		finalizarEntrenador(unEntrenador);
 	}
 }
 
@@ -52,7 +53,7 @@ void tratarLaSenialRecibida (int senial)
 
 }
 
-void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcAbortiva) (t_entrenadorFisico *), void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) )
+void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) )
 {
 	//TODO: revisar si hay que hacer alguna otra cosa para 'encolar' señales o enrealidad bloquearlas (si no quiero que me interrumpan algo)
 
@@ -61,7 +62,7 @@ void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador,
 	if (_SIGINT_flag == 1)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGINT.**" );
-		fcAbortiva(unEntrenador);
+		finalizarEntrenador(unEntrenador);
 		_SIGINT_flag = 0;	//reseteo el flag.
 	}
 

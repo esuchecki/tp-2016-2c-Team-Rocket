@@ -28,7 +28,7 @@
 #include "libConfigStruct.h"
 #include "estadisticas.h"
 #include "batallaPkmn.h"
-
+#include "abortarEntrenador.h"
 
 
 

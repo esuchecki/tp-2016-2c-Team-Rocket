@@ -13,7 +13,7 @@
 #include "entrenadorConfig.h"
 #include "estructurasEntrenador.h"
 #include "so/constantes.h"
-
+#include "abortarEntrenador.h"
 
 
 /*

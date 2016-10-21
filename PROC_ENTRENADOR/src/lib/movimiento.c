@@ -26,7 +26,7 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 void copiarseMedallasDelMapaActual(t_entrenadorFisico * unEntrenador, char * nombreMapa);
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
-void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador);
+void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fueVicitimaDeDeadlock);
 
 
 
@@ -231,7 +231,8 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 			jugarEnElMapa(nuevoEntrenador, info, socketConexion);
 		}else{
 			log_info(myArchivoDeLog,"No se pudo conectar, cierre forzoso");
-			exit(EXIT_FAILURE);
+			finalizarEntrenador(nuevoEntrenador);
+			//exit(EXIT_FAILURE);
 		}
 
 	}
@@ -256,23 +257,37 @@ void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
 }
 void reintentar(t_entrenadorFisico * unEntrenador) {
 	char reintentar;
+	puts ("No le quedan mas vidas disponibles..");
 	printf("Desea reintentar?S/N \n");
 	scanf("%s", &reintentar);
-	if (reintentar == 'S' || reintentar == 's') {
+	if (reintentar == 'S' || reintentar == 's')
+	{
 		borrarDirectorioDeBill(unEntrenador);
-		//TODO conectarse al mapa otra vez (habria que reiniciar la hoja de viaje?? y borrar medallas
-
+		//TODO: EMIiii conectarse al mapa otra vez (habria que reiniciar la hoja de viaje y borrar medallas
 	}
+	else	//Si no quiere reintentar lo finalizo.
+		finalizarEntrenador(unEntrenador);
 }
 
-void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador) {
+void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiVictimaDeDeadlock) {
 	//TODO: ¿Tengo que validar que la metadata este inicializada?
+
+	if (fuiVictimaDeDeadlock)
+		puts ("Me descontaron una vida por deadlock");
+	else
+		puts ("Le quitaron una vida con SIGTERM.");
+
 	if (unEntrenador->metadata->vidas > 0)		//Minima cantidad de vidas es 0.
 		unEntrenador->metadata->vidas--;	//resto una vida
 
-	//TODO: Validar si me quede sin vidas me muero =(
+	printf ("Me quedan %d vidas.", unEntrenador->metadata->vidas);
+
+	//Si no tengo vidas, me muero!.
 	if (unEntrenador->metadata->vidas == 0) {
 		reintentar(unEntrenador);
+	} else if ( (unEntrenador->metadata->vidas > 0) && fuiVictimaDeDeadlock) {
+		//TODO: EMI: reconectarse al mapa actual
+		borrarDirectorioDeBill(unEntrenador);
 	}
 }
 
@@ -297,18 +312,6 @@ void pedirPorSocketLaPosicionDeLaPokeNestProxima(
 	free(paquete);
 }
 
-void perdioUnaVidaEntrenador(t_entrenadorFisico * unEntrenador) {
-	unEntrenador->misEstadisticas.cant_muertes++;
-	if (unEntrenador->metadata->vidas > 0)	//Minima cantidad de vidas es 0.
-		unEntrenador->metadata->vidas--;	//resto una vida
-
-	if (unEntrenador->metadata->vidas == 0) {
-		reintentar(unEntrenador);
-	} else if (unEntrenador->metadata->vidas > 0) {
-		//TODO EMI: reconectarse al mapa
-		borrarDirectorioDeBill(unEntrenador);
-	}
-}
 
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 		int socketConexion) {
@@ -319,7 +322,6 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 	while (1) {
 		//TODO: abrir un hilo aparte para esto??
 		funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador,
-				(void *) &finalizarEntrenador,
 				(void*) &accionDelEntrenadorAnteSIGUSR1,
 				(void*) &accionDelEntrenadorAnteSIGTERM);
 
@@ -424,7 +426,7 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		//En caso de deadlock llamar a esta fc
 		;
 		t_pokemon * elMejor = malloc(sizeof(t_pokemon));
-		elMejor = elegirMejorPokemon(unEntrenador, (void*) finalizarEntrenador);
+		elMejor = elegirMejorPokemon(unEntrenador);
 
 		t_data * paquete = pedirPaquete(mejorPokemon, sizeof(t_pokemon),
 				elMejor);
@@ -437,10 +439,10 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		break;
 	case perdisteBatalla:
 		//TODO: hacer lo que tenga que hacer
+			//loguear, etc...
+		accionDelEntrenadorAnteSIGTERM(unEntrenador, true);	//con esto ejecuta la logica!.
 		break;
-	case ubicacionMedallaMapa:
-		//TODO: hacer lo que tenga que hacer
-		break;
+	case ubicacionMedallaMapa: break; //este mensaje quedo desestimado.
 	}
 	free(info->data);
 	free(info);

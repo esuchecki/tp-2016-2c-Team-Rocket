@@ -20,11 +20,12 @@
 #include <so/constantes.h>	//para los path's
 #include "entrenadorConfig.h"
 #include <so/libConfig.h>
+#include "abortarEntrenador.h"
 
 
 
 
-t_pokemon * elegirMejorPokemon (t_entrenadorFisico * unEntrenador, void (*fc_abortar) (void *));
+t_pokemon * elegirMejorPokemon (t_entrenadorFisico * unEntrenador);
 
 
 
