@@ -84,19 +84,19 @@ int connect_to(char* IP, char * port) {
 t_data * leer_paquete(int socket) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
 	int resultado;
-	label1: resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
+	resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
 	if(resultado != 4){
-		goto label1;
+		puts("error en el recv");
 	}
-	label2: resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
+	resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
 	if(resultado != 4){
-		goto label2;
+		puts("error en el recv");
 	}
 	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
-	label3: resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
+	resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
 	if(resultado != paquete_entrante->tamanio){
-		goto label3;
+		puts("error en el recv");
 	}
 	return paquete_entrante;
 
@@ -131,11 +131,13 @@ int common_send(int socket, t_data * paquete) {
 	buffer = serializar(paquete);
 
 	int resultado;
+
 	label: resultado = send(socket, buffer, tamanioTotal, MSG_WAITALL);
+
 	if(resultado != tamanioTotal){
 		goto label;
 	}
 	free(buffer);
-	return resultado;
+	return 0;
 }
 

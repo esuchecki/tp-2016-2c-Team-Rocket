@@ -19,8 +19,7 @@ t_list *colaListos;
 t_list *colaBloqueados;
 t_list *colaFinalizados;
 sem_t entrenador_listo,entrenador_bloqueado,mapa_libre;
-pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
-
+pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados;
 
 
 void inicializar_estructuras_planificador();

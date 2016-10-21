@@ -28,10 +28,11 @@ void inicializar_estructuras_planificador() {
 	pthread_mutex_init(&mutex_listos, NULL);
 	pthread_mutex_init(&mutex_algoritmo, NULL);
 	pthread_mutex_init(&mutex_bloqueados, NULL);
-	pthread_mutex_init(&mutex_ejecucion, NULL);
+
 	colaListos = list_create();
 	colaBloqueados = list_create();
 	colaFinalizados = list_create();
+
 }
 
 t_entrenador * generarEntrenador(int i, void * data) {
@@ -57,13 +58,12 @@ void * ejecutarPlanificador(void * datos) {
 
 		pthread_mutex_lock(&mutex_algoritmo);
 
-		t_entrenador *proximoEntrenador;
-		proximoEntrenador = ejecutar_algoritmo(
+		t_entrenador *entrenadorElegido = ejecutar_algoritmo(
 				mapa->metadata->algoritmo, mapa->metadata->quantum);
 
 		pthread_mutex_unlock(&mutex_algoritmo);
-
-		atenderConexion(proximoEntrenador->nroDesocket, mapa);
+		log_info(myArchivoDeLog,"ESCUCHO AL ENTRENADOR-SOCKET %d",entrenadorElegido->nroDesocket);
+		atenderConexion(entrenadorElegido->nroDesocket, mapa);
 
 	}
 
@@ -307,15 +307,6 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 	free(entrenadorAEliminar);
 }
 
-void liberarRecursos(t_entrenador *entrenador) {
-	//TODO: manejar el tema de los recursos del entrenador
-
-	//TODO: aparte de liberarlos en las estructuras administrativas, tambien actualizar los recursos en la gui!
-
-	//Creo que este metodo esta demas, ya me esoy encargando de esas cosas en borrarEntrenadorDelMapa!
-
-	//sem_post(&entrenador_bloqueado);
-}
 
 void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
 
@@ -330,12 +321,6 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
 
 }
 
-int obtenerCoordenadasPokenest(char identificadorPokenest) {
-	int coordenadas = 0;
-//TODO: buscar las coordenadas de la pokenest con identificador = identificadorPokenest
-
-	return coordenadas;
-}
 
 int consumirQuantum(int i, int quantum) {
 

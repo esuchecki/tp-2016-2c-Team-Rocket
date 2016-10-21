@@ -20,17 +20,23 @@ int main(int argc,char*argv[]){
 	char * Puerto;
 	//TODO: obtener de archivo de configs el ip y puerto
 
-	int socket = connect_to("localhost","6100");
+	int socketConexion = connect_to("localhost","6100");
 
 	//TODO: Hacer lo que tenga que hacer el proceso
-	char *mensaje = malloc(15);
-	strcpy(mensaje,"Hola servidor");
-	int tamanio = strlen(mensaje);
+	 *
+	int null_data = 0;
 
-	t_data * paqueteHandshake = pedirPaquete(1,tamanio,mensaje);
+	t_data * paqueteHandshake = pedirPaquete(70,sizeof(int),&null_data);
 
-	common_send(socket,paqueteHandshake);
+	common_send(socketConexion,paqueteHandshake);
 
+	paqueteHandshake = leer_paquete(socketConexion);
+	if(paqueteHandshake->header == 71){
+		printf("La conexion con el servidor es un exito");
+	}else{
+		printf("La conexion con el servidor fallo");
+		exit(EXIT_FAILURE);
+	}
 	 */
 
 

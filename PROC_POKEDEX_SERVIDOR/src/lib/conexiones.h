@@ -11,11 +11,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct {
+	int socketConexion;
+	fd_set sockets_activos;
+}hilo_t;
+
 int atenderConexiones();
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos);
 
-void atenderConexion(int i, fd_set sockets_activos);
+void atenderConexion(void * data);
 
 
 

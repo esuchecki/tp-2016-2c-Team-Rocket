@@ -40,7 +40,7 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 
 
 int atenderConexion(int i, t_mapa * mapa) {
-	int flag;
+	int flag=-1;
 	t_data * paquete;
 	proceder: paquete = leer_paquete(i);
 	log_debug(myArchivoDeLog,"Atiendo al socket %d,con el header %d ",i,paquete->header);
@@ -135,12 +135,12 @@ int atenderConexion(int i, t_mapa * mapa) {
 
 		quitarDeColaDeListos(entrenador);
 
+		sem_post(&mapa_libre);
+
 		agregarAColaDeBloqueados(entrenador);
 
 		//usleep(mapa->metadata->retardo);
 		sleep(2);
-
-		sem_post(&mapa_libre);
 
 		sem_post(&entrenador_bloqueado);
 
@@ -231,13 +231,14 @@ int atenderConexiones(void * data) {
 	while (1) {
 		sockets_para_revisar = sockets_activos;
 		int retornoSelect;
-
+//		select:
 		retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
 		NULL, NULL, NULL);
 
 		if (retornoSelect == -1) {
 
 		}
+
 		int i;
 
 		for (i = 0; i <= socketMasGrande; i++) {
@@ -270,11 +271,12 @@ int atenderConexiones(void * data) {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
 					//int resultado =
 					//atenderConexion(i, mapa);
-					//if(resultado == 1){-
-					//goto select;
+					//if(resultado == 1){
+
 				}
 			}
 		}
+
 	}
 }
 

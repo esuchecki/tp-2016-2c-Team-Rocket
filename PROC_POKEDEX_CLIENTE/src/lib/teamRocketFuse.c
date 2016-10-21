@@ -10,19 +10,30 @@
 
 static int ejemplo_getattr(const char *path, struct stat *stbuf) {
 
+	int res = 0;
+	memset(stbuf, 0, sizeof(struct stat));
+
 	t_data * paquete = pedirPaquete(solicitudGetAttr,strlen(path),&path);
 	common_send(socketConexion,paquete);
 
 	paquete = leer_paquete(socketConexion);
+
 	switch(paquete->header){
 	case respuestaPorArchivo:
+		;
+		stbuf->st_mode = S_IFREG | 0444;
+		stbuf->st_nlink = 1;
+		stbuf->st_size = (size_t)paquete->data;
 		break;
 	case respuestaPorDirectorio:
+		stbuf->st_mode = S_IFDIR | 0755;
+		stbuf->st_nlink = 2;
+		break;
+	case errorGetAttr:
+		res = -ENOENT;
 		break;
 	}
 
-	int res = 0;
-	memset(stbuf, 0, sizeof(struct stat));
 
 	if (strcmp(path, "/") == 0) {
 		stbuf->st_mode = S_IFDIR | 0755;
@@ -119,10 +130,10 @@ static int ejemplo_read(const char *path, char *buf, size_t size, off_t offset,
 
 	enviarLecturaArchivo(path,size,offset);
 	t_data * lectura = leer_paquete(socketConexion);
+
 	if(lectura->header == respuestaLectura){
 		memcpy(buf,lectura->data,size);
 	}
-
 
 
 	if (strcmp(path, "/pikachu/pikachu.png") == 0) {
@@ -141,8 +152,11 @@ static int ejemplo_read(const char *path, char *buf, size_t size, off_t offset,
 	return size;
 }
 
-static struct fuse_operations ejemplo_oper = { .getattr = ejemplo_getattr,
-		.readdir = ejemplo_readdir, .read = ejemplo_read, };
+static struct fuse_operations ejemplo_oper = {
+		.getattr = ejemplo_getattr,
+		.readdir = ejemplo_readdir,
+		.read = ejemplo_read,
+};
 
 int iniciarFuse(int argc, char*argv[]) {
 	//pikachu
@@ -203,17 +217,19 @@ char * leerHastaCentinela(char *paquete) {
 
 void enviarLecturaArchivo(const char *path, size_t size, off_t offset) {
 
-	int tamanio = strlen(path) + sizeof(size_t) + sizeof(off_t);
+	t_data *paquete = pedirPaquete(leerArchivo, strlen(path), &path);
+
+	common_send(socketConexion,paquete);
+
+	int tamanio = sizeof(size_t) + sizeof(off_t);
 
 	void*buffer = malloc(tamanio);
 
-	memcpy(buffer,&path,strlen(path));
+	memcpy(buffer, &size, sizeof(size_t));
 
-	memcpy(buffer + strlen(path), &size, sizeof(size_t));
+	memcpy(buffer + sizeof(size_t), &offset, sizeof(off_t));
 
-	memcpy(buffer + strlen(path) + sizeof(size_t), &offset, sizeof(off_t));
-
-	t_data *paquete = pedirPaquete(leerArchivo, tamanio, buffer);
+	paquete = pedirPaquete(leerArchivo, tamanio, buffer);
 
 	common_send(socketConexion, paquete);
 
