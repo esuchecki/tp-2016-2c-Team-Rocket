@@ -114,13 +114,13 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
 	}
 }
 
-int atenderConexiones() {
+int atenderConexiones(char* ip, char* puerto) {
 
 	int socketEscucha, socketMasGrande;
 
 	fd_set sockets_para_revisar, sockets_activos;
 
-	socketEscucha = setup_listen("localhost", "6800");
+	socketEscucha = setup_listen(ip, puerto);
 
 	printf("%d\n", socketEscucha);
 
