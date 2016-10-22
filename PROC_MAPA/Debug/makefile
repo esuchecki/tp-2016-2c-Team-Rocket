@@ -27,13 +27,13 @@ endif
 all: mapa
 
 dependents:
-	-cd /home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) all
 
 # Tool invocations
-mapa: $(OBJS) $(USER_OBJS) /home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so
+mapa: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "mapa" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "mapa" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -44,6 +44,6 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
+/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
 
 -include ../makefile.targets

@@ -25,26 +25,24 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 
 	if (paquete->header == 0) {
 		//desconexion
-		puts("se desconecto");
-		desconectarEntrenador(socket_recepcion, mapa,sockets_activos,
+
+		desconectarEntrenador(socket_recepcion, mapa, sockets_activos,
 				socketMasGrande);
 
 		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 				socket_recepcion);
 
-	}else if (paquete->header < 0){
-		puts("error recv");
 	}
 
 }
 
-
-int atenderConexion(int i, t_mapa * mapa) {
-	int flag=-1;
+int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
+	int flag = -1;
+	int resultadoSend;
 	t_data * paquete;
 	proceder: paquete = leer_paquete(i);
-	log_debug(myArchivoDeLog,"Atiendo al socket %d,con el header %d ",i,paquete->header);
-//	detectarDesconexion(paquete, i, sockets_activos, mapa);
+	log_debug(myArchivoDeLog, "Atiendo al socket %d,con el header %d ", i,
+			paquete->header);
 
 	switch (paquete->header) {
 	case peticionPokenest:
@@ -73,7 +71,7 @@ int atenderConexion(int i, t_mapa * mapa) {
 				//usleep(mapa->metadata->retardo);
 				sleep(2);
 
-				common_send(i, nuevoPaquete);
+				resultadoSend = common_send(i, nuevoPaquete);
 
 				flag = consumirQuantum(i, mapa->metadata->quantum);
 
@@ -112,14 +110,15 @@ int atenderConexion(int i, t_mapa * mapa) {
 			//usleep(mapa->metadata->retardo);
 			sleep(2);
 
+			setearDistanciaPokenest(i, mapa, entrenador->pokenest);
+
 			flag = consumirQuantum(i, mapa->metadata->quantum);
 
 			int null_data = 0;
 			t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
-			common_send(entrenador->nroDesocket, turno);
+			resultadoSend = common_send(entrenador->nroDesocket, turno);
 			free(turno);
 
-			setearDistanciaPokenest(i, mapa, entrenador->pokenest);
 
 			break;
 		}
@@ -138,8 +137,7 @@ int atenderConexion(int i, t_mapa * mapa) {
 
 		entrenador->pokemonSolicitado = identificador[0];
 
-
-		flag =1;	// le aborto el quantum!
+		flag = 1;	// le aborto el quantum!
 
 		quitarDeColaDeListos(entrenador);
 
@@ -159,17 +157,23 @@ int atenderConexion(int i, t_mapa * mapa) {
 		break;
 	case 0:
 		/*desconectarEntrenador(i, mapa,sockets_activos,
-				socketMasGrande);
+		 socketMasGrande);
 
-		log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
-				i);
-		return 1;*/
+		 log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
+		 i);
+		 return 1;*/
 		break;
 	}
-	if (flag == 0){
+	log_info(myArchivoDeLog,"VALOR FLAG:%d",flag);
+	if (resultadoSend == 0 || paquete->header <= 0) {
+		desconectarEntrenador(i, mapa, sockets_activos, socketMasGrande);
+		return 0;
+	}
+	if (flag == 0) {
 		goto proceder;
 	}
-	return  0;
+
+	return 0;
 }
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa) {
@@ -204,9 +208,9 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 
 		int null_data = 0;
 
-		t_data * paquete = pedirPaquete(50,sizeof(int),&null_data);
+		t_data * paquete = pedirPaquete(50, sizeof(int), &null_data);
 
-		common_send(socket_nueva_conexion,paquete);
+		common_send(socket_nueva_conexion, paquete);
 
 		sem_post(&entrenador_listo);
 
@@ -224,7 +228,7 @@ int atenderConexiones(void * data) {
 
 	int socketEscucha;
 
-	fd_set sockets_para_revisar, sockets_activos;
+	fd_set sockets_para_revisar;
 
 	socketEscucha = setup_listen("localhost", mapa->metadata->puerto);
 
@@ -238,7 +242,10 @@ int atenderConexiones(void * data) {
 	FD_SET(socketEscucha, &sockets_activos);
 
 	while (1) {
+		pthread_mutex_lock(&mutex_sock);
 		sockets_para_revisar = sockets_activos;
+		pthread_mutex_unlock(&mutex_sock);
+
 		int retornoSelect;
 //		select:
 		retornoSelect = select(socketMasGrande + 1, &sockets_para_revisar,
@@ -267,7 +274,9 @@ int atenderConexiones(void * data) {
 
 					} else {
 						//Ponemos al socket nuevo en el set de sockets activos
+						pthread_mutex_lock(&mutex_sock);
 						FD_SET(socket_nueva_conexion, &sockets_activos);
+						pthread_mutex_unlock(&mutex_sock);
 
 						if (socket_nueva_conexion > socketMasGrande) {
 							socketMasGrande = socket_nueva_conexion;

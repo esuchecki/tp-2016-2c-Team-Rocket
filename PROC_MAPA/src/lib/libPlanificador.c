@@ -60,7 +60,7 @@ void * ejecutarPlanificador(void * datos) {
 		pthread_mutex_unlock(&mutex_algoritmo);
 
 		log_info(myArchivoDeLog,"ESCUCHO AL ENTRENADOR-SOCKET %d",entrenadorElegido->nroDesocket);
-		atenderConexion(entrenadorElegido->nroDesocket, mapa);
+		atenderConexion(entrenadorElegido->nroDesocket, mapa,sockets_activos);
 
 	}
 
@@ -272,8 +272,9 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 		entrenadorAEliminar = list_remove_by_condition(colaBloqueados,
 				seDesconecto);
 	}
-
+	pthread_mutex_lock(&mutex_sock);
 	FD_CLR(nroDesocket, &sockets_activos);
+	pthread_mutex_unlock(&mutex_sock);
 
 	close(nroDesocket);
 
@@ -330,30 +331,18 @@ int consumirQuantum(int i, int quantum) {
 	log_debug(myArchivoDeLog, "cantidad de instrucciones ejecutadas: %d",
 			entrenador->instruccionesEjecutadas);
 	if (quantum <= entrenador->instruccionesEjecutadas) {
-		log_debug(myArchivoDeLog,
-				"El entrenador %c es encolado nuevamente por fin de quantum",
-				entrenador->simbolo);
-		quitarDeColaDeListos(entrenador);
-		entrenador->instruccionesEjecutadas = 0;
-		agregarAColaDeListos(entrenador);
-		sem_post(&mapa_libre);
-		sem_post(&entrenador_listo);
-		return 1;
-	} else {
-
-		/*
-		int null_data = 0;
-
-		t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
-
-		common_send(entrenador->nroDesocket, turno);
-
-		free(turno);
-*/
+			log_debug(myArchivoDeLog,
+					"El entrenador %c es encolado nuevamente por fin de quantum",
+					entrenador->simbolo);
+			quitarDeColaDeListos(entrenador);
+			entrenador->instruccionesEjecutadas = 0;
+			agregarAColaDeListos(entrenador);
+			sem_post(&mapa_libre);
+			sem_post(&entrenador_listo);
+			return 1;
+	}else{
 		return 0;
-
 	}
-
 }
 
 t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket) {

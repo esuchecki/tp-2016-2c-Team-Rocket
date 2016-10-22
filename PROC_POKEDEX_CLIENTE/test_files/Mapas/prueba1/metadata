@@ -8,7 +8,7 @@ Batalla=1
 algoritmo=RR
 
 #Quantum aplicable a RR
-quantum=1
+quantum=3
 
 #Retardo entre accion y accion en pantalla..
 retardo=5000000
