@@ -193,13 +193,14 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 
 		sem_post(&entrenador_listo);
 
+	}else{
+		log_error(myArchivoDeLog,"No se puede entregar recurso por falta de recurso");
 	}
 
 }
 
 void desbloquearEntrenador(t_mapa *mapa) {
-	//TODO: entregar pokemon pedido por entrenador
-	// si no puedo entregarlo que hago? planifico otro de la colaDeListos?
+
 	int i;
 	for (i = 0; i < list_size(colaBloqueados); i++) {
 
@@ -398,7 +399,7 @@ void setearDistanciaPokenest(int nroDeSocket, t_mapa * self, char pokenest) {
 
 	int aux = distanciaEntrenadorPokenest(entrenador->simbolo, self, pokenest);
 
-	if (aux <= 0) {
+	if (aux < 0) {
 		//problemas al calcular la distancia
 		log_debug(myArchivoDeLog,
 				"Hubo algun error al calcular la distancia de #Socket: %s",
