@@ -13,6 +13,7 @@ void inicializarTiemposDelEntrenador (t_stats * estadisticas)
 {
 	estadisticas->cant_muertes = 0;
 	estadisticas->cant_deadlocks =0;
+	estadisticas->cant_reintentos =0;
 	estadisticas->bloqEnPokeNest_time = 0;
 	estadisticas->start_time = time (NULL);
 	//TODO: se puede validar que time devolvio -1 y prevenir problemas..

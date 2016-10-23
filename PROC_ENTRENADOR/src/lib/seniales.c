@@ -42,18 +42,18 @@ void tratarLaSenialRecibida (int senial)
 
 		case SIGUSR1:
 			log_warning(myArchivoDeLog,"Recibi la senial SIGUSR1." );
-			_SIGUSR1_flag = 1;
+			_SIGUSR1_flag ++;
 			break;
 
 		case SIGTERM:
 			log_warning(myArchivoDeLog,"Recibi la senial SIGTERM." );
-			_SIGTERM_flag = 1;
+			_SIGTERM_flag ++;
 			break;
 	}
 
 }
 
-void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) )
+void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *, bool) )
 {
 	//TODO: revisar si hay que hacer alguna otra cosa para 'encolar' señales o enrealidad bloquearlas (si no quiero que me interrumpan algo)
 
@@ -67,16 +67,16 @@ void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador,
 	}
 
 	//Resto vidas
-	if (_SIGTERM_flag == 1)
+	if (_SIGTERM_flag > 1)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGTERM.**" );
-		fcSIGTERM(unEntrenador);
+		fcSIGTERM(unEntrenador, false);
 		_SIGTERM_flag = 0;	//reseteo el flag.
 	}
 
 
 	//sumar vidas al entrenador
-	if (_SIGUSR1_flag == 1)
+	if (_SIGUSR1_flag > 1)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGUSR1.**" );
 		fcSIGUSR1(unEntrenador);

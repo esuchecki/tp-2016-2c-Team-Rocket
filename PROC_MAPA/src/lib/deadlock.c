@@ -179,62 +179,61 @@ void * deteccionDeadlock(void * datos) {
 
 	while (1) {
 		usleep(mapa->metadata->tiempoChequeadoDeadlock);
-
 		t_list * listaDeadlock = detectarDeadlock(mapa);
+		/*
+		t_list * listaDeadlock = list_create();
+		sleep(40);
+		list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,0));
+		list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,1));
+		log_info(myArchivoDeLog, "---------%s", string_itoa(list_size(listaDeadlock)));*/
+		if ((mapa->metadata->batalla[0] == '1') && (listaDeadlock != NULL))
+		{
+			log_info(myArchivoDeLog, "Resolucion de deadlock por batalla");
+			peticionesDePokemones(listaDeadlock);
 
-		if (listaDeadlock == NULL) {
+			t_entrenador * loser = batallarListaDePkmn(listaDeadlock);
 
-			//No Hay Deadlock, no hago nada
-
-		} else {
-			if(mapa->metadata->batalla == 1){
-				log_info(myArchivoDeLog,"Resolucion de deadlock por batalla");
-				peticionesDePokemones(listaDeadlock);
-				if (list_size(listaDeadlock) == 2) {
-					t_entrenador * entrenador1 = list_get(listaDeadlock, 0);
-					t_entrenador * entrenador2 = list_get(listaDeadlock, 1);
-
-
-					//t_entrenador * loser = malloc(sizeof(t_entrenador));
-					t_entrenador * loser;
-					loser = batallarDosEntrenadores(
-							entrenador1,
-							entrenador2);
-					//TODO: buscar el dueño del pokemon loser y eliminarlo
-					//Listo el dueño, falta eliminarlo
-
-
-				} else {
-					t_entrenador * loser = batallarListaDePkmn(listaDeadlock);
-					//TODO: buscar el dueño del pokemon loser y eliminarlo
-					//Listo el dueño, falta eliminarlo
-				}
-			}else{
-				//TODO:no hay batalla pokemon
-				log_info(myArchivoDeLog,"No hay resolucion batalla pokemon");
+			if (loser == NULL)
+			{
+				//TODO: si entro aca se mandaron algun moco...que hago!??
 			}
+			else
+			{
+				int null_data = 0;
+				t_data *paquetePerdisteBatalla = pedirPaquete(perdisteBatalla, sizeof(int), &null_data);
+				common_send(loser->nroDesocket, paquetePerdisteBatalla);
+				free(paquetePerdisteBatalla);
 
-
+				desconectarEntrenador(loser->nroDesocket, mapa, sockets_activos, socketMasGrande);
+			}
 		}
 	}
-
 	return NULL;
-
 }
+
 
 void peticionesDePokemones(t_list * listaDeadlock) {
 	int i;
 	for (i = 0; i < list_size(listaDeadlock); i++) {
 		t_entrenador * entrenador = list_get(listaDeadlock, i);
 
-		t_data * paquete = pedirPaquete(dameMejorPokemon, 4, &i);
+		t_data * paquete = pedirPaquete(dameMejorPokemon, sizeof(int), &i);
 
 		common_send(entrenador->nroDesocket, paquete);
 
 		paquete = leer_paquete(entrenador->nroDesocket);
 		if (paquete->header == mejorPokemon) {
-			entrenador->mejorPokemon = malloc(paquete->tamanio);
-			entrenador->mejorPokemon = paquete->data;
+
+			entrenador->mejorPokemon = malloc(sizeof(t_pokemon));
+
+			char * auxSpecies = malloc(50*sizeof(char));
+			void * buffer = malloc(sizeof(t_pokemon)+50*sizeof(char));
+			buffer = paquete->data;
+
+			memcpy(entrenador->mejorPokemon, buffer, sizeof(t_pokemon));
+			memcpy(auxSpecies, buffer+ sizeof(t_pokemon), 50*sizeof(char));
+
+			entrenador->mejorPokemon->species = auxSpecies;
 		} else {
 			log_info(myArchivoDeLog, "Error en la recepcion del mejor pokemon");
 		}

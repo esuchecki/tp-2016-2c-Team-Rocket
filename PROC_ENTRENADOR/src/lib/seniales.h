@@ -37,7 +37,7 @@ void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador);
  *
  * NOTA: inicializarSenialesEntrenador ya deben estar inicializadas!.
  */
-void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *) );
+void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador, void (*fcSIGUSR1) (t_entrenadorFisico *), void (*fcSIGTERM) (t_entrenadorFisico *, bool) );
 
 /*
  * @NAME: tratarLaSenialRecibida

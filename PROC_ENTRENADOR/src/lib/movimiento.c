@@ -1,8 +1,19 @@
 #include "movimiento.h"
 
+
+
+enum tipoDeEstadoEntrenador {
+	inicializar_estado = 150,
+	siguienteObjetivoPkmn = 151,
+	avanzarDeMapa = 152,
+	setearmeEnReiniciarMapaActual = 153,
+	setearmeEnReiniciarHojaDeViaje = 154,
+};
+
+
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 		int socketConexion);
-void inicializarEstadoEntrenador(t_entrenadorFisico * unEntrenador);
+void setearEstadoDelEntrenador(t_entrenadorFisico * unEntrenador, enum tipoDeEstadoEntrenador unFlag);
 int queHago(t_estadoEntrenador* estado);
 void enviarMensajeMovimiento(t_entrenadorFisico * unEntrenador,
 		int socketConection);
@@ -24,6 +35,10 @@ void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		time_t tiempo);
 void copiarseMedallasDelMapaActual(t_entrenadorFisico * unEntrenador, char * nombreMapa);
+void fcAuxiliarInicializarEstado (t_entrenadorFisico * unEntrenador);
+bool estoyEnEstadoDeReiniciarMapaActual (t_entrenadorFisico * unEntrenador);
+bool estoyEnEstadoDeReiniciarHojaDeViaje (t_entrenadorFisico * unEntrenador);
+
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fueVicitimaDeDeadlock);
@@ -31,31 +46,96 @@ void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fueV
 
 
 
+//----------------------------------------------------//
 
 
-void inicializarEstadoEntrenador(t_entrenadorFisico * unEntrenador) {
-	if (unEntrenador->moverseEnMapa == NULL) {
-		//inicializamos al Estado del entrenador.
-		t_estadoEntrenador * estadoEntrenador = malloc(
-				sizeof(t_estadoEntrenador));	//pedir mmem
-		estadoEntrenador->e_posX = __entrenadorPosInicialEnX;
-		estadoEntrenador->e_posY = __entrenadorPosInicialEnY;
-		estadoEntrenador->ultimoMov = 'Y'; //solo para que empieza hacia un costado...
 
-		estadoEntrenador->indexObjetivoPkmn = 0;
-		estadoEntrenador->indexMapaActual = 0;
-		estadoEntrenador->p_posX = -1;
-		estadoEntrenador->p_posY = -1;
-		estadoEntrenador->respuesta = -1;
 
-		unEntrenador->moverseEnMapa = estadoEntrenador;
-	} else {
-		t_estadoEntrenador * estadoEntrenador = unEntrenador->moverseEnMapa;
-		estadoEntrenador->indexObjetivoPkmn++;
-		estadoEntrenador->p_posX = -1;
-		estadoEntrenador->p_posY = -1;
-		estadoEntrenador->respuesta = -1;
+void setearEstadoDelEntrenador(t_entrenadorFisico * unEntrenador, enum tipoDeEstadoEntrenador unFlag) {
+	switch (unFlag)
+	{
+	case inicializar_estado:
+
+		if ( estoyEnEstadoDeReiniciarHojaDeViaje(unEntrenador) ) {
+			//inicializamos al Estado del entrenador.
+			t_estadoEntrenador * estadoEntrenador = malloc(sizeof(t_estadoEntrenador));
+
+			estadoEntrenador->indexMapaActual = 0;
+			unEntrenador->moverseEnMapa = estadoEntrenador;
+			fcAuxiliarInicializarEstado(unEntrenador);
+			break;
+		}
+
+		//si fui victima de deadlock
+		else if ( estoyEnEstadoDeReiniciarMapaActual(unEntrenador) )
+		{
+			unEntrenador->moverseEnMapa->indexMapaActual++;
+			unEntrenador->moverseEnMapa->indexMapaActual = -unEntrenador->moverseEnMapa->indexMapaActual;
+			fcAuxiliarInicializarEstado(unEntrenador);
+			break;
+		}
+
+		//TODO: error?
+		break;
+	case siguienteObjetivoPkmn:
+
+		//avanzo al proximo objetivo pkmn.
+		unEntrenador->moverseEnMapa->indexObjetivoPkmn++;
+		unEntrenador->moverseEnMapa->p_posX = -1;
+		unEntrenador->moverseEnMapa->p_posY = -1;
+		unEntrenador->moverseEnMapa->respuesta = -1;
+
+		break;
+	case avanzarDeMapa:
+		;
+		//reseteo los objetivos del mapa, mantengo el flag de indexMapaActual
+		int aux = unEntrenador->moverseEnMapa->indexMapaActual;
+		free(unEntrenador->moverseEnMapa);
+		unEntrenador->moverseEnMapa = NULL;
+		setearEstadoDelEntrenador(unEntrenador, inicializar_estado);
+		unEntrenador->moverseEnMapa->indexMapaActual = aux;
+		break;
+	case setearmeEnReiniciarMapaActual:
+
+		unEntrenador->moverseEnMapa->indexMapaActual = -unEntrenador->moverseEnMapa->indexMapaActual;
+		unEntrenador->moverseEnMapa->indexMapaActual--;
+		break;
+	case setearmeEnReiniciarHojaDeViaje:
+
+		free(unEntrenador->moverseEnMapa);
+		unEntrenador->moverseEnMapa = NULL;
+		break;
+	default:
+		log_error(myArchivoDeLog, "llegue a default en setarEstadoEntrenador.");
+		finalizarEntrenador(unEntrenador);
+		break;
 	}
+
+}
+
+
+void fcAuxiliarInicializarEstado (t_entrenadorFisico * unEntrenador)
+{
+	unEntrenador->moverseEnMapa->e_posX = __entrenadorPosInicialEnX;
+	unEntrenador->moverseEnMapa->e_posY = __entrenadorPosInicialEnY;
+	unEntrenador->moverseEnMapa->ultimoMov = 'Y'; //solo para que empieza hacia un costado...
+
+	unEntrenador->moverseEnMapa->indexObjetivoPkmn = 0;
+	unEntrenador->moverseEnMapa->p_posX = -1;
+	unEntrenador->moverseEnMapa->p_posY = -1;
+	unEntrenador->moverseEnMapa->respuesta = -1;
+}
+
+bool estoyEnEstadoDeReiniciarMapaActual (t_entrenadorFisico * unEntrenador)
+{
+	if (unEntrenador->moverseEnMapa != NULL)
+		return (unEntrenador->moverseEnMapa->indexMapaActual < 0);
+	return false;
+}
+
+bool estoyEnEstadoDeReiniciarHojaDeViaje (t_entrenadorFisico * unEntrenador)
+{
+	return (unEntrenador->moverseEnMapa == NULL);
 }
 
 void iniciarAventura(t_entrenadorFisico * unEntrenador) {
@@ -66,12 +146,13 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 		return;
 	}
 
-	inicializarEstadoEntrenador(unEntrenador);
+	setearEstadoDelEntrenador(unEntrenador, inicializar_estado);
 	//int indexMapaActual = 0;
 	//Me conecto al primer mapa y sigo asi conectandome recursivamente..
-	while (unEntrenador->metadata->hojaDeViaje->elements_count	> unEntrenador->moverseEnMapa->indexMapaActual) {
+	while ( list_size(unEntrenador->metadata->hojaDeViaje)	> unEntrenador->moverseEnMapa->indexMapaActual) {
 		t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,	unEntrenador->moverseEnMapa->indexMapaActual);
 		log_info(myArchivoDeLog, "Me voy a conectar al mapa: %s",	mapaActual->nombreMapa);
+		printf("Me voy a conectar al mapa: %s\n",	mapaActual->nombreMapa);
 
 		char * mapaActual_Ip = NULL;
 		char * mapaActual_Puerto = NULL;
@@ -87,12 +168,18 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 
 		free(mapaActual_Ip);
 		free(mapaActual_Puerto);
-		//free(mapaActual);
-		copiarseMedallasDelMapaActual(unEntrenador, mapaActual->nombreMapa);	//Antes me copio la medalla
-		unEntrenador->moverseEnMapa->indexMapaActual++;
-		log_info(myArchivoDeLog, "Termine mis tareas en el mapa actual.");
+		if (estoyEnEstadoDeReiniciarMapaActual(unEntrenador) || estoyEnEstadoDeReiniciarHojaDeViaje(unEntrenador) )
+		{
+			setearEstadoDelEntrenador(unEntrenador, inicializar_estado);
+		}
+		else
+		{
+			//free(mapaActual);
+			copiarseMedallasDelMapaActual(unEntrenador, mapaActual->nombreMapa);	//Antes me copio la medalla
+			unEntrenador->moverseEnMapa->indexMapaActual++;
+			log_info(myArchivoDeLog, "Termine mis tareas en el mapa actual.");
+		}
 	}
-
 	//En teoria aca se convirtio en maestro pokemon..
 	soyMaestroPokemon(unEntrenador);
 
@@ -237,11 +324,12 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 
 	}
 	close(socketConexion);
+	puts("Me desconecto del mapa actual.");
 }
 
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador) {
 	//TODO: ¿Tengo que validar que la metadata este inicializada?
-	unEntrenador->metadata->vidas++;	//sumo una vida
+	unEntrenador->metadata->vidas = unEntrenador->metadata->vidas + _SIGUSR1_flag;	//sumo vidas
 }
 
 void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
@@ -262,8 +350,11 @@ void reintentar(t_entrenadorFisico * unEntrenador) {
 	scanf("%s", &reintentar);
 	if (reintentar == 'S' || reintentar == 's')
 	{
+		unEntrenador->misEstadisticas.cant_reintentos ++;
+		unEntrenador->metadata->vidas = 1;	//le dejo una vida! :D
 		borrarDirectorioDeBill(unEntrenador);
-		//TODO: EMIiii conectarse al mapa otra vez (habria que reiniciar la hoja de viaje y borrar medallas
+		//TODO: borrar medallas.
+		setearEstadoDelEntrenador(unEntrenador, setearmeEnReiniciarHojaDeViaje);
 	}
 	else	//Si no quiere reintentar lo finalizo.
 		finalizarEntrenador(unEntrenador);
@@ -272,31 +363,38 @@ void reintentar(t_entrenadorFisico * unEntrenador) {
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiVictimaDeDeadlock) {
 	//TODO: ¿Tengo que validar que la metadata este inicializada?
 
+
 	if (fuiVictimaDeDeadlock)
+	{
 		puts ("Me descontaron una vida por deadlock");
+		if (unEntrenador->metadata->vidas > 0)//Minima cantidad de vidas es 0.
+			unEntrenador->metadata->vidas --;
+	}
 	else
-		puts ("Le quitaron una vida con SIGTERM.");
+	{
+		if (unEntrenador->metadata->vidas > _SIGTERM_flag)		//Minima cantidad de vidas es 0.
+			unEntrenador->metadata->vidas = unEntrenador->metadata->vidas -_SIGTERM_flag;	//resto vidas
+		else
+			unEntrenador->metadata->vidas =0;
 
-	if (unEntrenador->metadata->vidas > 0)		//Minima cantidad de vidas es 0.
-		unEntrenador->metadata->vidas--;	//resto una vida
+		puts ("Le quitaron vidas con SIGTERM.");
+	}
 
-	printf ("Me quedan %d vidas.", unEntrenador->metadata->vidas);
+	printf ("Me quedan %d vidas.\n", unEntrenador->metadata->vidas);
 
 	//Si no tengo vidas, me muero!.
 	if (unEntrenador->metadata->vidas == 0) {
+		unEntrenador->misEstadisticas.cant_muertes ++;
 		reintentar(unEntrenador);
 	} else if ( (unEntrenador->metadata->vidas > 0) && fuiVictimaDeDeadlock) {
-		//TODO: EMI: reconectarse al mapa actual
+		unEntrenador->misEstadisticas.cant_muertes++;
+		setearEstadoDelEntrenador(unEntrenador, setearmeEnReiniciarMapaActual);
 		borrarDirectorioDeBill(unEntrenador);
 	}
 }
 
 bool conozcoLaPosicionDeLaPokeNest(t_entrenadorFisico * unEntrenador) {
-	if ((unEntrenador->moverseEnMapa->p_posX > 0)
-			&& (unEntrenador->moverseEnMapa->p_posY > 0))
-		return true;
-	else
-		return false;
+	return ((unEntrenador->moverseEnMapa->p_posX > 0) && (unEntrenador->moverseEnMapa->p_posY > 0));
 }
 
 void pedirPorSocketLaPosicionDeLaPokeNestProxima(
@@ -315,17 +413,17 @@ void pedirPorSocketLaPosicionDeLaPokeNestProxima(
 
 void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 		int socketConexion) {
-	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,
-			unEntrenador->moverseEnMapa->indexMapaActual);
+	t_mapa * mapaActual = list_get(unEntrenador->metadata->hojaDeViaje,	unEntrenador->moverseEnMapa->indexMapaActual);
 	time_t tiempoAuxPN;
 
 	while (1) {
 		//TODO: abrir un hilo aparte para esto??
-		funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador,
-				(void*) &accionDelEntrenadorAnteSIGUSR1,
-				(void*) &accionDelEntrenadorAnteSIGTERM);
-
 		//Primero chequea que no le haya llegado ninguna señal...
+		funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador, (void*) &accionDelEntrenadorAnteSIGUSR1, (void*) &accionDelEntrenadorAnteSIGTERM);
+
+		if ( estoyEnEstadoDeReiniciarHojaDeViaje(unEntrenador) )
+		{	return;		break;		}
+
 
 		if (!conozcoLaPosicionDeLaPokeNest(unEntrenador)) {
 			pedirPorSocketLaPosicionDeLaPokeNestProxima(unEntrenador,
@@ -333,26 +431,23 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 			recibirRespuesta(socketConexion, unEntrenador, tiempoAuxPN);
 		} else {
 			//tengo la pokenest.. tengo que moverme
-			unEntrenador->moverseEnMapa->respuesta = queHago(
-					unEntrenador->moverseEnMapa);
+			unEntrenador->moverseEnMapa->respuesta = queHago(unEntrenador->moverseEnMapa);
 			if (unEntrenador->moverseEnMapa->respuesta == 0) {
 				tiempoAuxPN = time(NULL); //Lo inicializo aca, por si justo arranca en una posicion pokeNest
 			}
 			actualizarEstado(unEntrenador, socketConexion, tiempoAuxPN);
 		}
 
-		//Si llego al ultimo objetivo del mapa, sale!
-		if ((mapaActual->objetivosDelMapa[unEntrenador->moverseEnMapa->indexObjetivoPkmn])
-				== NULL) {
-			//reseteo los objetivos del mapa, mantengo el flag de indexMapaActual
-			int aux = unEntrenador->moverseEnMapa->indexMapaActual;
-			free(unEntrenador->moverseEnMapa);
-			unEntrenador->moverseEnMapa = NULL;
-			inicializarEstadoEntrenador(unEntrenador);
-			unEntrenador->moverseEnMapa->indexMapaActual = aux;
 
-			return;
-			break;
+		if ( estoyEnEstadoDeReiniciarMapaActual(unEntrenador) )
+		{	actualizarTiempoBloqueado(unEntrenador, tiempoAuxPN);
+			return;		break;
+		}
+
+		//Si llego al ultimo objetivo del mapa, sale!
+		if ((mapaActual->objetivosDelMapa[unEntrenador->moverseEnMapa->indexObjetivoPkmn])	== NULL) {
+			setearEstadoDelEntrenador(unEntrenador, avanzarDeMapa);
+			return;		break;
 		}
 
 	}
@@ -372,7 +467,7 @@ void logicaDeCapturarUnPkmn(t_entrenadorFisico * unEntrenador, t_data * info) {
 	__ubicacionDirDeBill);
 
 	if (copyFiles(ubicacionPokemon, directorioDeBill))//Lo copio. Si hubo algun error lo handleo
-			{
+	{
 		log_debug(myArchivoDeLog, "%s", ubicacionPokemon);
 		log_debug(myArchivoDeLog, "%s", directorioDeBill);
 		free(directorioDeBill);
@@ -382,7 +477,7 @@ void logicaDeCapturarUnPkmn(t_entrenadorFisico * unEntrenador, t_data * info) {
 	}
 	free(ubicacionPokemon);
 	free(directorioDeBill);
-	inicializarEstadoEntrenador(unEntrenador);//Con esta linea avanza al proximo objetivo pokemon. Chequear que pasa si termino los objetivos del mapa.
+	setearEstadoDelEntrenador(unEntrenador, siguienteObjetivoPkmn);
 
 }
 
@@ -421,22 +516,30 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		actualizarTiempoBloqueado(unEntrenador, tiempoAuxPN);
 		break;
 	case dameMejorPokemon:
-		//TODO: enviar pokemon mas fuerte. realizar esta funcion
+
+		puts("Me pidieron mi mejor pokemon!.");
+		unEntrenador->misEstadisticas.cant_deadlocks ++;
 
 		//En caso de deadlock llamar a esta fc
 		;
 		t_pokemon * elMejor = malloc(sizeof(t_pokemon));
 		elMejor = elegirMejorPokemon(unEntrenador);
 
-		t_data * paquete = pedirPaquete(mejorPokemon, sizeof(t_pokemon),
-				elMejor);
+		char * auxSpecies = malloc(50*sizeof(char));
+		strcpy(auxSpecies, elMejor->species);
+
+		void * buffer = malloc(sizeof(t_pokemon)+50*sizeof(char));
+		memcpy(buffer, elMejor, sizeof(t_pokemon));
+		memcpy(buffer + sizeof(t_pokemon), auxSpecies, 50*sizeof(char));
+
+		t_data * paquete = pedirPaquete(mejorPokemon, sizeof(t_pokemon)+50*sizeof(char), buffer);
 
 		common_send(socketConexion, paquete);
 
+		recibirRespuesta(socketConexion, unEntrenador, tiempoAuxPN);	//vuelve a chequear a ver que le responden!
 		break;
-	case ganasteBatalla:
-		//TODO: hacer lo que tenga que hacer
-		break;
+	case ganasteBatalla:	break; 	//este mensaje quedo desestimado.
+
 	case perdisteBatalla:
 		//TODO: hacer lo que tenga que hacer
 			//loguear, etc...

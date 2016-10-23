@@ -9,6 +9,21 @@
 #include "batallaPkmn.h"
 
 
+/*
+ * @NAME: batallarDosEntrenadores
+ * @DESC: Resuelve un conflicto entre 2 entrenadores, batallando sus pkmn.
+ *      -> Si en deadlock solo hay 2 entrenadores llamar a esta fc.
+ *      ->  -> Tenes que llamar a free por tu cuenta.
+ *
+ *
+ * @RETURN: devuelve el pokemon perdedor.
+ */
+t_entrenador * batallarDosEntrenadores(t_entrenador * entrenador1, t_entrenador * entrenador2);
+
+/*
+ * @NAME: loguearPkmn
+ * @DESC: Muestra por log el pkmn del entrenador a batallar.
+ */
 void loguearPkmn (t_entrenador * unEntrenador);
 
 

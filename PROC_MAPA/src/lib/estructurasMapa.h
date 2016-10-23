@@ -76,7 +76,10 @@ typedef struct{
 #ifndef LIB_ESTRUCTURASMAPA_log_H_
 #define LIB_ESTRUCTURASMAPA_log_H_
 #else
-#define extern LIB_ESTRUCTURASMAPA_log_H_
+	#ifndef LIB_ESTRUCTURASMAPA_extern_log_H_
+	#define LIB_ESTRUCTURASMAPA_extern_log_H_
+	extern LIB_ESTRUCTURASMAPA_log_H_
+	#endif
 #endif /* DEFINE_VARIABLES */
 
 LIB_ESTRUCTURASMAPA_log_H_ t_log* myArchivoDeLog;

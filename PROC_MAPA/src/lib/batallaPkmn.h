@@ -17,16 +17,7 @@
 #include <commons/collections/list.h>
 
 
-/*
- * @NAME: batallarDosEntrenadores
- * @DESC: Resuelve un conflicto entre 2 entrenadores, batallando sus pkmn.
- *      -> Si en deadlock solo hay 2 entrenadores llamar a esta fc.
- *      ->  -> Tenes que llamar a free por tu cuenta.
- *
- *
- * @RETURN: devuelve el pokemon perdedor.
- */
-t_entrenador * batallarDosEntrenadores(t_entrenador * entrenador1, t_entrenador * entrenador2);
+
 
 /*
  * @NAME: batallarListaDePkmn
