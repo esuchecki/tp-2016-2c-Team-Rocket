@@ -73,10 +73,14 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 
 				resultadoSend = common_send(i, nuevoPaquete);
 
-				flag = consumirQuantum(i, mapa->metadata->quantum);
-
-				setearDistanciaPokenest(i, mapa, entrenador->pokenest);
-
+				if(strcmp(mapa->metadata->algoritmo,"RR")==0){
+					flag = consumirQuantum(i, mapa->metadata->quantum);
+				}else{
+					setearDistanciaPokenest(i, mapa, entrenador->pokenest);
+					flag = 1;
+					sem_post(&mapa_libre);
+					sem_post(&entrenador_listo);
+				}
 				free(nuevoPaquete);
 
 				break;//con esto salvamos que tire error cuando fue una ejecucion valida.
@@ -110,10 +114,12 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 			//usleep(mapa->metadata->retardo);
 			sleep(2);
 
-			setearDistanciaPokenest(i, mapa, entrenador->pokenest);
-
-			flag = consumirQuantum(i, mapa->metadata->quantum);
-
+			if(strcmp(mapa->metadata->algoritmo,"RR")==0){
+				flag = consumirQuantum(i, mapa->metadata->quantum);
+			}else{
+				setearDistanciaPokenest(i, mapa, entrenador->pokenest);
+				flag = 0;
+			}
 			int null_data = 0;
 			t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
 			resultadoSend = common_send(entrenador->nroDesocket, turno);
@@ -136,7 +142,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		char *identificador = paquete->data;
 
 		entrenador->pokemonSolicitado = identificador[0];
-
+		log_debug(myArchivoDeLog,"EL ENTRENADOR %c SOLICITA POKE: %c",entrenador->simbolo,entrenador->pokemonSolicitado);
 		flag = 1;	// le aborto el quantum!
 
 		quitarDeColaDeListos(entrenador);
