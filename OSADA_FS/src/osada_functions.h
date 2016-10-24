@@ -36,4 +36,14 @@ osada_block* obtenerBloqueDatos();
 
 void imprimirEstructuraArchivos();
 
+int buscarArchivoPorPath(char* path);
+
+int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques);
+
+int calcularCantidadBloques(int tamanioEnBytes);
+
+osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques);
+
+osada_block* obtenerArchivoPorPath(char* path);
+
 #endif /* OSADA_FUNCTIONS_H_ */
