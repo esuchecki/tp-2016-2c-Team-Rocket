@@ -5,13 +5,13 @@ TiempoChequeoDeadlock=10000
 Batalla=1
 
 #Algoritmos RR o SRDF
-algoritmo=RR
+algoritmo=SRDF
 
 #Quantum aplicable a RR
 quantum=3
 
 #Retardo entre accion y accion en pantalla..
-retardo=50000
+retardo=5000000
 
 #Ip del servidor del mapa
 IP=127.0.0.1

@@ -11,24 +11,16 @@
 #include <commons/collections/list.h>
 #include <semaphore.h>
 #include <so/libSockets.h>
+#include <pkmn/factory.h>
 #include "estructurasMapa.h"
 
 
 t_list *colaListos;
 t_list *colaBloqueados;
 t_list *colaFinalizados;
-sem_t entrenador_listo,entrenador_bloqueado;
-pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados,mutex_ejecucion;
+sem_t entrenador_listo,entrenador_bloqueado,mapa_libre;
+pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados;
 
-typedef struct{
-	int nroDesocket;
-	char simbolo;
-	int instruccionesEjecutadas;
-	int distanciaAProximaPokenest;
-	char pokemonSolicitado;
-	char pokenest;
-	//TODO: ver que otros datos poner aca
-}t_entrenador;
 
 void inicializar_estructuras_planificador();
 
@@ -60,7 +52,7 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar);
 
 int obtenerCoordenadasPokenest(char identificadorPokenest);
 
-void consumirQuantum(int numeroDeSocket);
+int consumirQuantum(int numeroDeSocket,int quantum);
 
 t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket);
 

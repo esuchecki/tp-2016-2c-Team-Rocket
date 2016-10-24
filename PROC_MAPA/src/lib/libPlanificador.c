@@ -8,7 +8,7 @@
 #include "libPlanificador.h"
 #include "estructurasMapa.h"
 #include "libGrafica.h"
-
+#include "conexiones.h"
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -23,13 +23,16 @@
 void inicializar_estructuras_planificador() {
 	sem_init(&entrenador_listo, 1, 0);
 	sem_init(&entrenador_bloqueado, 1, 0);
+	sem_init(&mapa_libre, 1, 0);
+	sem_post(&mapa_libre);
 	pthread_mutex_init(&mutex_listos, NULL);
 	pthread_mutex_init(&mutex_algoritmo, NULL);
 	pthread_mutex_init(&mutex_bloqueados, NULL);
-	pthread_mutex_init(&mutex_ejecucion, NULL);
+
 	colaListos = list_create();
 	colaBloqueados = list_create();
 	colaFinalizados = list_create();
+
 }
 
 t_entrenador * generarEntrenador(int i, void * data) {
@@ -48,22 +51,16 @@ void * ejecutarPlanificador(void * datos) {
 	t_mapa *mapa = datos;
 
 	while (1) {
+
+		sem_wait(&mapa_libre);
 		sem_wait(&entrenador_listo);
 
 		pthread_mutex_lock(&mutex_algoritmo);
-
-		t_entrenador *proximoEntrenador = ejecutar_algoritmo(
-				mapa->metadata->algoritmo, mapa->metadata->quantum);
-
+		t_entrenador *entrenadorElegido = ejecutar_algoritmo(mapa->metadata->algoritmo, mapa->metadata->quantum);
 		pthread_mutex_unlock(&mutex_algoritmo);
 
-		int null_data = 0;
-
-		t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);
-
-		common_send(proximoEntrenador->nroDesocket, turno);
-
-		free(turno);
+		log_info(myArchivoDeLog,"ESCUCHO AL ENTRENADOR-SOCKET %d",entrenadorElegido->nroDesocket);
+		atenderConexion(entrenadorElegido->nroDesocket, mapa,sockets_activos);
 
 	}
 
@@ -74,22 +71,8 @@ t_entrenador * ejecutar_algoritmo(char * algoritmo, int quantum) {
 	if (strcmp(algoritmo, "RR") == 0) {
 
 		t_entrenador * elProximo = list_get(colaListos, 0);
-
-		if (elProximo->instruccionesEjecutadas < quantum) {
-
-			return elProximo;
-
-		} else {
-			elProximo = list_remove(colaListos, 0);
-
-			elProximo->instruccionesEjecutadas = 0;
-
-			list_add(colaListos, elProximo);
-
-			elProximo = list_get(colaListos, 0);
-
-			return elProximo;
-		}
+		log_debug(myArchivoDeLog, "Algoritmo elige a: %c", elProximo->simbolo);
+		return elProximo;
 
 	} else {
 		//algoritmo entrenador mas cercano a pokedex
@@ -120,7 +103,6 @@ void agregarAColaDeListos(t_entrenador *unEntrenador) {
 	loguearColasDePlanificacion(colaListos, "Listos");
 	loguearColasDePlanificacion(colaBloqueados, "Bloqueados");
 	loguearColasDePlanificacion(colaFinalizados, "Finalizados");
-
 
 	pthread_mutex_unlock(&mutex_listos);
 }
@@ -155,11 +137,7 @@ void * manejarEntrenadoresBloqueados(void * datos) {
 	while (1) {
 		sem_wait(&entrenador_bloqueado);
 
-		//pthread_mutex_lock(&mutex_bloqueados);
-
 		desbloquearEntrenador(mapa);
-
-		//pthread_mutex_unlock(&mutex_bloqueados);
 
 	}
 
@@ -178,20 +156,22 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 	}
 
 	t_pokeNest * pokeNest = list_find(mapa->pokeNest, igualIdentificador);
-
-	t_pokemonEnPokeNest * pokemon = list_find(pokeNest->pokemones, noEstaAtrapado);
+	t_pokemonEnPokeNest * pokemon = list_find(pokeNest->pokemones,
+			noEstaAtrapado);
 	if (pokemon != NULL) {
 
 		pokemon->capturadoPorEntrenador = entrenador->simbolo;
 		//restar un recurso a ese pokemon.
-		ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(mapa, entrenador->pokemonSolicitado);
+		ITEM_NIVEL * resultado = encontrameEsteIdEnLaLista(mapa,
+				entrenador->pokemonSolicitado);
 		resultado->quantity--;
 		entrenador->distanciaAProximaPokenest = -1;
 		entrenador->instruccionesEjecutadas = 0;
 
-
-		log_debug(myArchivoDeLog,"le asigne al entrenador %c, el pokemon: %c", entrenador->simbolo, pokeNest->identificador);
-		log_debug(myArchivoDeLog, "nombre del archivo: %s", pokemon->pokemonNNNdat);
+		log_debug(myArchivoDeLog, "le asigne al entrenador %c, el pokemon: %c",
+				entrenador->simbolo, pokeNest->identificador);
+		log_debug(myArchivoDeLog, "nombre del archivo: %s",
+				pokemon->pokemonNNNdat);
 		//char * directorioPkmn;
 		//directorioPkmn = malloc ( (sizeof (char)) * PATH_MAX +1);
 		//sprintf(directorioPkmn, "/%s/%s/%s/%s/%s", mapa->directorioPokeDex, __ubicacionMapas, mapa->nombre , __ubicacionDirPokenest, pokemon->pokemonNNNdat);
@@ -200,29 +180,34 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 		//TODO: pasarle path con la ubicacion del pokemon!
 		//int null_data = 0;
 		//t_data *capturaPkmn = pedirPaquete(capturastePokemon, (sizeof (char)) * PATH_MAX +1 , directorioPkmn);
-		t_data *capturaPkmn = pedirPaquete(capturastePokemon, (sizeof (char)) * PATH_MAX +1 , pokemon->pokemonNNNdat);
+		t_data *capturaPkmn = pedirPaquete(capturastePokemon,
+				(sizeof(char)) * PATH_MAX + 1, pokemon->pokemonNNNdat);
 		common_send(entrenador->nroDesocket, capturaPkmn);
-		log_debug(myArchivoDeLog,"%s", pokemon->pokemonNNNdat);
+		log_debug(myArchivoDeLog, "%s", pokemon->pokemonNNNdat);
 		//free(directorioPkmn);
 		free(capturaPkmn);
 
 		quitarDeColaDeBloqueados(entrenador);
+
 		agregarAColaDeListos(entrenador);
+
 		sem_post(&entrenador_listo);
 
+	}else{
+		log_error(myArchivoDeLog,"No se puede entregar recurso por falta de recurso");
 	}
 
 }
 
 void desbloquearEntrenador(t_mapa *mapa) {
-	//TODO: entregar pokemon pedido por entrenador
-	// si no puedo entregarlo que hago? planifico otro de la colaDeListos?
+
 	int i;
 	for (i = 0; i < list_size(colaBloqueados); i++) {
 
-
 		pthread_mutex_lock(&mutex_bloqueados);
+
 		t_entrenador * entrenador = list_get(colaBloqueados, i);
+
 		pthread_mutex_unlock(&mutex_bloqueados);
 
 		asignarPokemonAEntrenador(mapa, entrenador);
@@ -249,7 +234,7 @@ void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 }
 
 void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
-	log_debug(myArchivoDeLog,	"entroo...");
+	log_debug(myArchivoDeLog, "entroo...");
 	pthread_mutex_lock(&mutex_bloqueados);
 
 	bool mismoSocket(void * datos) {
@@ -274,7 +259,8 @@ void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
 
 }
 
-void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos,int socketMasGrande) {
+void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
+		fd_set sockets_activos, int socketMasGrande) {
 	bool seDesconecto(void * data) {
 		t_entrenador * alguno = data;
 		return alguno->nroDesocket == nroDesocket;
@@ -282,14 +268,16 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 
 	t_entrenador * entrenadorAEliminar = list_remove_by_condition(colaListos,
 			seDesconecto);
+
 	if (entrenadorAEliminar == NULL) {
 		entrenadorAEliminar = list_remove_by_condition(colaBloqueados,
 				seDesconecto);
 	}
+	pthread_mutex_lock(&mutex_sock);
+	FD_CLR(nroDesocket, &sockets_activos);
+	pthread_mutex_unlock(&mutex_sock);
 
 	close(nroDesocket);
-
-	FD_CLR(nroDesocket, &sockets_activos);
 
 	if (nroDesocket == socketMasGrande) {
 		socketMasGrande = 0;
@@ -297,6 +285,8 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 		for (fd2 = nroDesocket - 1; fd2 >= 0; fd2--) {
 			if (FD_ISSET(fd2, &sockets_activos)) {
 				socketMasGrande = fd2;
+				log_debug(myArchivoDeLog, "el socket mas grande cambia a: %d",
+						socketMasGrande);
 				break;
 
 			}
@@ -304,26 +294,19 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,fd_set sockets_activos
 	}
 
 	agregarAColaDeFinalizados(entrenadorAEliminar);
+
 	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
-	liberarRecursos(entrenadorAEliminar);
 
+	//liberarRecursos(entrenadorAEliminar);
 
+	sem_post(&entrenador_bloqueado);
+
+	sem_post(&mapa_libre);
 
 	free(entrenadorAEliminar);
 }
 
-void liberarRecursos(t_entrenador *entrenador) {
-	//TODO: manejar el tema de los recursos del entrenador
 
-	//TODO: aparte de liberarlos en las estructuras administrativas, tambien actualizar los recursos en la gui!
-
-
-	//Creo que este metodo esta demas, ya me esoy encargando de esas cosas en borrarEntrenadorDelMapa!
-
-
-
-	//sem_post(&entrenador_bloqueado);
-}
 
 void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
 
@@ -338,14 +321,9 @@ void agregarAColaDeFinalizados(t_entrenador *entrenadorAEliminar) {
 
 }
 
-int obtenerCoordenadasPokenest(char identificadorPokenest) {
-	int coordenadas = 0;
-//TODO: buscar las coordenadas de la pokenest con identificador = identificadorPokenest
 
-	return coordenadas;
-}
 
-void consumirQuantum(int i) {
+int consumirQuantum(int i, int quantum) {
 
 	t_entrenador * entrenador = reconocerEntrenadorSegunSocket(i);
 
@@ -353,7 +331,19 @@ void consumirQuantum(int i) {
 
 	log_debug(myArchivoDeLog, "cantidad de instrucciones ejecutadas: %d",
 			entrenador->instruccionesEjecutadas);
-
+	if (quantum <= entrenador->instruccionesEjecutadas) {
+			log_debug(myArchivoDeLog,
+					"El entrenador %c es encolado nuevamente por fin de quantum",
+					entrenador->simbolo);
+			quitarDeColaDeListos(entrenador);
+			entrenador->instruccionesEjecutadas = 0;
+			agregarAColaDeListos(entrenador);
+			sem_post(&mapa_libre);
+			sem_post(&entrenador_listo);
+			return 1;
+	}else{
+		return 0;
+	}
 }
 
 t_entrenador * reconocerEntrenadorSegunSocket(int nroDeSocket) {
@@ -401,21 +391,23 @@ t_entrenador * buscarCercaniaAPokenest() {
 
 }
 
-void setearDistanciaPokenest(int nroDeSocket, t_mapa * self,char pokenest) {
+void setearDistanciaPokenest(int nroDeSocket, t_mapa * self, char pokenest) {
 	t_entrenador *entrenador = reconocerEntrenadorSegunSocket(nroDeSocket);
 	//Lucas: Necesito conocer al mapa para saber la posicion :S
 	// Estoy suponiendo que pokemonSolicitado es el char de la pokenest. Ej: 'P'.
 	// La unica condicion es que el entrenador ya tiene que estar en el mapa cargado!!
 
-	int aux = distanciaEntrenadorPokenest(entrenador->simbolo, self,
-			pokenest);
+	int aux = distanciaEntrenadorPokenest(entrenador->simbolo, self, pokenest);
 
-	if (aux <= 0) {
+	if (aux < 0) {
 		//problemas al calcular la distancia
-		log_debug(myArchivoDeLog, "Hubo algun error al calcular la distancia de #Socket: %s", string_itoa((nroDeSocket)));
+		log_debug(myArchivoDeLog,
+				"Hubo algun error al calcular la distancia de #Socket: %s",
+				string_itoa((nroDeSocket)));
 		//printf("hubo algun error\n");
 	} else {
-		log_debug(myArchivoDeLog, "distancia a pokenest = %s", string_itoa((aux)));
+		log_debug(myArchivoDeLog, "distancia a pokenest = %s",
+				string_itoa((aux)));
 		entrenador->distanciaAProximaPokenest = aux;
 	}
 

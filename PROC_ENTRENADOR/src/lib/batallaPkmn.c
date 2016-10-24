@@ -9,28 +9,28 @@
 
 
 
-t_list * crearListaDePkmnEnDirDeBill (t_entrenadorFisico * unEntrenador, void (*fc_abortar) (void *));
+t_list * crearListaDePkmnEnDirDeBill (t_entrenadorFisico * unEntrenador);
 t_pokemon* crearPokemon (t_entrenadorFisico * unEntrenador, char * pokemonName, int * nivelPkmn);
 char * ubicacionDirDeBill(t_entrenadorFisico * unEntrenador);
-t_pokemon* cualEsElMejorPkmnDeEstaLista(t_list * lista_pokemon, t_entrenadorFisico * nuevoEntrenador, void (*fc_abortar) (void *));
-t_config * config_create_for_pkmnEnDirDeBill(t_entrenadorFisico * nuevoEntrenador, char * pokemon, void (*fc_abortar) (void *));
+t_pokemon* cualEsElMejorPkmnDeEstaLista(t_list * lista_pokemon, t_entrenadorFisico * nuevoEntrenador);
+t_config * config_create_for_pkmnEnDirDeBill(t_entrenadorFisico * nuevoEntrenador, char * pokemon);
 
 
 
 
 
-t_pokemon * elegirMejorPokemon (t_entrenadorFisico * unEntrenador, void (*fc_abortar) (void *))
+t_pokemon * elegirMejorPokemon (t_entrenadorFisico * unEntrenador)
 {
 	log_info(myArchivoDeLog, "Voy a buscar mi mejor pokemon en el directorio de bill");
-	t_list * lista_pokemon = crearListaDePkmnEnDirDeBill(unEntrenador, fc_abortar);
+	t_list * lista_pokemon = crearListaDePkmnEnDirDeBill(unEntrenador);
 	//t_pokemon * pokemonFactorya;
-	t_pokemon * pokemonFactorya = cualEsElMejorPkmnDeEstaLista(lista_pokemon, unEntrenador, (void*) &fc_abortar);
+	t_pokemon * pokemonFactorya = cualEsElMejorPkmnDeEstaLista(lista_pokemon, unEntrenador);
 
 
 	if (pokemonFactorya == NULL)
 	{
 		log_error(myArchivoDeLog, "El Pokémon MissingNo no existe! El puntero de retorno de la factory fue: %p", pokemonFactorya);
-		(*fc_abortar)(unEntrenador);	//finalizaElEntrenador
+		finalizarEntrenador(unEntrenador);
 	}
 
 	return pokemonFactorya;
@@ -38,7 +38,7 @@ t_pokemon * elegirMejorPokemon (t_entrenadorFisico * unEntrenador, void (*fc_abo
 
 
 
-t_list * crearListaDePkmnEnDirDeBill (t_entrenadorFisico * unEntrenador, void (*fc_abortar) (void *))
+t_list * crearListaDePkmnEnDirDeBill (t_entrenadorFisico * unEntrenador)
 {
 	t_list * lista_pokemon = list_create();
 
@@ -60,7 +60,7 @@ t_list * crearListaDePkmnEnDirDeBill (t_entrenadorFisico * unEntrenador, void (*
 	if ( ( encontrarEnUnDirectorio ( ubicacionDirDeBill(unEntrenador),  (void *) _funcionOrdenSuperiorQueQuieroEjecutar ) )==0 )
 	{
 		log_error(myArchivoDeLog, "problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'");
-		(*fc_abortar)(unEntrenador);	//finalizaElEntrenador
+		finalizarEntrenador(unEntrenador);
 	}
 
 	return lista_pokemon;
@@ -106,7 +106,7 @@ char * ubicacionDirDeBill(t_entrenadorFisico * unEntrenador)
 }
 
 
-t_pokemon* cualEsElMejorPkmnDeEstaLista(t_list * lista_pokemon, t_entrenadorFisico * nuevoEntrenador, void (*fc_abortar) (void *))
+t_pokemon* cualEsElMejorPkmnDeEstaLista(t_list * lista_pokemon, t_entrenadorFisico * nuevoEntrenador)
 {
 	char * nombreMejorPkmn;
 	nombreMejorPkmn = NULL;
@@ -115,8 +115,8 @@ t_pokemon* cualEsElMejorPkmnDeEstaLista(t_list * lista_pokemon, t_entrenadorFisi
 
 	void _funcionOrdenSuperiorQueQuieroEjecutar (char * pokemon)
 	{
-		t_config * temporal = config_create_for_pkmnEnDirDeBill(nuevoEntrenador, pokemon, (void*) &fc_abortar);
-		int nivelPkmn= _entrenador_configLeerInt(temporal, __nombreEnConfigNivelPkmn, nuevoEntrenador, (void *) &fc_abortar);
+		t_config * temporal = config_create_for_pkmnEnDirDeBill(nuevoEntrenador, pokemon);
+		int nivelPkmn= _entrenador_configLeerInt(temporal, __nombreEnConfigNivelPkmn, nuevoEntrenador);
 		metadata_finalizar(temporal);
 
 		if (nivelPkmn > *nivelMejorPkmn)
@@ -138,13 +138,13 @@ t_pokemon* cualEsElMejorPkmnDeEstaLista(t_list * lista_pokemon, t_entrenadorFisi
 }
 
 
-t_config * config_create_for_pkmnEnDirDeBill(t_entrenadorFisico * nuevoEntrenador, char * pokemon , void (*fc_abortar) (void *))
+t_config * config_create_for_pkmnEnDirDeBill(t_entrenadorFisico * nuevoEntrenador, char * pokemon)
 {
 	char * directorioPokemon;
 	asprintf(&directorioPokemon, "%s/%s", ubicacionDirDeBill(nuevoEntrenador), pokemon);
 
 	//log_debug(myArchivoDeLog, "fdsafsa: %s", directorioPokemon);
-	t_config * metadataEntrenador = _entrenador_newConfigType(directorioPokemon, nuevoEntrenador, (void *) &fc_abortar);
+	t_config * metadataEntrenador = _entrenador_newConfigType(directorioPokemon, nuevoEntrenador);
 	free (directorioPokemon);
 
 

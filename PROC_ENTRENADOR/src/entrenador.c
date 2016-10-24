@@ -29,6 +29,7 @@
 #include "lib/seniales.h"
 #include "so/constantes.h"
 #include "lib/movimiento.h"
+#include "lib/abortarEntrenador.h"
 
 
 //------------------------------------------//
@@ -49,9 +50,14 @@ int main(int argc, char *argv[]) {
 
 	t_entrenadorFisico * miEntrenador;
 	miEntrenador = inicializarEstructurasDelEntrenador(argv[1], argv[2]);
+
+
+	crearFolderDirDeBill(miEntrenador);		//Por si no estaba creada
+	crearFolderMedallas(miEntrenador);		//Por si no estaba creada
 	borrarDirectorioDeBill(miEntrenador);
+
 	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
-	inicializarSenialesEntrenador(miEntrenador, (void *) &finalizarEntrenador);
+	inicializarSenialesEntrenador(miEntrenador);
 
 
 	iniciarAventura(miEntrenador);

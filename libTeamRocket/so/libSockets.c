@@ -6,16 +6,15 @@
  */
 
 #include "../so/libSockets.h"
-
+#include <commons/log.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-
+#include "constantes.h"
 //#include "../so/libPlanificador.h"
-
 
 int setup_listen(char * IP, char * Port) {
 	struct addrinfo * serverInfo = common_setup(IP, Port);
@@ -48,7 +47,6 @@ struct addrinfo* common_setup(char * IP, char * Port) {
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
-
 
 	if (!strcmp(IP, "localhost")) {
 		hints.ai_flags = AI_PASSIVE;
@@ -86,13 +84,13 @@ int connect_to(char* IP, char * port) {
 t_data * leer_paquete(int socket) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
 
-	recv(socket, &paquete_entrante->header, sizeof(int), MSG_WAITALL);
+	recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
+
 	recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
 
 	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
-	recv(socket, paquete_entrante->data, paquete_entrante->tamanio,
-	MSG_WAITALL);
+	recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
 
 	return paquete_entrante;
 
@@ -120,14 +118,17 @@ char * serializar(t_data * unPaquete) {
 
 }
 
-void common_send(int socket, t_data * paquete) {
+int common_send(int socket, t_data * paquete) {
 	void * buffer;
 	int tamanioTotal;
 	tamanioTotal = paquete->tamanio + sizeof(int) + sizeof(int);
 	buffer = serializar(paquete);
 
-	send(socket, buffer, tamanioTotal, MSG_WAITALL);
+	int resultado;
+
+	resultado = send(socket, buffer, tamanioTotal, MSG_WAITALL);
 
 	free(buffer);
+	return resultado;
 }
 

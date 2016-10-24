@@ -25,6 +25,7 @@
 #define __ubicacionMetadataMapas "/metadata"
 #define __ubicacionDirPokenest "/PokeNests/"
 #define __ubicacionMetadataPokeNest "/metadata"
+#define __ubicacionMedallaDelMapa "medalla-%s.jpg"	// 1º %s nombreMapa
 
 #define __ubicacionPokemonesPokeNest "%s%03d.dat"	//  1º %s NombrePokeNest | 2º %03d = NNN (Actual) - Muestra 3 enteros con 0s.
 #define __valorInicialPokemonesPokenest (1)
@@ -63,6 +64,7 @@
 #define __ubicacionEntrenadores "/Entrenadores/"
 #define __ubicacionMetadataEntrenadores "/metadata"
 #define __ubicacionDirDeBill "/Dir de Bill/"
+#define __ubicacionDirDeMedallas "/medallas/"
 
 #define __nombreEnConfig_Vidas "vidas"
 #define __nombreEnConfig_Reintentos "reintentos"

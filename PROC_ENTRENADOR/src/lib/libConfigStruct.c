@@ -7,11 +7,6 @@
 
 #include "libConfigStruct.h"
 
-/*
- * @NAME: borrarEntrenador
- * @DESC: libera de memoria la estructura de un entrenador (uso interno)
- */
-void borrarEntrenador();
 
 /*
  * @NAME: leerMetadataDelEntrenador
@@ -70,22 +65,7 @@ t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador,
 
 
 
-void borrarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
-	if (nuevoEntrenador == NULL)
-		return;
 
-	//list_clean(nuevoEntrenador->metadata->hojaDeViaje);
-	if (nuevoEntrenador->metadata->hojaDeViaje != NULL)
-		list_clean_and_destroy_elements(nuevoEntrenador->metadata->hojaDeViaje, &free);
-	//list_destroy(nuevoEntrenador->metadata->hojaDeViaje);
-
-	free(nuevoEntrenador->metadata);
-	free(nuevoEntrenador);
-	//free(nuevoEntrenador->directorioPokeDex);
-	//free(nuevoEntrenador->nombre);
-
-	//TODO:...
-}
 
 t_entrenadorFisico * inicializarEstructurasDelEntrenador(char *nombreEntrenador,
 		char *directorioPokeDex) {
@@ -102,12 +82,7 @@ t_entrenadorFisico * inicializarEstructurasDelEntrenador(char *nombreEntrenador,
 
 
 
-void finalizarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
-	log_info(myArchivoDeLog, "voy a finalizar al entrenador");
-	borrarEntrenador(nuevoEntrenador);
-	log_destroy(myArchivoDeLog);
-	exit(EXIT_FAILURE);
-}
+
 
 void leerMetadataDelEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 	log_info(myArchivoDeLog, "Voy a leer la metadata del Entrenador.");
@@ -119,15 +94,9 @@ void leerMetadataDelEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 	nuevoEntrenador->metadata = nuevaMetadataEntrenador;
 	nuevoEntrenador->metadata->hojaDeViaje = NULL;
 
-	nuevaMetadataEntrenador->reintentos = _entrenador_configLeerInt(
-			metadataEntrenador, __nombreEnConfig_Reintentos, nuevoEntrenador,
-			(void *) finalizarEntrenador);
-	nuevaMetadataEntrenador->vidas = _entrenador_configLeerInt(
-			metadataEntrenador, __nombreEnConfig_Vidas, nuevoEntrenador,
-			(void *) finalizarEntrenador);
-	nuevaMetadataEntrenador->simbolo = (_entrenador_configLeerString(
-			metadataEntrenador, __nombreEnConfig_Simbolo, nuevoEntrenador,
-			(void *) finalizarEntrenador))[0];
+	nuevaMetadataEntrenador->reintentos = _entrenador_configLeerInt(metadataEntrenador, __nombreEnConfig_Reintentos, nuevoEntrenador);
+	nuevaMetadataEntrenador->vidas = _entrenador_configLeerInt(	metadataEntrenador, __nombreEnConfig_Vidas, nuevoEntrenador);
+	nuevaMetadataEntrenador->simbolo = (_entrenador_configLeerString(metadataEntrenador, __nombreEnConfig_Simbolo, nuevoEntrenador))[0];
 
 	inicializarHojaDeViaje(metadataEntrenador, nuevoEntrenador);
 
@@ -146,9 +115,7 @@ t_config *config_create_for_metadataEntrenador(
 			nuevoEntrenador->directorioPokeDex, __ubicacionEntrenadores,
 			nuevoEntrenador->nombre, __ubicacionMetadataEntrenadores);
 
-	t_config * metadataEntrenador = _entrenador_newConfigType(
-			directorioEntrenador, nuevoEntrenador,
-			(void *) finalizarEntrenador);
+	t_config * metadataEntrenador = _entrenador_newConfigType(directorioEntrenador, nuevoEntrenador);
 	free(directorioEntrenador);
 
 	return metadataEntrenador;
@@ -179,8 +146,7 @@ void inicializarHojaDeViaje(t_config *metadataEntrenador,
 	 */
 
 	aQueMapasMeTengoQueConectar = _entrenador_configLeerArray(
-			metadataEntrenador, __nombreEnConfig_HojaViajes, miEntrenador,
-			(void *) finalizarEntrenador);
+			metadataEntrenador, __nombreEnConfig_HojaViajes, miEntrenador);
 
 	t_list * hojaDeViaje = list_create();
 	if (!(list_is_empty(hojaDeViaje))) {
@@ -213,8 +179,7 @@ t_mapa * crearNuevoNodo(char * aQueMapasMeTengoQueConectar,
 	sprintf(keyObjMapa, __nombreEnConfig_ObjMapa, aQueMapasMeTengoQueConectar);
 
 	char ** objetivoDeEsteMapa;
-	objetivoDeEsteMapa = _entrenador_configLeerArray(metadataEntrenador,
-			keyObjMapa, miEntrenador, (void *) finalizarEntrenador);
+	objetivoDeEsteMapa = _entrenador_configLeerArray(metadataEntrenador, keyObjMapa, miEntrenador);
 
 	nuevoNodo->objetivosDelMapa = objetivoDeEsteMapa;
 
@@ -266,11 +231,8 @@ void cualEsLaIpDeEsteMapa(t_entrenadorFisico * miEntrenador, char * nombreMapa,
 	//returnedIp = NULL;
 	//returnedPort = NULL;
 
-	*returnedIp = _entrenador_configLeerString(metadataMapa, __nombreEnConfig_IP,
-			miEntrenador, (void *) finalizarEntrenador);
-	*returnedPort = _entrenador_configLeerString(metadataMapa,
-			__nombreEnConfig_Puerto, miEntrenador,
-			(void *) finalizarEntrenador);
+	*returnedIp = _entrenador_configLeerString(metadataMapa, __nombreEnConfig_IP, miEntrenador);
+	*returnedPort = _entrenador_configLeerString(metadataMapa,	__nombreEnConfig_Puerto, miEntrenador);
 
 	log_info(myArchivoDeLog, "IP= %s   | Puerto= %s", *returnedIp, *returnedPort);
 	metadata_finalizar(metadataMapa);
@@ -284,8 +246,7 @@ t_config *config_create_for_metadataMapa(t_entrenadorFisico * miEntrenador,
 	sprintf(directorioMapa, "/%s/%s/%s/%s", miEntrenador->directorioPokeDex,
 			__ubicacionMapas, nombreMapa, __ubicacionMetadataMapas);
 
-	t_config * metadataMapa = _entrenador_newConfigType(directorioMapa,
-			miEntrenador, (void *) finalizarEntrenador);
+	t_config * metadataMapa = _entrenador_newConfigType(directorioMapa,miEntrenador);
 	free(directorioMapa);
 
 	return metadataMapa;
@@ -310,4 +271,45 @@ void borrarDirectorioDeBill(t_entrenadorFisico * unEntrenador)
 		return;
 	}
 	free(directorioDeBill);
+}
+
+void crearFolderDirDeBill(t_entrenadorFisico * unEntrenador)
+{
+	log_info(myArchivoDeLog, "Voy a crear el dir de bill");
+	char * directorioDeBill;
+	directorioDeBill = malloc((sizeof(char)) * PATH_MAX + 1);
+
+	sprintf(directorioDeBill, "/%s/%s/%s/%s", unEntrenador->directorioPokeDex,__ubicacionEntrenadores, unEntrenador->nombre, __ubicacionDirDeBill);
+
+	if ( createFolder(directorioDeBill) )	//Lo borro. Si hubo algun error lo handleo
+	{
+		log_warning(myArchivoDeLog, "%s", directorioDeBill);
+		free(directorioDeBill);
+		log_warning(myArchivoDeLog,"Quise crear el dir de bill y mkdir me dijo que finalizo incorrectamente.");
+		finalizarEntrenador(unEntrenador);	//lo esta borrando igual, asi que por ahora lo comento!
+		//TODO: revisar que aca aveces dice que no finalizo correctamente..
+		return;
+	}
+	free(directorioDeBill);
+}
+
+
+void crearFolderMedallas(t_entrenadorFisico * unEntrenador)
+{
+	log_info(myArchivoDeLog, "Voy a crear el dir de medallas");
+	char * directorioMedallas;
+	directorioMedallas = malloc((sizeof(char)) * PATH_MAX + 1);
+
+	sprintf(directorioMedallas, "/%s/%s/%s/%s", unEntrenador->directorioPokeDex,__ubicacionEntrenadores, unEntrenador->nombre, __ubicacionDirDeMedallas);
+
+	if ( createFolder(directorioMedallas) )	//Lo borro. Si hubo algun error lo handleo
+	{
+		log_warning(myArchivoDeLog, "%s", directorioMedallas);
+		free(directorioMedallas);
+		log_warning(myArchivoDeLog,"Quise crear el dir de medallas y mkdir me dijo que finalizo incorrectamente.");
+		finalizarEntrenador(unEntrenador);	//lo esta borrando igual, asi que por ahora lo comento!
+		//TODO: revisar que aca aveces dice que no finalizo correctamente..
+		return;
+	}
+	free(directorioMedallas);
 }

@@ -147,106 +147,40 @@ int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const 
 
 int copyFiles(char *source, char *dest)
 {
-    int childExitStatus;
-    pid_t pid;
     int status;
     if (!source || !dest) {
         /* handle as you wish */
     	return 1;
     }
-
-    pid = fork();
-
-    if (pid == 0) { /* child */
-        exit ( execl("/bin/cp", "/bin/cp -f", source, dest, (char *)0) );
-    }
-    else if (pid < 0) {
-        /* error - couldn't start process - you decide how to handle */
-    	return 1;
-    }
-    else {
-        /* parent - wait for child - this has all error handling, you
-         * could just call wait() as long as you are only expecting to
-         * have one child process at a time.
-         */
-
-    	//Le cambio el waitpid, para que lo espere a que termine.
-        //pid_t ws = waitpid( pid, &childExitStatus, WNOHANG);
-    	pid_t ws = waitpid( pid, &childExitStatus, 0);
-        if (ws == -1)
-        { /* error - handle as you wish */
-        	return 1;
-        }
-
-        if( WIFEXITED(childExitStatus)) /* exit code in childExitStatus */
-        {
-            status = WEXITSTATUS(childExitStatus); /* zero is normal exit */
-            /* handle non-zero as you wish */
-            return status;
-        }
-        else if (WIFSIGNALED(childExitStatus)) /* killed */
-        {
-        	return 1;
-        }
-        else if (WIFSTOPPED(childExitStatus)) /* stopped */
-        {
-        	return 1;
-        }
-    }
-    return 1;
+   	char * temp = string_from_format("/bin/cp -f '%s' '%s'", source, dest);
+    status = system(temp);
+    free (temp);
+    return ((status == -1) ? 1 : 0);	//devuelvo si hubo un error si no pudo crear el proceso shell.
 }
 
 int deleteDirectoryContent(char *source)
 {
-    int childExitStatus;
-    pid_t pid;
     int status;
     if (!source) {
         /* handle as you wish */
     	return 1;
     }
+   	char * temp = string_from_format("rm -rf '%s'/*", source);
+   	status = system(temp);
+   	free (temp);
+   	return ((status == -1) ? 1 : 0);	//devuelvo si hubo un error si no pudo crear el proceso shell.
+}
 
-    pid = fork();
-
-    if (pid == 0) { /* child */
-        //execl("/bin/rm", "/bin/rm -rf ", source, (char *)0);
-    	char * temp = string_from_format("rm -rf '%s'/*", source);
-    	system(temp);
-    	free (temp);
-    	exit(0);
-    }
-    else if (pid < 0) {
-        /* error - couldn't start process - you decide how to handle */
+int createFolder(char *source)
+{
+    int status;
+    if (!source) {
+        /* handle as you wish */
     	return 1;
     }
-    else {
-        /* parent - wait for child - this has all error handling, you
-         * could just call wait() as long as you are only expecting to
-         * have one child process at a time.
-         */
-
-    	//Le cambio el waitpid, para que lo espere a que termine.
-        //pid_t ws = waitpid( pid, &childExitStatus, WNOHANG);
-    	pid_t ws = waitpid( pid, &childExitStatus, 0);
-        if (ws == -1)
-        { /* error - handle as you wish */
-        	return 1;
-        }
-
-        if( WIFEXITED(childExitStatus)) /* exit code in childExitStatus */
-        {
-            status = WEXITSTATUS(childExitStatus); /* zero is normal exit */
-            /* handle non-zero as you wish */
-            return status;
-        }
-        else if (WIFSIGNALED(childExitStatus)) /* killed */
-        {
-        	return 1;
-        }
-        else if (WIFSTOPPED(childExitStatus)) /* stopped */
-        {
-        	return 1;
-        }
-    }
-    return 1;
+   	char * temp = string_from_format("mkdir -p '%s'", source);
+   	status = system(temp);
+   	free (temp);
+   	return ((status == -1) ? 1 : 0);	//devuelvo si hubo un error si no pudo crear el proceso shell.
 }
+

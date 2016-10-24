@@ -17,6 +17,7 @@
 #include <signal.h>
 #include <string.h>
 
+#define PATH_MAX 4096
 
 int* pmap_pikachu;
 int* pmap_squirtle;
@@ -25,8 +26,11 @@ struct stat pikachuStat;
 struct stat squirtleStat;
 struct stat bulbasaurStat;
 
-
+int socketConexion;
 int iniciarFuse(int argc,char*argv[]);
 
+char * leerHastaCentinela(char *paquete);
+
+void enviarLecturaArchivo(const char *path, size_t size, off_t offset);
 
 #endif /* LIB_TEAMROCKETFUSE_H_ */

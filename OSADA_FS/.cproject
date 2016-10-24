@@ -132,7 +132,7 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1038213600" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
 								<option id="gnu.c.link.option.ldflags.1602570184" name="Linker flags" superClass="gnu.c.link.option.ldflags" value="-D_FILE_OFFSET_BITS=64" valueType="string"/>
-								<option id="gnu.c.link.option.libs.583682202" superClass="gnu.c.link.option.libs" valueType="libs">
+								<option id="gnu.c.link.option.libs.583682202" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="commons"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.758673762" superClass="cdt.managedbuild.tool.gnu.c.linker.input">

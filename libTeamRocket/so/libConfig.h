@@ -122,10 +122,6 @@ int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const 
  * Nota: Ejemplo de uso, copiar un pokemon del mapa al dir de bill.
  *
  *
- * Se baso en estas webs:
- * http://stackoverflow.com/questions/2180079/how-can-i-copy-a-file-on-unix-using-c
- *
- *
  */
 int copyFiles(char *source, char *dest);
 
@@ -145,6 +141,22 @@ int copyFiles(char *source, char *dest);
  *
  */
 int deleteDirectoryContent(char *source);
+
+
+/*
+ * @NAME: createFolder
+ * @DESC: Recibe un path y lo crea.
+ *		Nota, mkdir tiene pasado el parametro -f, para forzar el copiado
+ * @RET:  Retorna 1 si hubo algun error. / 0 si se ejecuto ok
+ *
+ *
+ * Nota: Ejemplo de uso, crear dir de bill y medallas.
+ *
+ *
+ * Se baso en copyFiles. *
+ *
+ */
+int createFolder(char *source);
 //------------------------------------------//
 
 

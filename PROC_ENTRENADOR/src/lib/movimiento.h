@@ -17,6 +17,7 @@
 #include <commons/log.h>
 #include <so/libSockets.h>
 #include <unistd.h>
+#include <pkmn/factory.h>
 
 #include "estadisticas.h"
 //librerias propias
@@ -25,7 +26,9 @@
 #include "seniales.h"
 #include "so/constantes.h"
 #include "libConfigStruct.h"
-
+#include "estadisticas.h"
+#include "batallaPkmn.h"
+#include "abortarEntrenador.h"
 
 
 

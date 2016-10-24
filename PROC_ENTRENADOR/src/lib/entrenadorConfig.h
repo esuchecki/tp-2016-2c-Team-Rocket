@@ -14,26 +14,26 @@
 #include <stdlib.h>
 #include <commons/string.h>
 #include "estructurasEntrenador.h"
-
+#include "abortarEntrenador.h"
 
 
 /*
  * @NAME: _entrenador_configLeerInt
  * @DESC: Implementa configLeerInt para el proceso entrenador.
  */
-uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
+uint16_t _entrenador_configLeerInt (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador);
 
 /*
  * @NAME: _entrenador_configLeerString
  * @DESC: Implementa configLeerString para el proceso entrenador.
  */
-char * _entrenador_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
+char * _entrenador_configLeerString (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador);
 
 /*
  * @NAME: _entrenador_newConfigType
  * @DESC: Implementa _newConfigType para el proceso entrenador.
  */
-t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
+t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * unEntrenador);
 
 /*
  * @NAME: _entrenador_configLeerArray
@@ -48,7 +48,7 @@ t_config * _entrenador_newConfigType (char * directorio, t_entrenadorFisico * un
  *  }
  *
  */
-char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador, void (*fc) (t_entrenadorFisico *));
+char ** _entrenador_configLeerArray (t_config * archivoConfig, char nombreDeLaPropiedad[50], t_entrenadorFisico * unEntrenador);
 
 
 

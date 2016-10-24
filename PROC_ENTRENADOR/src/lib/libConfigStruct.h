@@ -13,7 +13,7 @@
 #include "entrenadorConfig.h"
 #include "estructurasEntrenador.h"
 #include "so/constantes.h"
-
+#include "abortarEntrenador.h"
 
 
 /*
@@ -47,6 +47,18 @@ void cualEsLaIpDeEsteMapa (t_entrenadorFisico * miEntrenador, char * nombreMapa,
  * @DESC: Borra el contenido del directorio de bill..!
  */
 void borrarDirectorioDeBill(t_entrenadorFisico * unEntrenador);
+
+/*
+ * @NAME: crearFolderDirDeBill
+ * @DESC: crea la carpeta Dir de Bill
+ */
+void crearFolderDirDeBill(t_entrenadorFisico * unEntrenador);
+
+/*
+ * @NAME: crearFolderMedallas
+ * @DESC: crea la carpeta Dir de Medallas
+ */
+void crearFolderMedallas(t_entrenadorFisico * unEntrenador);
 //------------------------------------------//
 
 
