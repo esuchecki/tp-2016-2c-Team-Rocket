@@ -34,6 +34,6 @@ int main(void) {
 //	printf("%d\n",tablaArchivos[indice].first_block);
 //	printf("%d\n",tablaArchivos[indice].file_size);
 //	osada_block* bloquesDeDatos = obtenerBloqueDatos();
-	printf("%s\n",archivo[0]);
+	printf("%s\n",archivo);
 	return EXIT_SUCCESS;
 }

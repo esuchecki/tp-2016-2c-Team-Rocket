@@ -240,14 +240,32 @@ int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
 	return bloques;
 }
 
+int calcularBytesExedentes(int cantidadDeBloques, int tamanioArchivo){
+	int bytesEnBloques = cantidadDeBloques * OSADA_BLOCK_SIZE;
+	int resultado;
+	if(bytesEnBloques == tamanioArchivo){
+		resultado = 0;
+	} else {
+		int unBloqueDeMenos = (cantidadDeBloques -1) * OSADA_BLOCK_SIZE;
+		int exedente = tamanioArchivo - unBloqueDeMenos;
+		resultado = exedente;
+	}
+	return resultado;
+}
+
 osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo){
 	osada_block* archivoConOffset = malloc(cantidadDeBloques * OSADA_BLOCK_SIZE * sizeof(unsigned char));
 	osada_block* bloquesDeDatos = obtenerBloqueDatos();
 	int k = 0;
 	int i;
+	int cantidadACopiar = OSADA_BLOCK_SIZE;
+	int exedente = calcularBytesExedentes(cantidadDeBloques,tamanioArchivo);
 	while( k < cantidadDeBloques ){
 		i = bloquesQueLoConforman[k];
-		memcpy(archivoConOffset[k], bloquesDeDatos[i], OSADA_BLOCK_SIZE * sizeof(unsigned char));
+		if (k == (cantidadDeBloques -1) && exedente>0){
+			int cantidadACopiar = exedente;
+		}
+		memcpy(archivoConOffset[k], bloquesDeDatos[i], cantidadACopiar * sizeof(unsigned char));
 		//archivoConOffset[k] = bloquesDeDatos[i];
 		k = k + 1;
 	}
