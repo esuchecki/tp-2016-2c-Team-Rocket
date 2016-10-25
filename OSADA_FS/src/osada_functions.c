@@ -11,6 +11,7 @@
 #include <fuse.h>
 #include <commons/bitarray.h>
 #include <commons/string.h>
+#include "osada_functions.h"
 
 #define ROOT_INDEX     65535
 
@@ -22,6 +23,32 @@ osada_header* header;
 //void establecerTamanio(int tamanio) { //Bytes
 //	TAMANIO_BYTES = tamanio;
 //}
+
+
+
+//Declaro funciones locales
+//int totalBloques();
+//int calcularBloques(int estructura);
+//int calcularCantidadBloques(int tamanioEnBytes);
+//int obtenerBytesBloques(int cantidadBloques);
+//int calcularBloquesEstructurasBase();
+//void abrirArchivo();
+//osada_header* obtenerHeader();
+//t_bitarray* obtenerBitmap();
+//osada_file* obtenerTablaArchivos();
+//int* obtenerTablaAsignaciones();
+//osada_block* obtenerBloqueDatos();
+//void imprimirEstructuraArchivos();
+void inicializarHeader();
+//int buscarArchivoPorPath(char* path);
+unsigned char* obtenerString(unsigned char* string);
+int buscarArchivoEnFS(char* nombre, int padre);
+//int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques);
+//osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo);
+//osada_block* obtenerArchivoPorPath(char* path);
+//end
+
+
 
 int totalBloques() {
 	return header->fs_blocks;
@@ -93,7 +120,8 @@ osada_header* obtenerHeader(){
 
 t_bitarray* obtenerBitmap(){
 	osada_header* header = obtenerHeader();
-	t_bitarray* bitmap = bitarray_create(bloques_archivo[1],header->bitmap_blocks);
+	//TODO: chequear que este haciendo bien el casteo.
+	t_bitarray* bitmap = bitarray_create( (char *) bloques_archivo[1],header->bitmap_blocks);
 	return bitmap;
 }
 
@@ -105,14 +133,18 @@ osada_file* obtenerTablaArchivos(){
 
 int* obtenerTablaAsignaciones(){
 	inicializarHeader();
-	int* tablaAsignaciones = bloques_archivo[header->allocations_table_offset];
+	//TODO: chequear que este haciendo bien el casteo.
+	int* tablaAsignaciones = (int*) &bloques_archivo[header->allocations_table_offset];
 	return tablaAsignaciones;
 }
 
 osada_block* obtenerBloqueDatos(){
 	inicializarHeader();
-	int bloquesTablaAsignaciones = ((header->fs_blocks - header->allocations_table_offset) * 4 / OSADA_BLOCK_SIZE)-1;
-	osada_block* bloqueDatos = bloques_archivo[header->allocations_table_offset + bloquesTablaAsignaciones];
+	//TODO: chequear que el borre el -1-
+	//int bloquesTablaAsignaciones = ((header->fs_blocks - header->allocations_table_offset) * 4 / OSADA_BLOCK_SIZE)-1;
+	int bloquesTablaAsignaciones = ((header->fs_blocks - header->allocations_table_offset) * 4 / OSADA_BLOCK_SIZE)+1;
+	//TODO: chequear que este haciendo bien el casteo.
+	osada_block * bloqueDatos = &bloques_archivo[header->allocations_table_offset + bloquesTablaAsignaciones];
 	return bloqueDatos;
 }
 
@@ -142,7 +174,8 @@ void inicializarHeader(){
 
 int buscarArchivoPorPath(char* path){ //retorna el indice del archivo en la tabla de archivos
 	char** array = string_split(path, "/");
-	int length =  string_length(array);
+	//TODO: chequear que este haciendo bien la conversion.
+	//int length =  string_length(&array);
 	int i = 0;
 	int retorno;
 	int padre = ROOT_INDEX;
@@ -154,9 +187,9 @@ int buscarArchivoPorPath(char* path){ //retorna el indice del archivo en la tabl
 	return retorno;
 }
 
-char* obtenerString(char* string){
+unsigned char* obtenerString(unsigned char* string){
 	int i;
-	char* resultado = malloc(OSADA_FILENAME_LENGTH);
+	unsigned char* resultado = malloc(OSADA_FILENAME_LENGTH * sizeof(unsigned char) );
 	for ( i = 0 ; i<OSADA_FILENAME_LENGTH ; i++ ) {
 		if(string[i] != '\0'){
 			resultado[i] = string[i];
@@ -179,8 +212,8 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	for ( i = 0 ; (j>0 && retorno == -1); i++ ) {
 	   j = tablaArchivos[i].state;
 	   if(j>0){
-		   char* directorio = obtenerString(tablaArchivos[i].fname);
-		   if(strcmp(directorio,nombre)==0 && tablaArchivos[i].parent_directory == padre){
+		   unsigned char* directorio = obtenerString(tablaArchivos[i].fname);
+		   if((strcmp((char*)directorio, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
 			   retorno = i;
 		   }
 	   }
@@ -208,16 +241,18 @@ int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
 }
 
 osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo){
-	osada_block* archivoConOffset[cantidadDeBloques];
+	osada_block* archivoConOffset = malloc(cantidadDeBloques * OSADA_BLOCK_SIZE * sizeof(unsigned char));
 	osada_block* bloquesDeDatos = obtenerBloqueDatos();
 	int k = 0;
 	int i;
 	while( k < cantidadDeBloques ){
 		i = bloquesQueLoConforman[k];
-		archivoConOffset[k] = bloquesDeDatos[i];
+		memcpy(archivoConOffset[k], bloquesDeDatos[i], OSADA_BLOCK_SIZE * sizeof(unsigned char));
+		//archivoConOffset[k] = bloquesDeDatos[i];
 		k = k + 1;
 	}
-	printf("%s\n",archivoConOffset[10]);
+	//printf("%s\n",archivoConOffset[0]);
+	//como vamos a printearlo por pantalla le tiro un realloc
 	return archivoConOffset;
 }
 

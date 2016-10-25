@@ -4,11 +4,18 @@
  *  Created on: 12/9/2016
  *      Author: utnso
  */
-#include "osada-utils/osada.h"
-#include <commons/bitarray.h>
+
 
 #ifndef OSADA_FUNCTIONS_H_
 #define OSADA_FUNCTIONS_H_
+
+
+#include "osada-utils/osada.h"
+#include <commons/bitarray.h>
+#include <string.h>
+#include <stdlib.h>
+
+
 
 void establecerTamanio(int tamanio);
 
@@ -42,7 +49,7 @@ int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques);
 
 int calcularCantidadBloques(int tamanioEnBytes);
 
-osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques);
+osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo);
 
 osada_block* obtenerArchivoPorPath(char* path);
 

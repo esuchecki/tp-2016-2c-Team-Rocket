@@ -27,13 +27,13 @@ int main(void) {
 //	printf("%s\n", total);
 //	printf("%d\n", header->fs_blocks);
 //	imprimirEstructuraArchivos();
-	osada_block* archivo = obtenerArchivoPorPath("Pokemons/001.txt");
+	osada_block* archivo = obtenerArchivoPorPath("README.txt");
 //	int indice = buscarArchivoPorPath("Pokemons/001.txt");
 //	osada_file* tablaArchivos = obtenerTablaArchivos();
 //	printf("%d\n",tablaArchivos[indice].state);
 //	printf("%d\n",tablaArchivos[indice].first_block);
 //	printf("%d\n",tablaArchivos[indice].file_size);
 //	osada_block* bloquesDeDatos = obtenerBloqueDatos();
-	printf("%s\n",archivo[10]);
+	printf("%s\n",archivo[0]);
 	return EXIT_SUCCESS;
 }
