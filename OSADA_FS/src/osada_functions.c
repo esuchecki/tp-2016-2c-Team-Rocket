@@ -20,36 +20,6 @@ struct stat osadaStat;
 osada_block* bloques_archivo;
 osada_header* header;
 
-//void establecerTamanio(int tamanio) { //Bytes
-//	TAMANIO_BYTES = tamanio;
-//}
-
-
-
-//Declaro funciones locales
-//int totalBloques();
-//int calcularBloques(int estructura);
-//int calcularCantidadBloques(int tamanioEnBytes);
-//int obtenerBytesBloques(int cantidadBloques);
-//int calcularBloquesEstructurasBase();
-//void abrirArchivo();
-//osada_header* obtenerHeader();
-//t_bitarray* obtenerBitmap();
-//osada_file* obtenerTablaArchivos();
-//int* obtenerTablaAsignaciones();
-//osada_block* obtenerBloqueDatos();
-//void imprimirEstructuraArchivos();
-void inicializarHeader();
-//int buscarArchivoPorPath(char* path);
-unsigned char* obtenerString(unsigned char* string);
-int buscarArchivoEnFS(char* nombre, int padre);
-//int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques);
-//osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo);
-//osada_block* obtenerArchivoPorPath(char* path);
-//end
-
-
-
 int totalBloques() {
 	return header->fs_blocks;
 }
@@ -92,6 +62,12 @@ int calcularCantidadBloques(int tamanioEnBytes){
 	return resultado;
 }
 
+void inicializarHeader(){
+	if(header == NULL){
+		obtenerHeader();
+	}
+}
+
 int obtenerBytesBloques(int cantidadBloques) {
 	return (cantidadBloques * __tamanioBloque);
 }
@@ -120,7 +96,6 @@ osada_header* obtenerHeader(){
 
 t_bitarray* obtenerBitmap(){
 	osada_header* header = obtenerHeader();
-	//TODO: chequear que este haciendo bien el casteo.
 	t_bitarray* bitmap = bitarray_create( (char *) bloques_archivo[1],header->bitmap_blocks);
 	return bitmap;
 }
@@ -133,17 +108,13 @@ osada_file* obtenerTablaArchivos(){
 
 int* obtenerTablaAsignaciones(){
 	inicializarHeader();
-	//TODO: chequear que este haciendo bien el casteo.
 	int* tablaAsignaciones = (int*) &bloques_archivo[header->allocations_table_offset];
 	return tablaAsignaciones;
 }
 
 osada_block* obtenerBloqueDatos(){
 	inicializarHeader();
-	//TODO: chequear que el borre el -1-
-	//int bloquesTablaAsignaciones = ((header->fs_blocks - header->allocations_table_offset) * 4 / OSADA_BLOCK_SIZE)-1;
 	int bloquesTablaAsignaciones = ((header->fs_blocks - header->allocations_table_offset) * 4 / OSADA_BLOCK_SIZE)+1;
-	//TODO: chequear que este haciendo bien el casteo.
 	osada_block * bloqueDatos = &bloques_archivo[header->allocations_table_offset + bloquesTablaAsignaciones];
 	return bloqueDatos;
 }
@@ -165,41 +136,6 @@ void imprimirEstructuraArchivos(){
 	   }
 	}
 }
-
-void inicializarHeader(){
-	if(header == NULL){
-		obtenerHeader();
-	}
-}
-
-int buscarArchivoPorPath(char* path){ //retorna el indice del archivo en la tabla de archivos
-	char** array = string_split(path, "/");
-	//TODO: chequear que este haciendo bien la conversion.
-	//int length =  string_length(&array);
-	int i = 0;
-	int retorno;
-	int padre = ROOT_INDEX;
-	while(array[i]!= NULL){
-		retorno = buscarArchivoEnFS(array[i], padre);
-		padre = retorno;
-		i++;
-	}
-	return retorno;
-}
-
-unsigned char* obtenerString(unsigned char* string){
-	int i;
-	unsigned char* resultado = malloc(OSADA_FILENAME_LENGTH * sizeof(unsigned char) );
-	for ( i = 0 ; i<OSADA_FILENAME_LENGTH ; i++ ) {
-		if(string[i] != '\0'){
-			resultado[i] = string[i];
-		} else {
-			break;
-		}
-	}
-	return resultado;
-}
-
 /*
  * Retorna -1 si el archivo no existe o
  * el indice de su posicion en la tabla
@@ -212,13 +148,29 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	for ( i = 0 ; (j>0 && retorno == -1); i++ ) {
 	   j = tablaArchivos[i].state;
 	   if(j>0){
-		   unsigned char* directorio = obtenerString(tablaArchivos[i].fname);
-		   if((strcmp((char*)directorio, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
+		   if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
 			   retorno = i;
 		   }
 	   }
 	}
 	return retorno;
+}
+
+int buscarArchivoPorPath(char* path){ //retorna el indice del archivo en la tabla de archivos
+	int resultado;
+	if(strcmp("/",path)!=0){
+		char** array = string_split(path, "/");
+		int i = 0;
+		int padre = ROOT_INDEX;
+		while(array[i]!= NULL){
+			resultado = buscarArchivoEnFS(array[i], padre);
+			padre = resultado;
+			i++;
+		}
+	} else {
+		resultado = -1;
+	}
+	return resultado;
 }
 
 
@@ -278,9 +230,13 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 osada_block* obtenerArchivoPorPath(char* path){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int index = buscarArchivoPorPath(path);
-	int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[index].file_size);
-	int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
-	return obtenerArchivo(bloquesArchivo,cantidadDeBloques,tablaArchivos[index].file_size);
+	osada_block* resultado;
+	if(index>0){
+		int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[index].file_size);
+		int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
+		resultado = obtenerArchivo(bloquesArchivo,cantidadDeBloques,tablaArchivos[index].file_size);
+	}
+	return resultado;
 }
 
 char** leerDirectorio(char* path){
@@ -308,6 +264,20 @@ char** leerDirectorio(char* path){
 		subdirectoriosNombres[i] = tablaArchivos[subdirectoriosMax[i]].fname;
 	}
 	return subdirectoriosNombres;
+}
+
+long* obtenerAtributos(char* path){
+	long* atributos = malloc(sizeof(long) * 2);
+	int indiceDirectorio = buscarArchivoPorPath(path);
+	if(indiceDirectorio>=0){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		atributos[0] = tablaArchivos[indiceDirectorio].state;
+		atributos[1] = tablaArchivos[indiceDirectorio].file_size;
+	} else {
+		atributos[0]=-1;
+	}
+
+	return atributos;
 }
 
 
