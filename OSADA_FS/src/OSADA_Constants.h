@@ -9,6 +9,7 @@
 #define OSADA_CONSTANTS_H_
 
 #include <stdint.h>
+#include "osada-utils/osada.h"
 #define __maxTamanioDisco (4294967296) // 4GB = 1024 * 1024 * 1024 * 4 Bytes
 #define __maxTamanioArchivo (4294967296)
 #define __maxNombreArchivo (17) //Caracteres
@@ -23,6 +24,7 @@
 #define __estructuraBloqueDatos (5)
 
 #define __pathArchivo "/home/utnso/trabajoPractico/tp-2016-2c-Team-Rocket/OSADA_FS/src/challenge.bin"
+
 
 //typedef struct {
 //	char estado;

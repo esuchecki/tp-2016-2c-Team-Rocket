@@ -233,7 +233,7 @@ int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
 	int j= 0;
 	bloques[j] = i;
 	while(tablaAsignaciones[i]!= -1){
-		j = j + 1;
+		j++;
 		bloques[j] = tablaAsignaciones[i];
 		i = tablaAsignaciones[i];
 	}
@@ -267,7 +267,7 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 		}
 		memcpy(archivoConOffset[k], bloquesDeDatos[i], cantidadACopiar * sizeof(unsigned char));
 		//archivoConOffset[k] = bloquesDeDatos[i];
-		k = k + 1;
+		k++;
 	}
 	//printf("%s\n",archivoConOffset[0]);
 	//como vamos a printearlo por pantalla le tiro un realloc
@@ -281,6 +281,33 @@ osada_block* obtenerArchivoPorPath(char* path){
 	int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[index].file_size);
 	int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
 	return obtenerArchivo(bloquesArchivo,cantidadDeBloques,tablaArchivos[index].file_size);
+}
+
+char** leerDirectorio(char* path){
+	int subdirectoriosMax[2048]; //Cantidad máxima de subdirectorios
+	int padre;
+	if(strcmp("/",path)==0){
+		padre = ROOT_INDEX;
+	} else {
+		padre = buscarArchivoPorPath(path);
+	}
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	int j = 1;
+	int i,k;
+	k = 0;
+	for ( i = 0 ; j>0 ; i++ ) {
+	   j = tablaArchivos[i].state;
+	   if(tablaArchivos[i].parent_directory==padre){
+		   subdirectoriosMax[k]=i;
+		   k++;
+	   }
+	}
+	char** subdirectoriosNombres;
+	subdirectoriosNombres = malloc(sizeof(char)*k*OSADA_FILENAME_LENGTH);
+	for(i=0;i<k;i++){
+		subdirectoriosNombres[i] = tablaArchivos[subdirectoriosMax[i]].fname;
+	}
+	return subdirectoriosNombres;
 }
 
 

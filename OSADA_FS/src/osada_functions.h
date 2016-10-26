@@ -53,4 +53,6 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 
 osada_block* obtenerArchivoPorPath(char* path);
 
+char** leerDirectorio(char* path);
+
 #endif /* OSADA_FUNCTIONS_H_ */

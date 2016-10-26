@@ -27,13 +27,24 @@ int main(void) {
 //	printf("%s\n", total);
 //	printf("%d\n", header->fs_blocks);
 //	imprimirEstructuraArchivos();
-	osada_block* archivo = obtenerArchivoPorPath("README.txt");
+//	osada_block* archivo = obtenerArchivoPorPath("/README.txt");
+	char** directorios = leerDirectorio("/Vermilion City/Pokemons/");
 //	int indice = buscarArchivoPorPath("Pokemons/001.txt");
 //	osada_file* tablaArchivos = obtenerTablaArchivos();
 //	printf("%d\n",tablaArchivos[indice].state);
 //	printf("%d\n",tablaArchivos[indice].first_block);
 //	printf("%d\n",tablaArchivos[indice].file_size);
 //	osada_block* bloquesDeDatos = obtenerBloqueDatos();
-	printf("%s\n",archivo);
+//	printf("%s\n",archivo);
+	int i = 0;
+	for(i = 0;i<14;i++){
+		printf("%s\n",directorios[i]);
+	}
+	char* separador = "------------------------------------------------------------";
+	printf("%s\n",separador);
+	directorios = leerDirectorio("/");
+	for(i = 0;i<200;i++){
+		printf("%s\n",directorios[i]);
+	}
 	return EXIT_SUCCESS;
 }
