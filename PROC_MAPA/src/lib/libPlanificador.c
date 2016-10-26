@@ -299,9 +299,10 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 
 	//liberarRecursos(entrenadorAEliminar);
 
+	sem_post(&mapa_libre);
+
 	sem_post(&entrenador_bloqueado);
 
-	sem_post(&mapa_libre);
 
 	free(entrenadorAEliminar);
 }

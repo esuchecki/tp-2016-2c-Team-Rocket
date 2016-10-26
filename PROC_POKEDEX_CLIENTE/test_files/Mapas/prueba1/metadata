@@ -1,5 +1,5 @@
 #Tiempo Chequeo Deadlock
-TiempoChequeoDeadlock=10000
+TiempoChequeoDeadlock=2000000
 
 #Modo Batalla ON-OFF
 Batalla=1

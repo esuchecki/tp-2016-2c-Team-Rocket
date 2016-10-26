@@ -97,10 +97,11 @@ static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 			printf("palabra detectada: %s\n", palabra);
 
 			//TODO: ahora hay que fillearlo? ver bien el tema de las paternidades
+			filler(buf, palabra, NULL, 0);
 		}
 
 	} else if (paquete->header == errorReadAddr) {
-		//TODO: servidor no encontro nada segun el path enviado
+		//TODO: servidor no encontro nada segun el path enviado, que hago?
 	}
 
 	int res = 0;

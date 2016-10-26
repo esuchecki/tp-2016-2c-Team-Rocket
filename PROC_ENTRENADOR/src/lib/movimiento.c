@@ -97,7 +97,7 @@ void setearEstadoDelEntrenador(t_entrenadorFisico * unEntrenador, enum tipoDeEst
 		break;
 	case setearmeEnReiniciarMapaActual:
 
-		unEntrenador->moverseEnMapa->indexMapaActual = -unEntrenador->moverseEnMapa->indexMapaActual;
+		unEntrenador->moverseEnMapa->indexMapaActual =- unEntrenador->moverseEnMapa->indexMapaActual;
 		unEntrenador->moverseEnMapa->indexMapaActual--;
 		break;
 	case setearmeEnReiniciarHojaDeViaje:
@@ -145,6 +145,8 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 		finalizarEntrenador(unEntrenador);
 		return;
 	}
+	//TODO: esta referencia anull no tendria que estar.
+	unEntrenador->moverseEnMapa = NULL;
 
 	setearEstadoDelEntrenador(unEntrenador, inicializar_estado);
 	//int indexMapaActual = 0;
@@ -537,9 +539,11 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		common_send(socketConexion, paquete);
 
 		recibirRespuesta(socketConexion, unEntrenador, tiempoAuxPN);	//vuelve a chequear a ver que le responden!
-		break;
-	case ganasteBatalla:	break; 	//este mensaje quedo desestimado.
 
+		break;
+	case ganasteBatalla:
+		puts("Gane batalla por Deadlock");
+		break; 	//este mensaje quedo desestimado.
 	case perdisteBatalla:
 		//TODO: hacer lo que tenga que hacer
 			//loguear, etc...

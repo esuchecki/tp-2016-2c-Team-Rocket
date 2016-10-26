@@ -18,12 +18,10 @@
 #include <stdlib.h>
 
 
-void atenderConexion(void *datos) {
+void atenderConexion(int socket_conexion) {
 	//Me llega un mensaje del pokedex cliente
 
-	hilo_t *cliente = datos;
-
-	t_data *paquete = leer_paquete(cliente->socketConexion);
+	t_data *paquete = leer_paquete(socket_conexion);
 
 	//TODO: ver el tema de la sincronizacion.
 	//pense que podriamos crear una lista con los archivos que se abrieron y el modo
@@ -42,7 +40,7 @@ void atenderConexion(void *datos) {
 		break;
 	case solicitudGetAttr:
 		;
-		char * path = paquete->data;
+		//char * path = paquete->data;
 		//TODO: ver si el path es directorio o archivo
 
 		/* CASO RESPUESTA ARCHIVO
@@ -73,7 +71,7 @@ void atenderConexion(void *datos) {
 	case leerArchivo:
 		;
 		//char * path = paquete->data;
-		t_data * posiciones = leer_paquete(cliente->socketConexion);
+		t_data * posiciones = leer_paquete(socket_conexion);
 		size_t size;
 		off_t offset;
 		memcpy(&size, &posiciones->data, sizeof(size_t));
@@ -89,7 +87,6 @@ void atenderConexion(void *datos) {
 	}
 
 	free(paquete);
-	free(cliente);
 }
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
@@ -115,6 +112,8 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
 }
 
 int atenderConexiones(char* ip, char* puerto) {
+
+	pthread_mutex_init(&mutex_mayor,NULL);
 
 	int socketEscucha, socketMasGrande;
 
@@ -147,25 +146,6 @@ int atenderConexiones(char* ip, char* puerto) {
 				if (i == socketEscucha) {
 					//es una nueva conexion sobre el puerto de escucha
 
-					struct sockaddr_storage remoteaddr;
-					socklen_t addrlen;
-					addrlen = sizeof(remoteaddr);
-
-					int socket_nueva_conexion = accept(socketEscucha,
-							(struct sockaddr *) &remoteaddr, &addrlen);
-					if (socket_nueva_conexion == -1) {
-						//se desconecto o no conecto alguno
-						printf("error al asignar socket a la nueva conexion");
-
-					} else {
-						//Ponemos al socket nuevo en el set de sockets activos
-						FD_SET(socket_nueva_conexion, &sockets_activos);
-
-						if (socket_nueva_conexion > socketMasGrande) {
-							socketMasGrande = socket_nueva_conexion;
-						}
-						handshake(socket_nueva_conexion, sockets_activos);
-
 						pthread_t manejoCliente;
 
 						pthread_attr_t attrHilo;
@@ -173,14 +153,16 @@ int atenderConexiones(char* ip, char* puerto) {
 						pthread_attr_setdetachstate(&attrHilo,
 						PTHREAD_CREATE_DETACHED);
 
-						hilo_t * data = malloc(sizeof(hilo_t));
-						data->socketConexion = socket_nueva_conexion;
-						data->sockets_activos = sockets_activos;
+						nodo_hilo * nodo = malloc(sizeof(nodo_hilo));
+						nodo->hilo = manejoCliente;
+						nodo->socketMasGrande = socketMasGrande;
+						nodo->socketEscucha = socketEscucha;
+						nodo->sockets_activos = sockets_activos;
 
 						pthread_create(&manejoCliente, &attrHilo,
-								(void *) atenderConexion, (void *) data);
+								(void *) establecerConexion, (void *) nodo);
 
-					}
+
 				} else {
 					//la actividad es un puerto ya enlazado, hay que atenderlo
 					//atenderConexion(i, sockets_activos);
@@ -188,5 +170,39 @@ int atenderConexiones(char* ip, char* puerto) {
 				}
 			}
 		}
+	}
+}
+
+void establecerConexion(void * data) {
+
+	nodo_hilo *datos = data;
+
+	struct sockaddr_storage remoteaddr;
+	socklen_t addrlen;
+	addrlen = sizeof(remoteaddr);
+
+	int socket_nueva_conexion = accept(datos->socketEscucha,
+			(struct sockaddr *) &remoteaddr, &addrlen);
+
+	if (socket_nueva_conexion == -1) {
+		//se desconecto o no conecto alguno
+		printf("error al asignar socket a la nueva conexion");
+
+	} else {
+		//Ponemos al socket nuevo en el set de sockets activos
+		FD_SET(socket_nueva_conexion, &datos->sockets_activos);
+
+		pthread_mutex_lock(&mutex_mayor);
+		if (socket_nueva_conexion > datos->socketMasGrande) {
+			datos->socketMasGrande = socket_nueva_conexion;
+		}
+		pthread_mutex_unlock(&mutex_mayor);
+
+		handshake(socket_nueva_conexion, datos->sockets_activos);
+
+	}
+
+	while (1) {
+		atenderConexion(socket_nueva_conexion);
 	}
 }
