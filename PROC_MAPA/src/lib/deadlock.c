@@ -205,6 +205,8 @@ void * deteccionDeadlock(void * datos) {
 				free(paquetePerdisteBatalla);
 
 				desconectarEntrenador(loser->nroDesocket, mapa, sockets_activos, socketMasGrande);
+
+				list_destroy(listaDeadlock);
 			}
 		}
 	}
