@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 
+
 void atenderConexion(int socket_conexion) {
 	//Me llega un mensaje del pokedex cliente
 
