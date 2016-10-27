@@ -11,14 +11,8 @@
 #include <so/libConfig.h>
 #include <commons/log.h>
 #include <string.h>
-
 #include "lib/teamRocketFuse.h"
-
-t_log * logCliente;
-
-#define pathConfig "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/config_cliente.txt"
-
-void inicializarLogCliente ( char *argv[] );
+#include "PROC_POKEDEX_CLIENTE.h"
 
 int main(int argc,char*argv[]){
 
@@ -28,8 +22,10 @@ int main(int argc,char*argv[]){
 	//Para leer la config como parametro de ejecucion
 	//char * pathConfg = argv[1];
 
-	t_config * config = newConfigType(pathConfig);
-	//Configo la ip
+	inicializarLogCliente(argv,true);
+
+	t_config * config = newConfigType(pathConfigCli);
+	//Consigo la ip
 	IP = configLeerString(config,"IP");
 	if(IP == NULL){
 		exit(EXIT_FAILURE);
@@ -40,12 +36,11 @@ int main(int argc,char*argv[]){
 		exit(EXIT_FAILURE);
 	}
 
-	inicializarLogCliente(argv);
+	inicializarLogCliente(argv,true);
 
 	//int socketConexion = connect_to("localhost","6100");
 	int socketConexion = connect_to(IP,Puerto);
 
-	//TODO: Hacer lo que tenga que hacer el proceso
 
 	int null_data = 0;
 
@@ -61,24 +56,20 @@ int main(int argc,char*argv[]){
 		exit(EXIT_FAILURE);
 	}
 
-
-
-
-
-	//aca ejecuta la sentencia de fuse.
+	//TODO: FUSE
 	return iniciarFuse(argc, argv);
 
 }
 
-void inicializarLogCliente ( char *argv[] )
+void inicializarLogCliente( char *argv[],bool consolaOn )
 {
 
-	logCliente = log_create("/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/log" , argv[0], false, LOG_LEVEL_DEBUG);
+	logCliente = log_create("/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/log.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
 
 
 	if (logCliente != NULL)
 	{
-		puts("se creo OK el arch de log");
+		puts("Se creo OK el arch de log");
 	}
 	else
 	{

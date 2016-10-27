@@ -21,7 +21,9 @@
 void atenderConexion(void *datos) {
 	//Me llega un mensaje del pokedex cliente
 
+
 	hilo_t *cliente = datos;
+
 
 	t_data *paquete = leer_paquete(cliente->socketConexion);
 
@@ -122,7 +124,7 @@ int atenderConexiones(char* ip, char* puerto) {
 
 	socketEscucha = setup_listen(ip, puerto);
 
-	printf("%d\n", socketEscucha);
+	printf("Estoy escuchando clientes en el socket %d\n", socketEscucha);
 
 	listen(socketEscucha, 1024);
 
@@ -164,6 +166,7 @@ int atenderConexiones(char* ip, char* puerto) {
 						if (socket_nueva_conexion > socketMasGrande) {
 							socketMasGrande = socket_nueva_conexion;
 						}
+						printf("Tengo un nuevo cliente en el socket %d\n",socket_nueva_conexion);
 						handshake(socket_nueva_conexion, sockets_activos);
 
 						pthread_t manejoCliente;

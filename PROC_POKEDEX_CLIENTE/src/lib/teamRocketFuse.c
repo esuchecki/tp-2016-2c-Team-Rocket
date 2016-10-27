@@ -95,14 +95,17 @@ static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 			paquete->data = (char*) paquete->data + 1;
 
 			printf("palabra detectada: %s\n", palabra);
-
+			//log_trace(logCliente,"palabra detectada: %s\n",palabra);
 			//TODO: ahora hay que fillearlo? ver bien el tema de las paternidades
+			filler(buf,palabra,NULL,0);
 		}
 
 	} else if (paquete->header == errorReadAddr) {
 		//TODO: servidor no encontro nada segun el path enviado
+		return -ENOENT;
 	}
 
+	/*
 	int res = 0;
 
 	if (strcmp(path, "/") == 0) {
@@ -120,8 +123,9 @@ static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	} else {
 		res = -ENOENT;
 	}
+	*/
 
-	return res;
+	return 0;
 
 }
 
@@ -159,6 +163,7 @@ static struct fuse_operations ejemplo_oper = {
 };
 
 int iniciarFuse(int argc, char*argv[]) {
+	/*
 	//pikachu
 	int fd_pikachu;
 	fd_pikachu = open("../pokedex_dir/pikachu.png", O_RDWR);
@@ -180,7 +185,8 @@ int iniciarFuse(int argc, char*argv[]) {
 	pmap_bulbasaur = mmap(0, bulbasaurStat.st_size, PROT_READ | PROT_WRITE,
 			MAP_SHARED, fd_bulbasaur, 0);
 
-	return fuse_main(argc, argv, &ejemplo_oper, NULL);
+	*/
+	return fuse_main(argc, argv, &ejemplo_oper,NULL);
 }
 
 char * leerHastaCentinela(char *paquete) {
