@@ -175,7 +175,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		desconectarEntrenador(i, mapa, sockets_activos, socketMasGrande);
 		return 0;
 	}
-	if (flag == 0) {
+	if (flag == 0 || flag == -1) {
 		goto proceder;
 	}
 
