@@ -10,6 +10,13 @@
 #include <pthread.h>
 #include <unistd.h>
 
+/*
+ * @NAME: esUnicoEsteEntrenador
+ * @DESC: Se utiliza para validar que el algoritmo de deteccion de deadlock, no me agrege 2 veces al mismo entrenador en la lista de deadlock.
+ */
+bool esUnicoEsteEntrenador (t_list* listaDeadlock, char simboloEntrenador);
+
+
 int calcularRecursosAsignados(t_entrenador *entrenadorBloqueado,
 		t_pokeNest *pokenest) {
 	bool entrenadorAtrapoPokemon(void * nodo) {
@@ -151,7 +158,12 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 	for (i = 0; i < cantidadPokenest; i++) {
 		if (Finish[i] == false) {
 			t_entrenador *entrenador = list_get(colaBloqueados, i);
-			list_add(listaDeadlock, entrenador);
+
+			if(entrenador != NULL){
+			//le pido al algoritmo de deadlock que si el entrenador estaba en la cola, no lo vuelva a agregar.
+			if (esUnicoEsteEntrenador(listaDeadlock, entrenador->simbolo))
+				list_add(listaDeadlock, entrenador);
+			}
 		}
 	}
 
@@ -172,6 +184,27 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 	}
 
 }
+
+bool esUnicoEsteEntrenador (t_list* listaDeadlock, char simboloEntrenador)
+{
+	//defino la condicion (que no exista el item)
+	bool _yaExistiaEsteId(void * nodo)
+	{
+		if ( ((t_entrenador *) nodo)->simbolo == simboloEntrenador)	//sabemos que idDelItem es un char.
+		{
+			return 1;	//Ese id ya existe
+	 	}
+		return 0;
+	}
+
+	//devuelvo 0-false si NO es unico.
+	if (list_count_satisfying( listaDeadlock, (void *) _yaExistiaEsteId ) > 0)
+		return 0;
+
+	//devuelvo 1-true xq es unico.
+	return 1;
+}
+
 
 void * deteccionDeadlock(void * datos) {
 
@@ -205,6 +238,8 @@ void * deteccionDeadlock(void * datos) {
 				free(paquetePerdisteBatalla);
 
 				desconectarEntrenador(loser->nroDesocket, mapa, sockets_activos, socketMasGrande);
+
+				list_destroy(listaDeadlock);
 			}
 		}
 	}
