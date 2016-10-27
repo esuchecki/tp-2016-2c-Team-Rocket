@@ -32,8 +32,8 @@ void atenderConexion(int socket_conexion) {
 	switch (paquete->header) {
 	case solicitudReadAddr:
 		;
-		//char * path = paquete->data;
-		/*
+		/*char * path = paquete->data;
+		 *
 		 * TODO:encontrar todos los nombres que contiene ese path detras de el
 		 * intercalando un centinela %
 		 *
@@ -41,24 +41,32 @@ void atenderConexion(int socket_conexion) {
 		break;
 	case solicitudGetAttr:
 		;
-		//char * path = paquete->data;
+//		char * path = paquete->data;
 		//TODO: ver si el path es directorio o archivo
-
-		/* CASO RESPUESTA ARCHIVO
-		 * size_t size;
-		 * paquete = pedirPaquete(respuestaPorArchivo,sizeof(size_t),&size);
-		 * common_send(cliente->socketConexion,paquete);
-		 *
-		 * CASO RESPUESTA DIRECTORIO
-		 * int null_data = 0;
-		 * paquete = pedirPaquete(respuestaPorDirectorio,sizeof(int),&null_data);
-		 * common_send(cliente->socketConexion,paquete);
-		 *
-		 * CASO RESPUESTA POR ERROR - NO ENCONTRO DATOS POR EL PATH
-		 * int null_data = 0;
-		 * paquete = pedirPaquete(errorGetAttr,sizeof(int),&null_data);
-		 * common_send(cliente->socketConexion,paquete);
-		 */
+/*		long* atributos =  obtenerAtributos(path);
+		switch(atributos[0]){
+		case REGULAR:
+			size_t size;
+			paquete = pedirPaquete(respuestaPorArchivo,sizeof(size_t),&size);
+			common_send(socket_conexion,paquete);
+			break;
+		case DIRECTORY:
+			int null_data = 0;
+			paquete = pedirPaquete(respuestaPorDirectorio,sizeof(int),&null_data);
+			common_send(socket_conexion,paquete);
+			break;
+		case DELETED:
+			int null_data = 0;
+			paquete = pedirPaquete(errorGetAttr,sizeof(int),&null_data);
+			common_send(socket_conexion,paquete);
+			break;
+		case -1:
+			int null_data = 0;
+			paquete = pedirPaquete(errorGetAttr,sizeof(int),&null_data);
+			common_send(socket_conexion,paquete);
+			break;
+		}
+*/
 		break;
 	case crearDirectorio:
 		//este no se si va a ser un mensaje que le pida el cliente
