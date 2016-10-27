@@ -43,7 +43,7 @@ osada_block* obtenerBloqueDatos();
 
 void imprimirEstructuraArchivos();
 
-int buscarArchivoPorPath(char* path);
+int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo);
 
 int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques);
 
@@ -60,5 +60,7 @@ long* obtenerAtributos(char* path);
 int obtenerEspacioLibreTablaArchivos();
 
 char* obtenerPathPadre(char* path);
+
+int crearDirectorio(char* path);
 
 #endif /* OSADA_FUNCTIONS_H_ */

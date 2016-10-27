@@ -156,16 +156,25 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	return retorno;
 }
 
-int buscarArchivoPorPath(char* path){ //retorna el indice del archivo en la tabla de archivos
+//ejemplo de uso quieroElAnteUltimo:
+//	"/Vermilion City/Pokemons/EduGroso"
+// with true:	-> resultado = pokemons
+// with false:	-> resultado = EduGroso.
+//
+int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indice del archivo en la tabla de archivos
 	int resultado;
 	if(strcmp("/",path)!=0){
 		char** array = string_split(path, "/");
 		int i = 0;
+		int j=0;
+		if (quieroElAnteUltimo)	j++;	//apunta al indice siguiente.
+
 		int padre = ROOT_INDEX;
-		while(array[i]!= NULL){
+		while(array[j]!= NULL){
 			resultado = buscarArchivoEnFS(array[i], padre);
 			padre = resultado;
 			i++;
+			j++;
 		}
 	} else {
 		resultado = -1;
@@ -226,7 +235,7 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 
 osada_block* obtenerArchivoPorPath(char* path){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	int index = buscarArchivoPorPath(path);
+	int index = buscarArchivoPorPath(path, false);
 	osada_block* resultado;
 	if(index>0){
 		int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[index].file_size);
@@ -242,7 +251,7 @@ char** leerDirectorio(char* path){
 	if(strcmp("/",path)==0){
 		padre = ROOT_INDEX;
 	} else {
-		padre = buscarArchivoPorPath(path);
+		padre = buscarArchivoPorPath(path, false);
 	}
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int j = 1;
@@ -265,7 +274,7 @@ char** leerDirectorio(char* path){
 
 long* obtenerAtributos(char* path){
 	long* atributos = malloc(sizeof(long) * 2);
-	int indiceDirectorio = buscarArchivoPorPath(path);
+	int indiceDirectorio = buscarArchivoPorPath(path, false);
 	if(indiceDirectorio>=0){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		atributos[0] = tablaArchivos[indiceDirectorio].state;
@@ -303,17 +312,17 @@ int obtenerEspacioLibreTablaArchivos(){
  * Retorna el elemento n del path,
  * con -1 es el ultimo, -2 el anteultimo...
  */
-char* obtenerUltimoElemento(char* path){
-	char** array = string_split(path, "/");
+unsigned char* obtenerUltimoElemento(char* path){
+	unsigned char** array = (unsigned char **) string_split(path, "/");
 	int i = 0;
-	char* ultimo;
-	if(strcmp("/",path)==0){
+	unsigned char* ultimo;
+	if(strcmp("/",path)!= 0){
 		while(array[i]!=NULL){
 			ultimo = array[i];
 			i++;
 		}
 	} else {
-		ultimo = "";
+		ultimo = (unsigned char*) "";
 	}
 	return ultimo;
 }
@@ -332,10 +341,12 @@ char* obtenerPathPadre(char* path){
 	if(i>1){
 		int j=0;
 		int hasta;
-		while(path[j]!="\0"){
-			if(path[j]=="/"){
+		//TODO: cambio aca.
+		while(path[j]!='\0'){
+			if(path[j]=='/'){
 				hasta = j;
 			}
+			j++;
 		}
 		padre = string_substring(path, 0, hasta);
 	} else {
@@ -349,7 +360,7 @@ char* obtenerPathPadre(char* path){
  * o -1 de lo contrario
  */
 int crearDirectorio(char* path){
-	int existeDirectorio = buscarArchivoPorPath(path);
+	int existeDirectorio = buscarArchivoPorPath(path, false);
 	int resultado;
 	int espacioLibre = obtenerEspacioLibreTablaArchivos();
 	if(existeDirectorio>-1 && espacioLibre>-1){
@@ -358,11 +369,15 @@ int crearDirectorio(char* path){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		tablaArchivos[espacioLibre].file_size = 0;
 		tablaArchivos[espacioLibre].first_block = -1;
-		tablaArchivos[espacioLibre].fname = obtenerUltimoElemento(path);
+		//strncpy((char *)tablaArchivos[espacioLibre].fname, (char *) obtenerUltimoElemento(path), OSADA_FILENAME_LENGTH);
+		//tablaArchivos[espacioLibre].fname = (unsigned char) tablaArchivos[espacioLibre].fname;
+		//tablaArchivos[espacioLibre].fname = (obtenerUltimoElemento(path));
+		memcpy(tablaArchivos[espacioLibre].fname, obtenerUltimoElemento(path), OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+
 		tablaArchivos[espacioLibre].lastmod = (unsigned)time(NULL);
 		int padre;
 		char* pathPadre = obtenerPathPadre(path);
-		int existePadre = buscarArchivoPorPath(path);
+		int existePadre = buscarArchivoPorPath(path, true);
 		if(existePadre>-1){
 			padre = existePadre;
 		} else {

@@ -57,7 +57,18 @@ int main(void) {
 //	osada_block* archivo = obtenerArchivoPorPath("Pokemons/007.txt");
 //	printf("%s\n",archivo);
 //	int primeroLibre = obtenerEspacioLibreTablaArchivos();
-	char* padre =  obtenerPathPadre("/Vermilion City/Pokemons");
-	printf("%s\n",padre);
+
+//	char* padre =  obtenerPathPadre("/Vermilion City/Pokemons");
+//	printf("%s\n",padre);
+
+	//ejemplo de prueba.
+	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
+	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
+	int i;
+	char** directorios = leerDirectorio("/Vermilion City/Pokemons");
+		for(i = 0;i<200;i++){
+			printf("%s\n",directorios[i]);
+		}
+
 	return EXIT_SUCCESS;
 }
