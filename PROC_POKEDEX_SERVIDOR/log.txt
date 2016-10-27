@@ -1,0 +1,36 @@
+[INFO] 21:14:12:55 ./PROC_POKEDEX_SERVIDOR/(3541:3541): -------------------------------------------------------
+[DEBUG] 21:14:12:56 ./PROC_POKEDEX_SERVIDOR/(3541:3541): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:16:05:840 ./PROC_POKEDEX_SERVIDOR/(3633:3633): -------------------------------------------------------
+[ERROR] 21:16:05:841 ./PROC_POKEDEX_SERVIDOR/(3633:3633): Fallo cargar la ip
+[INFO] 21:16:52:889 ./PROC_POKEDEX_SERVIDOR/(3699:3699): -------------------------------------------------------
+[DEBUG] 21:16:52:890 ./PROC_POKEDEX_SERVIDOR/(3699:3699): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:18:48:993 ./PROC_POKEDEX_SERVIDOR/(3801:3801): -------------------------------------------------------
+[DEBUG] 21:18:48:995 ./PROC_POKEDEX_SERVIDOR/(3801:3801): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:18:51:426 ./PROC_POKEDEX_SERVIDOR/(3802:3802): -------------------------------------------------------
+[DEBUG] 21:18:51:428 ./PROC_POKEDEX_SERVIDOR/(3802:3802): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:18:54:459 ./PROC_POKEDEX_SERVIDOR/(3803:3803): -------------------------------------------------------
+[DEBUG] 21:18:54:463 ./PROC_POKEDEX_SERVIDOR/(3803:3803): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:19:33:252 ./PROC_POKEDEX_SERVIDOR/(3804:3804): -------------------------------------------------------
+[DEBUG] 21:19:33:254 ./PROC_POKEDEX_SERVIDOR/(3804:3804): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:38:37:130 ./PROC_POKEDEX_SERVIDOR/(4519:4519): -------------------------------------------------------
+[DEBUG] 21:38:37:132 ./PROC_POKEDEX_SERVIDOR/(4519:4519): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 21:47:38:712 ./git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/Debug/PROC_POKEDEX_SERVIDOR/(5416:5416): -------------------------------------------------------
+[DEBUG] 21:47:38:714 ./git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/Debug/PROC_POKEDEX_SERVIDOR/(5416:5416): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 09:28:59:216 ./PROC_POKEDEX_SERVIDOR/(2793:2793): -------------------------------------------------------
+[DEBUG] 09:28:59:231 ./PROC_POKEDEX_SERVIDOR/(2793:2793): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 09:42:20:936 ./PROC_POKEDEX_SERVIDOR/(2996:2996): -------------------------------------------------------
+[DEBUG] 09:42:20:938 ./PROC_POKEDEX_SERVIDOR/(2996:2996): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 09:58:46:491 ./PROC_POKEDEX_SERVIDOR/(3286:3286): -------------------------------------------------------
+[DEBUG] 09:58:46:498 ./PROC_POKEDEX_SERVIDOR/(3286:3286): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 09:59:22:453 ./PROC_POKEDEX_SERVIDOR/(3325:3325): -------------------------------------------------------
+[DEBUG] 09:59:22:454 ./PROC_POKEDEX_SERVIDOR/(3325:3325): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 09:59:27:257 ./PROC_POKEDEX_SERVIDOR/(3327:3327): -------------------------------------------------------
+[DEBUG] 09:59:27:261 ./PROC_POKEDEX_SERVIDOR/(3327:3327): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 10:04:02:358 ./PROC_POKEDEX_SERVIDOR/(3465:3465): -------------------------------------------------------
+[DEBUG] 10:04:02:359 ./PROC_POKEDEX_SERVIDOR/(3465:3465): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 10:05:45:970 ./PROC_POKEDEX_SERVIDOR/(3521:3521): -------------------------------------------------------
+[DEBUG] 10:05:45:971 ./PROC_POKEDEX_SERVIDOR/(3521:3521): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 10:07:27:207 ./PROC_POKEDEX_SERVIDOR/(3582:3582): -------------------------------------------------------
+[DEBUG] 10:07:27:215 ./PROC_POKEDEX_SERVIDOR/(3582:3582): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 10:10:44:604 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/Debug/PROC_POKEDEX_SERVIDOR/(3708:3708): -------------------------------------------------------
+[DEBUG] 10:10:44:606 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/Debug/PROC_POKEDEX_SERVIDOR/(3708:3708): Voy a atender conexiones en la ip 127.0.0.1

@@ -130,7 +130,7 @@ int atenderConexiones(char* ip, char* puerto) {
 
 	socketEscucha = setup_listen(ip, puerto);
 
-	printf("%d\n", socketEscucha);
+	printf("Estoy escuchando clientes en el socket %d\n", socketEscucha);
 
 	listen(socketEscucha, 1024);
 

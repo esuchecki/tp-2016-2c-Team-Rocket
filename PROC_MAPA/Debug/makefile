@@ -27,7 +27,7 @@ endif
 all: mapa
 
 dependents:
-	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) all
 
 # Tool invocations
 mapa: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so
