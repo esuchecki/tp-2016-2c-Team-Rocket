@@ -46,13 +46,18 @@ int main(void) {
 //	for(i = 0;i<200;i++){
 //		printf("%s\n",directorios[i]);
 //	}
-	long* atributos = obtenerAtributos("/");
-	printf("%d\n",atributos[0]);
-	atributos = obtenerAtributos("/Pokemons");
-	printf("%d\n",atributos[0]);
-	printf("%d\n",atributos[1]);
-	atributos = obtenerAtributos("/Pokemons/001.txt");
-	printf("%d\n",atributos[0]);
-	printf("%d\n",atributos[1]);
+//	long* atributos = obtenerAtributos("/");
+//	printf("%d\n",atributos[0]);
+//	atributos = obtenerAtributos("/Pokemons");
+//	printf("%d\n",atributos[0]);
+//	printf("%d\n",atributos[1]);
+//	atributos = obtenerAtributos("/Pokemons/001.txt");
+//	printf("%d\n",atributos[0]);
+//	printf("%d\n",atributos[1]);
+//	osada_block* archivo = obtenerArchivoPorPath("Pokemons/007.txt");
+//	printf("%s\n",archivo);
+//	int primeroLibre = obtenerEspacioLibreTablaArchivos();
+	char* padre =  obtenerPathPadre("/Vermilion City/Pokemons");
+	printf("%s\n",padre);
 	return EXIT_SUCCESS;
 }

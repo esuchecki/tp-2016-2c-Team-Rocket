@@ -145,7 +145,7 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	int retorno = -1;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int i,j = 1;
-	for ( i = 0 ; (j>0 && retorno == -1); i++ ) {
+	for ( i = 0 ; (j>0 && retorno == -1 && i<2048); i++ ) {
 	   j = tablaArchivos[i].state;
 	   if(j>0){
 		   if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
@@ -218,11 +218,8 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 			int cantidadACopiar = exedente;
 		}
 		memcpy(archivoConOffset[k], bloquesDeDatos[i], cantidadACopiar * sizeof(unsigned char));
-		//archivoConOffset[k] = bloquesDeDatos[i];
 		k++;
 	}
-	//printf("%s\n",archivoConOffset[0]);
-	//como vamos a printearlo por pantalla le tiro un realloc
 	return archivoConOffset;
 }
 
@@ -280,4 +277,99 @@ long* obtenerAtributos(char* path){
 	return atributos;
 }
 
+/*
+ * Retorna la primera posicion libre
+ * en la tabla de archivos, o -1 si
+ * existieran 2048 elementos en la tabla
+ * de archivos
+ */
+int obtenerEspacioLibreTablaArchivos(){
+	int i,j = 1;
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	for ( i = 0 ; (j>0 && i<2048); i++ ) {
+	   j = tablaArchivos[i].state;
+	}
+	int k;
+	if(i<2048){
+		i--;
+		k = i;
+	} else {
+		k = -1;
+	}
+	return k;
+}
 
+/*
+ * Retorna el elemento n del path,
+ * con -1 es el ultimo, -2 el anteultimo...
+ */
+char* obtenerUltimoElemento(char* path){
+	char** array = string_split(path, "/");
+	int i = 0;
+	char* ultimo;
+	if(strcmp("/",path)==0){
+		while(array[i]!=NULL){
+			ultimo = array[i];
+			i++;
+		}
+	} else {
+		ultimo = "";
+	}
+	return ultimo;
+}
+
+/*
+ * Retorna el path del padre de
+ * un directorio
+ */
+char* obtenerPathPadre(char* path){
+	char** array = string_split(path, "/");
+	int i = 0;
+	while(array[i]!=NULL){
+		i++;
+	}
+	char* padre;
+	if(i>1){
+		int j=0;
+		int hasta;
+		while(path[j]!="\0"){
+			if(path[j]=="/"){
+				hasta = j;
+			}
+		}
+		padre = string_substring(path, 0, hasta);
+	} else {
+		padre = "";
+	}
+	return padre;
+}
+
+/*
+ * Retorna 0 si el directorio se creo
+ * o -1 de lo contrario
+ */
+int crearDirectorio(char* path){
+	int existeDirectorio = buscarArchivoPorPath(path);
+	int resultado;
+	int espacioLibre = obtenerEspacioLibreTablaArchivos();
+	if(existeDirectorio>-1 && espacioLibre>-1){
+		resultado = -1;
+	} else {
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		tablaArchivos[espacioLibre].file_size = 0;
+		tablaArchivos[espacioLibre].first_block = -1;
+		tablaArchivos[espacioLibre].fname = obtenerUltimoElemento(path);
+		tablaArchivos[espacioLibre].lastmod = (unsigned)time(NULL);
+		int padre;
+		char* pathPadre = obtenerPathPadre(path);
+		int existePadre = buscarArchivoPorPath(path);
+		if(existePadre>-1){
+			padre = existePadre;
+		} else {
+			padre = ROOT_INDEX;
+		}
+		tablaArchivos[espacioLibre].parent_directory = padre;
+		tablaArchivos[espacioLibre].state = 2;
+	}
+	return resultado;
+}

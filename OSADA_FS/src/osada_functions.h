@@ -57,4 +57,8 @@ char** leerDirectorio(char* path);
 
 long* obtenerAtributos(char* path);
 
+int obtenerEspacioLibreTablaArchivos();
+
+char* obtenerPathPadre(char* path);
+
 #endif /* OSADA_FUNCTIONS_H_ */
