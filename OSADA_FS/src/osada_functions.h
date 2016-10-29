@@ -63,4 +63,6 @@ char* obtenerPathPadre(char* path);
 
 int crearDirectorio(char* path);
 
+int borrarDirectorio(char* path);
+
 #endif /* OSADA_FUNCTIONS_H_ */

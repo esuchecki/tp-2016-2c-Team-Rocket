@@ -124,7 +124,7 @@ void imprimirEstructuraArchivos(){
 	int j = 1;
 	int i,k;
 	char* guion = "-";
-	for ( i = 0 ; j>0 ; i++ ) {
+	for ( i = 0 ; i<2048 ; i++ ) {
 	   j = tablaArchivos[i].state;
 	   k = tablaArchivos[i].parent_directory;
 	   if(j>0){
@@ -369,11 +369,7 @@ int crearDirectorio(char* path){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		tablaArchivos[espacioLibre].file_size = 0;
 		tablaArchivos[espacioLibre].first_block = -1;
-		//strncpy((char *)tablaArchivos[espacioLibre].fname, (char *) obtenerUltimoElemento(path), OSADA_FILENAME_LENGTH);
-		//tablaArchivos[espacioLibre].fname = (unsigned char) tablaArchivos[espacioLibre].fname;
-		//tablaArchivos[espacioLibre].fname = (obtenerUltimoElemento(path));
 		memcpy(tablaArchivos[espacioLibre].fname, obtenerUltimoElemento(path), OSADA_FILENAME_LENGTH * sizeof (unsigned char));
-
 		tablaArchivos[espacioLibre].lastmod = (unsigned)time(NULL);
 		int padre;
 		char* pathPadre = obtenerPathPadre(path);
@@ -385,6 +381,24 @@ int crearDirectorio(char* path){
 		}
 		tablaArchivos[espacioLibre].parent_directory = padre;
 		tablaArchivos[espacioLibre].state = 2;
+	}
+	return resultado;
+}
+
+int borrarDirectorio(char* path){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio>-1){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		tablaArchivos[existeDirectorio].file_size = 0;
+		tablaArchivos[existeDirectorio].first_block = -1;
+		memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+		tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
+		tablaArchivos[existeDirectorio].parent_directory = -1;
+		tablaArchivos[existeDirectorio].state = 0;
+		resultado = 0;
+	} else {
+		resultado = -1;
 	}
 	return resultado;
 }

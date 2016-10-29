@@ -26,7 +26,7 @@ int main(void) {
 //	char* total = "Total Blocks";
 //	printf("%s\n", total);
 //	printf("%d\n", header->fs_blocks);
-//	imprimirEstructuraArchivos();
+	imprimirEstructuraArchivos();
 //	osada_block* archivo = obtenerArchivoPorPath("/README.txt");
 //	char** directorios = leerDirectorio("/Vermilion City/Pokemons/");
 //	int indice = buscarArchivoPorPath("Pokemons/001.txt");
@@ -62,13 +62,14 @@ int main(void) {
 //	printf("%s\n",padre);
 
 	//ejemplo de prueba.
-	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
-	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
-	int i;
-	char** directorios = leerDirectorio("/Vermilion City/Pokemons");
-		for(i = 0;i<200;i++){
-			printf("%s\n",directorios[i]);
-		}
-
+//	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
+//	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
+//	int i;
+//	char** directorios = leerDirectorio("/Vermilion City/Pokemons");
+//		for(i = 0;i<200;i++){
+//			printf("%s\n",directorios[i]);
+//		}
+	int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");
+	imprimirEstructuraArchivos();
 	return EXIT_SUCCESS;
 }
