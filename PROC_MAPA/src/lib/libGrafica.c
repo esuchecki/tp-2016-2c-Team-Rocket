@@ -8,6 +8,7 @@
 #include "libGrafica.h"
 
 
+int fcAuxiliarEstaDentroDelMargenDelMapa(int pos_x, int pos_y, int guiRows, int guiCols);
 void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y);
 
 /*
@@ -21,6 +22,8 @@ void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y);
  */
 char * decimeComoSeLlamaEstaPokeNest (char * ubicacionActual);
 
+
+
 //------------------------------------------//
 
 
@@ -32,12 +35,11 @@ void dibujarMapa (t_mapa * mapa)
 	while ( 1 )
 	{
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) &finalizarGui, (void* ) &accionDelMapaAnteSIGUSR2 );
-		nivel_gui_dibujar(mapa->items, mapa->nombre);
+		if (!_mapaEnModoDebug)
+			nivel_gui_dibujar(mapa->items, mapa->nombre);
 
 		usleep(mapa->metadata->retardo);	//como para poner un tiempo..
 	}
-
-
 }
 
 
@@ -216,15 +218,29 @@ void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y) {
 int estaDentroDelMargenDelMapa(int pos_x, int pos_y)
 {
 	int rows, cols;
-	if (nivel_gui_get_area_nivel(&rows, &cols) == EXIT_SUCCESS)
+	if (_mapaEnModoDebug)
 	{
-		if (pos_x > 0 && pos_x < rows && pos_y > 0 && pos_y < cols)
-		{
-			return 1;
-		}
+		//En caso de debug, le hardcodeo el size de la terminal a 80x24 (default).
+		rows = 24;
+		cols = 80;
+		return fcAuxiliarEstaDentroDelMargenDelMapa(pos_x, pos_y, rows, cols);
 	}
-	return 0;
+	else
+	{
+		if (nivel_gui_get_area_nivel(&rows, &cols) == EXIT_SUCCESS)
+			return fcAuxiliarEstaDentroDelMargenDelMapa(pos_x, pos_y, rows, cols);
 
+		return 0;
+	}
+}
+
+
+int fcAuxiliarEstaDentroDelMargenDelMapa(int pos_x, int pos_y, int guiRows, int guiCols)
+{
+	if (pos_x > 0 && pos_x < guiRows && pos_y > 0 && pos_y < guiCols)
+		return 1;
+
+	return 0;
 }
 
 
@@ -350,7 +366,8 @@ void finalizarGui (t_mapa * mapa)
 {
 	log_info(myArchivoDeLog, "voy a finalizar la gui");
 	borrarMapa (mapa);
-	nivel_gui_terminar();
+	if (!_mapaEnModoDebug)
+		nivel_gui_terminar();
 	log_destroy(myArchivoDeLog);
 	exit(EXIT_FAILURE);
 }

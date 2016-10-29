@@ -32,12 +32,19 @@ void inicializarLogMapa ( char *argv[] );
 
 int main( int argc, char *argv[] )
 {
+	//Para ejecutar el mapa en modo debug cambiar este flag.
+	//Hace todas las mismas operaciones pero no inicializa la gui.
+	//***************************************
+	_mapaEnModoDebug = 0;	//En 1 es modo debug, en 0 ejecucion normal.
+	//***************************************
+
 	validarArgumentos (argc, argv );
 	inicializarLogMapa(argv);
 
 	t_mapa * mapa;
 
-	nivel_gui_inicializar();
+	if (!_mapaEnModoDebug)
+		nivel_gui_inicializar();
 	mapa = inicializarEstructurasDelMapa (argv[1], argv[2]);
 
 	inicializarSenialesMapa (mapa, (void *) &finalizarGui );

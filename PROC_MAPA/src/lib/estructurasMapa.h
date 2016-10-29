@@ -67,6 +67,7 @@ typedef struct{
 
 
 
+bool _mapaEnModoDebug;
 //------------------------------------------//
 
 #endif /* LIB_ESTRUCTURASMAPA_H_ */

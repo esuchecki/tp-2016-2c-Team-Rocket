@@ -27,10 +27,11 @@ endif
 all: PROC_POKEDEX_SERVIDOR
 
 dependents:
-	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug && $(MAKE) all
 
 # Tool invocations
-PROC_POKEDEX_SERVIDOR: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so
+PROC_POKEDEX_SERVIDOR: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so /home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	gcc -L"/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "PROC_POKEDEX_SERVIDOR" $(OBJS) $(USER_OBJS) $(LIBS)
@@ -45,5 +46,6 @@ clean:
 .PHONY: all clean dependents
 .SECONDARY:
 /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
+/home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS:
 
 -include ../makefile.targets

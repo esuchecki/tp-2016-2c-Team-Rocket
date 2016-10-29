@@ -69,6 +69,7 @@
 						<entry flags="RESOLVED" kind="libraryFile" name="libTeamRocket" srcPrefixMapping="" srcRootPath=""/>
 					</externalSetting>
 				</externalSettings>
+				<externalSettings containerId="OSADA_FS;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier"/>
 			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.1344189448">
@@ -133,5 +134,13 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/PROC_POKEDEX_SERVIDOR"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/PROC_POKEDEX_SERVIDOR"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

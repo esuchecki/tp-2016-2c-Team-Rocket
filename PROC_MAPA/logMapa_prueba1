@@ -1,0 +1,170 @@
+[INFO] 17:47:51:364 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2847:2847): -------------------------------------------------------
+[INFO] 17:50:31:66 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): -------------------------------------------------------
+[INFO] 17:50:32:624 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Voy a leer la metadata del mapa.
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): tiempoChequeadoDeadlock= 33920
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): ModoBatalla= 1
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Algoritmo= SRDF
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Quantum= 3
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Retardo= 19264
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): IP= 127.0.0.1
+[INFO] 17:50:32:625 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Puerto= 8001
+[INFO] 17:50:32:626 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Finaliza la lectura de metadata del mapa.
+[INFO] 17:50:32:626 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Voy a leer las PokeNest y cargarlas
+[INFO] 17:50:32:626 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 17:50:32:636 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): charmander001.dat
+[INFO] 17:50:32:675 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Se creo una Pokenest: [ C | x=6 | y=6 | cant=1 ]
+[INFO] 17:50:32:676 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 17:50:32:676 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): pikachu001.dat
+[INFO] 17:50:32:719 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Se creo una Pokenest: [ P | x=3 | y=3 | cant=1 ]
+[INFO] 17:50:32:719 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2940): Finalizo la carga de PokeNest.
+[DEBUG] 17:50:41:731 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(2940:2961): Se crea el socket escucha con numero: 4
+
+[INFO] 18:23:40:276 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): -------------------------------------------------------
+[INFO] 18:23:40:277 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Voy a leer la metadata del mapa.
+[INFO] 18:23:40:277 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): tiempoChequeadoDeadlock= 33920
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): ModoBatalla= 1
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Algoritmo= SRDF
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Quantum= 3
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Retardo= 19264
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): IP= 127.0.0.1
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Puerto= 8001
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Finaliza la lectura de metadata del mapa.
+[INFO] 18:23:40:282 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Voy a leer las PokeNest y cargarlas
+[INFO] 18:23:40:286 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 18:23:40:287 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): charmander001.dat
+[INFO] 18:23:40:376 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Se creo una Pokenest: [ C | x=6 | y=6 | cant=1 ]
+[INFO] 18:23:40:376 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 18:23:40:377 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): pikachu001.dat
+[INFO] 18:23:40:478 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Se creo una Pokenest: [ P | x=3 | y=3 | cant=1 ]
+[INFO] 18:23:40:478 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4045): Finalizo la carga de PokeNest.
+[DEBUG] 18:23:40:583 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se crea el socket escucha con numero: 4
+
+[INFO] 18:23:43:639 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se Mueve a cola de listos al entrenador: #
+[INFO] 18:23:43:639 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Cola de Listos: #
+[INFO] 18:23:43:639 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:23:43:639 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:23:43:639 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se conecto un entrenador: [ # ]
+[DEBUG] 18:23:43:639 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se creo un entrenador con simbolo: #, y con numero de socket: 5
+[INFO] 18:23:59:398 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se Mueve a cola de listos al entrenador: @
+[INFO] 18:23:59:399 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Cola de Listos: #
+[INFO] 18:23:59:399 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Cola de Listos: @
+[INFO] 18:23:59:399 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:23:59:399 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:23:59:399 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se conecto un entrenador: [ @ ]
+[DEBUG] 18:23:59:399 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4130): Se creo un entrenador con simbolo: @, y con numero de socket: 6
+[INFO] 18:24:15:623 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 18:24:23:123 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 10 
+[DEBUG] 18:25:17:128 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 3;3
+[DEBUG] 18:25:46:457 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 4
+[INFO] 18:25:56:348 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:1
+[INFO] 18:26:18:177 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): ESCUCHO AL ENTRENADOR-SOCKET 6
+[DEBUG] 18:26:29:262 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 6,con el header 10 
+[DEBUG] 18:26:32:34 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 6;6
+[DEBUG] 18:26:34:36 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 10
+[INFO] 18:26:34:36 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:1
+[INFO] 18:26:50:628 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 18:27:04:29 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:27:19:87 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:27:19:87 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 2, 1
+[DEBUG] 18:27:45:570 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 3
+[INFO] 18:27:55:512 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:27:59:790 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:28:06:407 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:28:06:407 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 2, 2
+[DEBUG] 18:28:08:408 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 2
+[INFO] 18:28:08:410 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:28:15:322 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:28:15:322 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:28:15:322 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 3, 2
+[DEBUG] 18:28:17:323 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 1
+[INFO] 18:28:17:325 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:28:27:107 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:28:27:108 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:28:27:108 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 3, 3
+[DEBUG] 18:28:29:109 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 0
+[INFO] 18:28:29:111 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:28:39:160 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 12 
+[DEBUG] 18:29:00:120 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): EL ENTRENADOR # SOLICITA POKE: P
+[INFO] 18:29:13:998 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Se quita de la cola de Listos al entrenador: #
+[INFO] 18:29:13:998 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Cola de Listos: @
+[INFO] 18:29:13:998 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:29:13:998 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:29:16:670 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Se agrega a la cola de bloqueados al entrenador: #
+[INFO] 18:29:16:671 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Cola de Listos: @
+[INFO] 18:29:16:671 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Cola de Bloqueados: #
+[INFO] 18:29:16:671 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): La cola de planificacion de Finalizados esta vacía
+[DEBUG] 18:30:01:142 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): le asigne al entrenador #, el pokemon: P
+[DEBUG] 18:30:01:142 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): nombre del archivo: ///home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/test_files///Mapas//prueba1//PokeNests//pikachu//pikachu001.dat
+[DEBUG] 18:30:01:152 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): ///home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/test_files///Mapas//prueba1//PokeNests//pikachu//pikachu001.dat
+[DEBUG] 18:30:01:152 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): entroo...
+[INFO] 18:30:01:152 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Se quita de la cola de Bloqueados al entrenador: #
+[INFO] 18:30:01:152 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Cola de Listos: @
+[INFO] 18:30:01:152 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:30:01:152 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:30:01:153 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Se Mueve a cola de listos al entrenador: #
+[INFO] 18:30:01:153 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Cola de Listos: @
+[INFO] 18:30:01:153 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Cola de Listos: #
+[INFO] 18:30:01:153 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:30:01:153 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:30:49:499 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 18:31:09:377 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 10 
+[DEBUG] 18:31:09:377 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 6;6
+[DEBUG] 18:31:11:379 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 6
+[INFO] 18:31:11:380 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:1
+[INFO] 18:31:22:387 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 18:31:39:33 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:31:45:238 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:31:45:238 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 4, 3
+[DEBUG] 18:31:47:239 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 5
+[INFO] 18:31:47:241 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:31:47:241 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:32:06:472 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:32:06:473 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 4, 4
+[DEBUG] 18:32:08:474 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 4
+[INFO] 18:32:08:476 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:32:08:476 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:32:12:869 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:32:12:869 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 5, 4
+[DEBUG] 18:32:14:870 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 3
+[INFO] 18:32:14:872 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:32:14:872 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:32:21:10 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:32:21:10 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 5, 5
+[DEBUG] 18:32:23:10 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 2
+[INFO] 18:32:23:12 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:32:23:12 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:32:37:770 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:32:37:770 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 6, 5
+[DEBUG] 18:32:39:770 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 1
+[INFO] 18:32:39:773 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:32:39:774 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 11 
+[DEBUG] 18:32:45:260 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): movi al entrenador
+[DEBUG] 18:32:45:260 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): simbolo: #, 6, 6
+[DEBUG] 18:32:47:261 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): distancia a pokenest = 0
+[INFO] 18:32:47:264 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:0
+[DEBUG] 18:32:47:264 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 12 
+[DEBUG] 18:32:51:622 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): EL ENTRENADOR # SOLICITA POKE: C
+[INFO] 18:32:51:622 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Se quita de la cola de Listos al entrenador: #
+[INFO] 18:32:51:622 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Cola de Listos: @
+[INFO] 18:32:51:622 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:32:51:622 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:32:51:623 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Se agrega a la cola de bloqueados al entrenador: #
+[INFO] 18:32:51:623 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Cola de Listos: @
+[INFO] 18:32:51:623 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Cola de Bloqueados: #
+[INFO] 18:32:51:623 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): La cola de planificacion de Finalizados esta vacía
+[DEBUG] 18:32:56:81 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): le asigne al entrenador #, el pokemon: C
+[DEBUG] 18:32:56:81 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): nombre del archivo: ///home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/test_files///Mapas//prueba1//PokeNests//charmander//charmander001.dat
+[DEBUG] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): ///home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/test_files///Mapas//prueba1//PokeNests//charmander//charmander001.dat
+[DEBUG] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): entroo...
+[INFO] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Se quita de la cola de Bloqueados al entrenador: #
+[INFO] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Cola de Listos: @
+[INFO] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Se Mueve a cola de listos al entrenador: #
+[INFO] 18:32:56:117 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Cola de Listos: @
+[INFO] 18:32:56:118 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): Cola de Listos: #
+[INFO] 18:32:56:118 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Bloqueados esta vacía
+[INFO] 18:32:56:118 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4129): La cola de planificacion de Finalizados esta vacía
+[INFO] 18:33:34:446 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 18:33:34:447 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): Atiendo al socket 5,con el header 134558768 
+[INFO] 18:33:59:538 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4045:4128): VALOR FLAG:-1

@@ -6,6 +6,7 @@
  */
 
 
+
 #ifndef OSADA_FUNCTIONS_H_
 #define OSADA_FUNCTIONS_H_
 
