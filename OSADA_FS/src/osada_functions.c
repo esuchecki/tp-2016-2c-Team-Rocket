@@ -223,7 +223,7 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 	int exedente = calcularBytesExedentes(cantidadDeBloques,tamanioArchivo);
 	while( k < cantidadDeBloques ){
 		i = bloquesQueLoConforman[k];
-		if (k == (cantidadDeBloques -1) && exedente>0){
+		if ((k == (cantidadDeBloques -1)) && (exedente>0)){
 			int cantidadACopiar = exedente;
 		}
 		memcpy(archivoConOffset[k], bloquesDeDatos[i], cantidadACopiar * sizeof(unsigned char));
@@ -265,10 +265,12 @@ char** leerDirectorio(char* path){
 	   }
 	}
 	char** subdirectoriosNombres;
-	subdirectoriosNombres = malloc(sizeof(char)*k*OSADA_FILENAME_LENGTH);
+	subdirectoriosNombres = malloc(sizeof(char)*(k+1)*OSADA_FILENAME_LENGTH);
 	for(i=0;i<k;i++){
 		subdirectoriosNombres[i] = tablaArchivos[subdirectoriosMax[i]].fname;
 	}
+	subdirectoriosNombres[k] = NULL;
+	//La ultima posicion tiene un null
 	return subdirectoriosNombres;
 }
 

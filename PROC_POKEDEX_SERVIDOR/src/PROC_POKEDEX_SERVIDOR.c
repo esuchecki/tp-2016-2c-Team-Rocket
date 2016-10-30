@@ -16,13 +16,21 @@
 #include <so/libConfig.h>
 #include "lib/conexiones.h"
 #include "PROC_POKEDEX_SERVIDOR.h"
+//TODO: cambiar este
+#include "../OSADA_FS/src/osada_functions.h"
+
 
 int main(int argc, char*argv[]) {
 
+
+	abrirArchivo();
 	//char * Port = malloc(10);
 
-	char* IP;
-	char* PUERTO;
+	char* IP = malloc(15);
+	char* PUERTO = malloc(15);
+	strcpy(IP, "127.0.0.1");
+	strcpy(PUERTO, "6100");
+	/*
 	//Para leer la config como parametro de ejecucion
 		//char * pathConfg = argv[1];
 
@@ -44,7 +52,9 @@ int main(int argc, char*argv[]) {
 
 
 		log_debug(logServidor,"Voy a atender conexiones en la ip %s",IP);
-	atenderConexiones(IP,PUERTO);
+		*/
+	//atenderConexiones(IP,PUERTO);
+	escucharNuevasConexiones(IP,PUERTO);
 
 	return 0;
 }

@@ -8,33 +8,72 @@
 #include "teamRocketFuse.h"
 #include <so/libSockets.h>
 
-static int ejemplo_getattr(const char *path, struct stat *stbuf) {
+static int teamRocket_getAttr (const char *path, struct stat *stbuf);
 
+static int teamRocket_readDir(const char *path, void *buf, fuse_fill_dir_t filler,
+		off_t offset, struct fuse_file_info *fi);
+
+static int teamRocket_read (const char *path, char *buf, size_t size, off_t offset,
+		struct fuse_file_info *fi);
+
+void enviarLecturaArchivo(char *path, size_t size, off_t offset) ;
+
+
+
+
+static int teamRocket_getAttr (const char *path, struct stat *stbuf)
+{
 	int res = 0;
-	memset(stbuf, 0, sizeof(struct stat));
 
-	t_data * paquete = pedirPaquete(solicitudGetAttr,strlen(path),&path);
-	common_send(socketConexion,paquete);
-
-	paquete = leer_paquete(socketConexion);
-
-	switch(paquete->header){
-	case respuestaPorArchivo:
-		;
-		stbuf->st_mode = S_IFREG | 0444;
-		stbuf->st_nlink = 1;
-		stbuf->st_size = (size_t)paquete->data;
-		break;
-	case respuestaPorDirectorio:
-		stbuf->st_mode = S_IFDIR | 0755;
-		stbuf->st_nlink = 2;
-		break;
-	case errorGetAttr:
-		res = -ENOENT;
-		break;
+	//Por defecto el punto de montaje es una carpeta.
+	if (strcmp(path, "/") == 0) {
+			stbuf->st_mode = S_IFDIR | 0755;
+			stbuf->st_nlink = 2;
+			return res;
 	}
+	else
+	{
+		//memset(stbuf, 0, sizeof(struct stat));
+		char * newPath = malloc (strlen(path)+1);
+		strcpy(newPath, path);
+
+		t_data * paquete = pedirPaquete(poke_solicitudGetAttr,strlen(newPath)+1,newPath);
+		common_send(socketConexion,paquete);
+
+		free(newPath);
+		paquete = leer_paquete(socketConexion);
+
+		switch(paquete->header){
+		case poke_respuestaPorArchivo:
+			;
+			//log_error(logCliente, "My socket connection is: %s", string_itoa( (long)paquete->data));
+			stbuf->st_mode = S_IFREG | 0666;
+			stbuf->st_nlink = 1;
+			stbuf->st_size = *((long*)paquete->data);
+			//stbuf->st_size = 12312;
+			return res;
+			break;
+		case poke_respuestaPorDirectorio:
+			stbuf->st_mode = S_IFDIR | 0755;
+			stbuf->st_nlink = 2;
+			return res;
+			break;
+		case poke_errorGetAttr:
+			res = -ENOENT;
+			return res;
+			break;
+		default:
+			;
+			return -ENOENT;
+			break;
+		}
+	}
+	return -ENOENT;
+}
 
 
+/*
+static int ejemplo_getattr(const char *path, struct stat *stbuf) {
 	if (strcmp(path, "/") == 0) {
 		stbuf->st_mode = S_IFDIR | 0755;
 		stbuf->st_nlink = 2;
@@ -73,39 +112,87 @@ static int ejemplo_getattr(const char *path, struct stat *stbuf) {
 
 	return res;
 }
+*/
 
-static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-		off_t offset, struct fuse_file_info *fi) {
-
+static int teamRocket_readDir(const char *path, void *buf, fuse_fill_dir_t filler,
+		off_t offset, struct fuse_file_info *fi)
+{
 	//TODO: ver si falta el \0
-	t_data * paquete = pedirPaquete(solicitudReadAddr, strlen(path), &path);
+	log_error(logCliente, "My socket connection is: %s", string_itoa(socketConexion));
 
+	/*
+	char * palabra = malloc(18);
+	strcpy(palabra, "Pokemons");
+	filler(buf,palabra,NULL,0);
+	return 0;
+*/
+
+	char * newPath = malloc (strlen(path)+1);
+	strcpy(newPath, path);
+
+	t_data * paquete = pedirPaquete(poke_solicitudReadDir, strlen(newPath)+1, newPath);
 	common_send(socketConexion, paquete);
-
 	paquete = leer_paquete(socketConexion);
 
-	if (paquete->header == respuestaReadAddr) {
-		//TODO: parsear string respuesta y fillear
-		while (1) {
-			if (strlen(paquete->data) == 0) {
-				break;
-			}
-			char * palabra = leerHastaCentinela(paquete->data);
-			paquete->data = memchr(paquete->data, '%', strlen(paquete->data));
-			paquete->data = (char*) paquete->data + 1;
+	free(newPath);
+	if (paquete->header == poke_respuestaReadDir) {
 
-			printf("palabra detectada: %s\n", palabra);
-			//log_trace(logCliente,"palabra detectada: %s\n",palabra);
-			//TODO: ahora hay que fillearlo? ver bien el tema de las paternidades
+		int _OSADA_FILENAME_LENGTH = 17;
+		int temp=0;
+		int aux=0;
+
+		int cuantosStringsMePasaron = 0;
+		cuantosStringsMePasaron = (((paquete->tamanio)/ sizeof(char))/(_OSADA_FILENAME_LENGTH+1));
+		log_debug(logCliente, "Me pasaron x strings: %s", string_itoa(cuantosStringsMePasaron));
+
+		while (temp < cuantosStringsMePasaron)
+		{
+			aux = sizeof(char) * (_OSADA_FILENAME_LENGTH+1);
+			char * palabra = malloc(aux);
+			memcpy(palabra, paquete->data + (aux * temp ), (_OSADA_FILENAME_LENGTH+1) );
 			filler(buf,palabra,NULL,0);
+			free(palabra);
+			temp++;
 		}
 
-	} else if (paquete->header == errorReadAddr) {
+
+		//TODO: parsear string respuesta y fillear
+//		while (1) {
+//			if (strlen(paquete->data) == 0)
+//				break;
+//
+//
+//			char * palabra = malloc(18);
+//			//memcpy(palabra, paquete->data, 18);
+//			strcpy(palabra, "Pokemons");
+//			/*
+//			char * palabra = leerHastaCentinela(paquete->data);
+//			paquete->data = memchr(paquete->data, '\0', strlen(paquete->data));
+//			paquete->data = (char*) paquete->data + 1;
+//
+//			printf("palabra detectada: %s\n", palabra);
+//			*/
+//			//log_trace(logCliente,"palabra detectada: %s\n",palabra);
+//			//TODO: ahora hay que fillearlo? ver bien el tema de las paternidades
+//			filler(buf,palabra,NULL,0);
+//			break;
+//		}
+		return 0;
+
+	} else if (paquete->header == poke_errorReadDir) {
 		//TODO: servidor no encontro nada segun el path enviado, que hago?
 		return -ENOENT;
 	}
 
-	/*
+	return -ENOENT;
+}
+
+
+/*
+static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+		off_t offset, struct fuse_file_info *fi) {
+
+
 	int res = 0;
 
 	if (strcmp(path, "/") == 0) {
@@ -123,21 +210,35 @@ static int ejemplo_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	} else {
 		res = -ENOENT;
 	}
-	*/
+
 
 	return 0;
 
 }
+*/
 
-static int ejemplo_read(const char *path, char *buf, size_t size, off_t offset,
+
+static int teamRocket_read (const char *path, char *buf, size_t size, off_t offset,
 		struct fuse_file_info *fi) {
 
-	enviarLecturaArchivo(path,size,offset);
+	char * newPath = malloc (strlen(path)+1);
+	strcpy(newPath, path);
+	enviarLecturaArchivo(newPath,size,offset);
 	t_data * lectura = leer_paquete(socketConexion);
+	free(newPath);
 
-	if(lectura->header == respuestaLectura){
-		memcpy(buf,lectura->data,size);
+	if(lectura->header == poke_respuestaLectura){
+		//memcpy(buf,lectura->data,size);
+		memcpy(buf, lectura->data, lectura->tamanio);
+		return lectura->tamanio;
 	}
+	return 0;
+
+}
+
+/*
+static int ejemplo_read(const char *path, char *buf, size_t size, off_t offset,
+		struct fuse_file_info *fi) {
 
 
 	if (strcmp(path, "/pikachu/pikachu.png") == 0) {
@@ -155,11 +256,21 @@ static int ejemplo_read(const char *path, char *buf, size_t size, off_t offset,
 	}
 	return size;
 }
+*/
 
+
+/*
 static struct fuse_operations ejemplo_oper = {
 		.getattr = ejemplo_getattr,
 		.readdir = ejemplo_readdir,
 		.read = ejemplo_read,
+};
+*/
+
+static struct fuse_operations teamRocket_oper = {
+		.getattr = teamRocket_getAttr,
+		.readdir = teamRocket_readDir,
+		.read = teamRocket_read,
 };
 
 int iniciarFuse(int argc, char*argv[]) {
@@ -186,13 +297,14 @@ int iniciarFuse(int argc, char*argv[]) {
 			MAP_SHARED, fd_bulbasaur, 0);
 
 	*/
-	return fuse_main(argc, argv, &ejemplo_oper,NULL);
+	return fuse_main(argc, argv, &teamRocket_oper,NULL);
 }
 
+/*
 char * leerHastaCentinela(char *paquete) {
 	int i;
 	char caracter;
-	char centinela = '%';
+	char centinela = '\0';
 
 	for (i = 0; caracter != centinela; i++) {
 
@@ -220,23 +332,17 @@ char * leerHastaCentinela(char *paquete) {
 
 	return buffer;
 }
+*/
+void enviarLecturaArchivo(char *path, size_t size, off_t offset) {
 
-void enviarLecturaArchivo(const char *path, size_t size, off_t offset) {
-
-	t_data *paquete = pedirPaquete(leerArchivo, strlen(path), &path);
-
+	t_data *paquete = pedirPaquete(poke_leerArchivo, strlen(path)+1, path);
 	common_send(socketConexion,paquete);
 
 	int tamanio = sizeof(size_t) + sizeof(off_t);
-
 	void*buffer = malloc(tamanio);
-
 	memcpy(buffer, &size, sizeof(size_t));
-
 	memcpy(buffer + sizeof(size_t), &offset, sizeof(off_t));
-
-	paquete = pedirPaquete(leerArchivo, tamanio, buffer);
-
+	paquete = pedirPaquete(poke_leerArchivo, tamanio, buffer);
 	common_send(socketConexion, paquete);
 
 }

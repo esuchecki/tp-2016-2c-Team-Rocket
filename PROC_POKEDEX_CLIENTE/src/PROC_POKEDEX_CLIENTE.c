@@ -19,6 +19,8 @@ int main(int argc,char*argv[]){
 
 	char * IP;
 	char * Puerto;
+
+	/*
 	//Para leer la config como parametro de ejecucion
 	//char * pathConfg = argv[1];
 
@@ -35,11 +37,12 @@ int main(int argc,char*argv[]){
 	if(Puerto == NULL){
 		exit(EXIT_FAILURE);
 	}
-
+*/
 	inicializarLogCliente(argv,true);
 
-	//int socketConexion = connect_to("localhost","6100");
-	int socketConexion = connect_to(IP,Puerto);
+
+	socketConexion = connect_to("localhost","6100");
+	//int socketConexion = connect_to(IP,Puerto);
 
 
 	int null_data = 0;
@@ -56,6 +59,7 @@ int main(int argc,char*argv[]){
 		exit(EXIT_FAILURE);
 	}
 
+	log_info(logCliente, "My socket connection is: %s", string_itoa(socketConexion));
 	//TODO: FUSE
 	return iniciarFuse(argc, argv);
 
@@ -64,7 +68,7 @@ int main(int argc,char*argv[]){
 void inicializarLogCliente( char *argv[],bool consolaOn )
 {
 
-	logCliente = log_create("/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/log.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
+	logCliente = log_create("/home/utnso/Escritorio/log.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
 
 
 	if (logCliente != NULL)

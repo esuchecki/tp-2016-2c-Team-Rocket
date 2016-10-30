@@ -25,4 +25,46 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src/osada_src/OSADA_Constants.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/OSADA_Constants.h</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada-utils</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada_functions.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/osada_functions.c</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada_functions.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/osada_functions.h</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada-utils/VERSION.md</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/osada-utils/VERSION.md</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada-utils/osada-dump</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/osada-utils/osada-dump</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada-utils/osada-format</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/osada-utils/osada-format</locationURI>
+		</link>
+		<link>
+			<name>src/osada_src/osada-utils/osada.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/OSADA_FS/src/osada-utils/osada.h</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

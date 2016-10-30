@@ -30,4 +30,7 @@ void atenderConexion(int socket_conexion);
 void establecerConexion(void * data);
 
 
+
+void escucharNuevasConexiones(char* ip,char *puerto);
+
 #endif /* LIB_CONEXIONES_H_ */

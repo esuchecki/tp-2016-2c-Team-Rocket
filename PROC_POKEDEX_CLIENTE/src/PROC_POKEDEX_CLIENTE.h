@@ -10,7 +10,7 @@
 
 #include <commons/log.h>
 
-t_log * logCliente;
+
 
 #define pathConfigCli "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/config_cliente.txt"
 

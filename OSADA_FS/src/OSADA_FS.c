@@ -26,7 +26,7 @@ int main(void) {
 //	char* total = "Total Blocks";
 //	printf("%s\n", total);
 //	printf("%d\n", header->fs_blocks);
-	imprimirEstructuraArchivos();
+//	imprimirEstructuraArchivos();
 //	osada_block* archivo = obtenerArchivoPorPath("/README.txt");
 //	char** directorios = leerDirectorio("/Vermilion City/Pokemons/");
 //	int indice = buscarArchivoPorPath("Pokemons/001.txt");
@@ -46,16 +46,16 @@ int main(void) {
 //	for(i = 0;i<200;i++){
 //		printf("%s\n",directorios[i]);
 //	}
-//	long* atributos = obtenerAtributos("/");
-//	printf("%d\n",atributos[0]);
-//	atributos = obtenerAtributos("/Pokemons");
+	//long* atributos = obtenerAtributos("/");
+	//printf("%d\n",atributos[0]);
+//	long * atributos = obtenerAtributos("/Vermilion City/Pokemons");
 //	printf("%d\n",atributos[0]);
 //	printf("%d\n",atributos[1]);
 //	atributos = obtenerAtributos("/Pokemons/001.txt");
 //	printf("%d\n",atributos[0]);
 //	printf("%d\n",atributos[1]);
-//	osada_block* archivo = obtenerArchivoPorPath("Pokemons/007.txt");
-//	printf("%s\n",archivo);
+	osada_block* archivo = obtenerArchivoPorPath("Pokemons/007.txt");
+	printf("%s\n",archivo);
 //	int primeroLibre = obtenerEspacioLibreTablaArchivos();
 
 //	char* padre =  obtenerPathPadre("/Vermilion City/Pokemons");
@@ -64,12 +64,17 @@ int main(void) {
 	//ejemplo de prueba.
 //	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
 //	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
-//	int i;
-//	char** directorios = leerDirectorio("/Vermilion City/Pokemons");
-//		for(i = 0;i<200;i++){
+
+
+//	int i=0;
+//	char** directorios = leerDirectorio("/");
+//		while (directorios[i] != NULL) {
 //			printf("%s\n",directorios[i]);
+//			i++;
 //		}
-	int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");
-	imprimirEstructuraArchivos();
+
+
+	//int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");
+	//imprimirEstructuraArchivos();
 	return EXIT_SUCCESS;
 }

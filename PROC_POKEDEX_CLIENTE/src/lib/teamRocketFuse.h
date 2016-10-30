@@ -16,6 +16,9 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
+//TODO: sacar..
+#include <commons/log.h>
+#include <commons/string.h>
 
 #define PATH_MAX 4096
 
@@ -27,10 +30,11 @@ struct stat squirtleStat;
 struct stat bulbasaurStat;
 
 int socketConexion;
+t_log * logCliente;
 int iniciarFuse(int argc,char*argv[]);
 
-char * leerHastaCentinela(char *paquete);
+//char * leerHastaCentinela(char *paquete);
 
-void enviarLecturaArchivo(const char *path, size_t size, off_t offset);
+//void enviarLecturaArchivo(const char *path, size_t size, off_t offset);
 
 #endif /* LIB_TEAMROCKETFUSE_H_ */

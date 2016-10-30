@@ -36,26 +36,26 @@ enum enviosMapa{
 };
 
 enum enviosPokedexCliente{
-	solicitudReadAddr = 80,
-	solicitudGetAttr = 81,
-	crearDirectorio = 82,
-	borrarDirectorio = 83,
-	abrirArchivo = 84,
-	leerArchivo = 85,
-	escribirArchivo = 86
+	poke_solicitudReadDir = 80,
+	poke_solicitudGetAttr = 81,
+	poke_crearDirectorio = 82,
+	poke_borrarDirectorio = 83,
+	poke_abrirArchivo = 84,
+	poke_leerArchivo = 85,
+	poke_escribirArchivo = 86
 };
 
 enum enviosPokedexServidor{
-	respuestaReadAddr = 90,
-	errorReadAddr = 91,
-	respuestaPorArchivo = 92,
-	respuestaPorDirectorio = 93,
-	errorGetAttr = 94,
-	respuestaCreacion = 95,
-	respuestaBorrado = 96,
-	respuestaApertura = 97,
-	respuestaLectura = 98,
-	respuestaEscritura = 99
+	poke_respuestaReadDir = 90,
+	poke_errorReadDir = 91,
+	poke_respuestaPorArchivo = 92,
+	poke_respuestaPorDirectorio = 93,
+	poke_errorGetAttr = 94,
+	poke_respuestaCreacion = 95,
+	poke_respuestaBorrado = 96,
+	poke_respuestaApertura = 97,
+	poke_respuestaLectura = 98,
+	poke_respuestaEscritura = 99
 };
 
 //MAXIS: son los mensajes "internos" para que el entrenador se mueva.

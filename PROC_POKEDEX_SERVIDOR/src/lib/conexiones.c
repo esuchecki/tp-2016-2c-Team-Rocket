@@ -16,82 +16,150 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+//TODO: cambiar estos include de lugar!.
+#include "../OSADA_FS/src/OSADA_Constants.h"
+#include "../OSADA_FS/src/osada-utils/osada.h"
+#include "../OSADA_FS/src/osada_functions.h"
+#include "../libTeamRocket/so/libSockets.h"
+
+
+void atender(int socket);
 
 
 
 void atenderConexion(int socket_conexion) {
 	//Me llega un mensaje del pokedex cliente
 
+	printf ("entro a atender conexion\n");
 	t_data *paquete = leer_paquete(socket_conexion);
-
+	printf ("leyo paquete\n");
+	char * path = paquete->data;
+	size_t size = 0;
+	off_t offset=0;
+	int null_data;
 	//TODO: ver el tema de la sincronizacion.
 	//pense que podriamos crear una lista con los archivos que se abrieron y el modo
 	//en el que lo abrieron si para escritura o lectura cosa de que cada vez
 	//que alguien haga alguna solicitud se fije ahi si puede realizarla o no.
 
 	switch (paquete->header) {
-	case solicitudReadAddr:
+	case poke_solicitudReadDir:
 		;
-		/*char * path = paquete->data;
-		 *
-		 * TODO:encontrar todos los nombres que contiene ese path detras de el
-		 * intercalando un centinela %
-		 *
-		 */
+		printf("Me pidieron el readDir de: %s\n", path);
+		char ** directorios = leerDirectorio(path);
+
+		int temp=0;
+		int aux = sizeof(char) * (OSADA_FILENAME_LENGTH+1);
+		char * buffer = malloc(sizeof(char));
+		//char * buffer = malloc(sizeof(char) * (OSADA_FILENAME_LENGTH+1) );
+		while (directorios[temp]!= NULL)
+		{
+			buffer = realloc(buffer, aux *(temp+1));
+			memcpy(buffer + (aux * temp), directorios[temp], OSADA_FILENAME_LENGTH);
+			//Me aseguro que en la ultima posicion haya un '\0'
+			char a = '\0';
+			memcpy( buffer + (aux * temp)  + OSADA_FILENAME_LENGTH, &a, sizeof(char));
+			temp++;
+		}
+
+
+		if (temp > 0)	//Tenia al menos un archivo el directorio.
+		{
+			paquete = pedirPaquete(poke_respuestaReadDir, aux *(temp),buffer);
+			common_send(socket_conexion,paquete);
+		}
+		else
+		{	//No tiene archivos.
+			paquete = pedirPaquete(poke_errorReadDir, sizeof(int),&null_data);
+			common_send(socket_conexion,paquete);
+		}
+
+		//le pongo un NULL al final.
+		//temp++;
+		//buffer = realloc(buffer, sizeof(char) * (temp) * (OSADA_FILENAME_LENGTH+1) );
+		//buffer[temp-1] = NULL;
+
+
+//		char hola[OSADA_FILENAME_LENGTH+1];
+//		strcpy(hola, directorios[0]);
+		//= directorios[0];
+		//sendeamos
+		//size_t size;
+
+		free(buffer);
+
 		break;
-	case solicitudGetAttr:
+	case poke_solicitudGetAttr:
 		;
-//		char * path = paquete->data;
+
 		//TODO: ver si el path es directorio o archivo
-/*		long* atributos =  obtenerAtributos(path);
+		printf("Me pidieron el getAttr de: %s\n", path);
+		long* atributos =  obtenerAtributos(path);
+
+
 		switch(atributos[0]){
 		case REGULAR:
-			size_t size;
-			paquete = pedirPaquete(respuestaPorArchivo,sizeof(size_t),&size);
+			;
+			//size= (size_t) atributos[1];
+			paquete = pedirPaquete(poke_respuestaPorArchivo,sizeof(long),&atributos[1]);
 			common_send(socket_conexion,paquete);
+			//size = 0;
 			break;
 		case DIRECTORY:
-			int null_data = 0;
-			paquete = pedirPaquete(respuestaPorDirectorio,sizeof(int),&null_data);
+			;
+			null_data = 0;
+			paquete = pedirPaquete(poke_respuestaPorDirectorio,sizeof(int),&null_data);
 			common_send(socket_conexion,paquete);
 			break;
 		case DELETED:
-			int null_data = 0;
-			paquete = pedirPaquete(errorGetAttr,sizeof(int),&null_data);
+			;
+			null_data = 0;
+			paquete = pedirPaquete(poke_errorGetAttr,sizeof(int),&null_data);
 			common_send(socket_conexion,paquete);
 			break;
 		case -1:
-			int null_data = 0;
-			paquete = pedirPaquete(errorGetAttr,sizeof(int),&null_data);
+			;
+			null_data = 0;
+			paquete = pedirPaquete(poke_errorGetAttr,sizeof(int),&null_data);
 			common_send(socket_conexion,paquete);
 			break;
 		}
-*/
+
 		break;
-	case crearDirectorio:
+	case poke_crearDirectorio:
 		//este no se si va a ser un mensaje que le pida el cliente
 		break;
-	case borrarDirectorio:
+	case poke_borrarDirectorio:
 		//este no se si va a ser un mensaje que le pida el cliente
 		break;
-	case abrirArchivo:
+	case poke_abrirArchivo:
 		//este no se si va a ser un mensaje que le pida el cliente
 		break;
-	case leerArchivo:
+	case poke_leerArchivo:
 		;
 		//char * path = paquete->data;
 		t_data * posiciones = leer_paquete(socket_conexion);
-		size_t size;
-		off_t offset;
-		memcpy(&size, &posiciones->data, sizeof(size_t));
-		memcpy(&offset, &posiciones->data + sizeof(size_t), sizeof(off_t));
+		memcpy(&size, posiciones->data, sizeof(size_t));
+		memcpy(&offset, posiciones->data + sizeof(size_t), sizeof(off_t));
+
+		printf("Me pidieron leer el Archivo: %s\n", path);
+		printf("size: %zu, offset: %jd\n", size, (intmax_t)offset);
 
 		//TODO: leer el archivo con path "path", tamanio size,y offset "offset"
+		osada_block* archivo = obtenerArchivoPorPath(path);
+		//printf("%s\n",archivo);
+		//Hardcodeo el 556 para que lea README.txt
+		paquete = pedirPaquete(poke_respuestaLectura, 556,archivo);
+		common_send(socket_conexion,paquete);
 
-		//TODO: enviarle el archivo al cliente
 
 		break;
-	case escribirArchivo:
+	case poke_escribirArchivo:
+		break;
+	//case -1:
+	default:
+		;
+		pthread_exit(0);
 		break;
 	}
 
@@ -209,9 +277,82 @@ void establecerConexion(void * data) {
 
 		handshake(socket_nueva_conexion, datos->sockets_activos);
 
+		printf("Soy una nueva conexion.\n");
 	}
 
 	while (1) {
 		atenderConexion(socket_nueva_conexion);
+	}
+}
+
+char * guardarConCentinela(char **paquete, int * sizeOfBuffer) {
+	int i;
+	char caracter;
+	char centinela = '\0';
+
+	for (i = 0; caracter != centinela; i++) {
+
+		caracter = paquete[i];
+
+		if (caracter == centinela) {
+			i++;
+			break;
+		}
+	}
+
+	char * buffer = malloc(sizeof(char) * i);
+
+	caracter = paquete[0];
+
+	for (i = 0; caracter != centinela; i++) {
+		caracter = paquete[i];
+		if (caracter == centinela) {
+			break;
+		}
+		memcpy(buffer + i, paquete + i, sizeof(char));
+	}
+
+	buffer[i] = '\0';
+
+	return buffer;
+}
+
+
+
+
+//Codigo de Maxi
+void escucharNuevasConexiones(char* ip,char *puerto){
+
+	int socketEscucha = setup_listen(ip, puerto);
+	int i = 0;
+
+	printf("Estoy escuchando clientes en el socket %d\n", socketEscucha);
+	listen(socketEscucha, 1024);
+
+	pthread_t hilos[20];
+	struct sockaddr_storage remoteaddr;
+	socklen_t addrlen;
+	addrlen = sizeof(remoteaddr);
+
+	//Aca abrim
+
+	while(1){
+		int socket_nueva_conexion = accept(socketEscucha,
+					(struct sockaddr *) &remoteaddr, &addrlen);
+		//pthread_create(&hilos[i], NULL,(void *) atender,(void*) socket_nueva_conexion);;
+		atender(socket_nueva_conexion);
+		printf("Este es el cliente numero %d",i);
+		i++;
+	}
+}
+
+
+//Codigo de Maxi
+void atender(int socket){
+	nodo_hilo * nodo = malloc(sizeof(nodo_hilo));
+	handshake(socket,nodo->sockets_activos);
+	printf("Nuevo Socket: %d\n", socket);
+	while(1){
+		atenderConexion(socket);
 	}
 }

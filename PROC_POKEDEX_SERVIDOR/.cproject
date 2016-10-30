@@ -30,6 +30,9 @@
 								<option id="gnu.c.compiler.option.include.paths.2030443957" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libTeamRocket}&quot;"/>
 								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1127036481" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="_FILE_OFFSET_BITS=64"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1066351021" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1063266625" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
