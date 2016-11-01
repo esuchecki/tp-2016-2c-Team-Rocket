@@ -1,6 +1,22 @@
 Metodos interconexion socket Pokedex Cliente y Server:
 ===============================================
 
+Estado:
+=======
+
+1) readdir = OK
+2) getattr = OK (falta fecha)
+3) mkdir = En OSADA si, en Fuse no.
+4) rmdir = En OSADA si, en Fuse no. (¿Que pasa si NO esta vacio el directorio?/¿Que pasa si no es un directorio?)
+7) read = 50% y 50%, hay que readaptarla.
+8) write = 0% (primero implementar truncate)
+10) truncate = 0%.
+11) rename = 0%.
+12) unlink = 0%.
+
+
+
+
 *) Cliente:
 =========
 
@@ -21,6 +37,7 @@ Ej:
 
 Nota: No importa si es directorio o archivo, devuelve todo.
 Nota2: Hay un #define PATH_MAX para la longitud maxima de un path (4096)
+Nota3: arboles, excel, images, tp-2016-2c-Team-Rocket.docx -> Son strings!!
 
 -------------------------
 2-> Envia una solicitud de "getattr", le pasa un path.
@@ -48,6 +65,9 @@ Ej:
 
 	si yo le paso la ruta: '/tp-2016-2c-Team-Rocket.docx'
 	El sv deberia devolver:	->  ess un archivo, size: 1089800
+
+
+Nota: Posiblemente quede pendiente implementar la ultima fecha de modificacion tmb.
 
 
 -------------------------
@@ -78,10 +98,21 @@ Nota: Que hacer si el directorio no esta vacio? En teoria no lo tiene que borrar
 	* Le pasa el path del archivo al pokedex server, la cantidad de bytes que quiere leer, y un offset ( 0 + offset) de la posicion a empezar a leer.
 	* Pokedex server le devuelve los bytes, el pokedex cliente hace memcpy a un buffer (buf).
 
+Nota: El cliente puede hacer una peticion de tamaño mayor al tamaño del archivo.
+Nota2: Internamente en pokedex servidor, yo tengo que conocer el blocke de bytes y la cantidad de bytes de ese bloque, que le tengo que pasar al cliente.
+
+Ejemplo:
+	Readme.txt del challenge.bin pesa 556(bytes)
+	El cliente me hace una peticion de 4096(bytes) y yo le devuelvo al cliente 556 (bytes), osea el maximo. Internamente pokedex servidor debe saber que solo tien que pasarle 556 (bytes) y no, el total que le pidio el cliente.
+
 -------------------------
 8-> Implementar "write"
-	* Le pasa el path del archivo al pokedex server, la cantidad de bytes que quiere escribir, y un offset ( 0 + offset) de la posicion a empezar a escribir.
+	* Le pasa el path del archivo al pokedex server, la cantidad de bytes que quiere escribir,  un offset ( 0 + offset) de la posicion a empezar a escribir y lo que quiere escribir!!.
+	(Son 4 cosas)
+	(const char *path, const char *buf, size_t size,off_t offset)
 	* Pokedex server le devuelve un ok o no ok.
+
+Nota: Primero implementar truncate!!
 
 -------------------------
 9-> A confirmar si hay que implementar "openDir"
@@ -89,6 +120,34 @@ Nota: Que hacer si el directorio no esta vacio? En teoria no lo tiene que borrar
 Nota: Lo usamos, pero en una de esas fuse lo auto-implementa.
 
 -------------------------
+10-> Implementar "truncate"
+
+	* Le pasa el path del archivo al pokedex server, y la cantidad de bytes.
+	* Le tienen que devolver algun valor de si todo ok o fallo.
+	
+Nota: Si el archivo no estaba creado, lo crea del tamaño que le pasaron por size.
+Nota2: Si estaba creado, le hace un re-size al tamaño pedido (puede ser 0, el mismo tamaño, mas grande, mas chico, etc..)
+
+-------------------------
+11-> Implementar "rename"
+
+	* Le pasa 2 path al pokedex server, donde esta el archivo (que quiero cambiarle el nombre) y el otro es el nuevo nombre del archivo.
+	* Le tienen que devolver algun valor de si todo ok o fallo.
+
+Nota: el path destino puede estar en otro directorio.. (capaz para simplificar podemos hacer que si esta en otro directorio devuelva error).
+Nota2: ¿Que pasa si el destino esta fuera del F.S. OSADA? Lo tendria que interpretar pokedex cliente y hacer una peticion a OSADA y el otro al F.S. local? **duda** 
+
+-------------------------
+12-> Implementar "unlink"
+
+	* Le pasa 2 path al pokedex server, donde esta el archivo (que quiero cambiarle el nombre) y el otro es el nuevo nombre del archivo.
+	* Le tienen que devolver algun valor de si todo ok o fallo.
+
+Nota: Puede ser que te pidar hacer unlink a una carpeta, devuelve error.
+Nota2: para nosotros este metodo siempre es borrar un archivo.
+
+-------------------------
+
 
 
 
