@@ -13,6 +13,8 @@
 #include "batallaPkmn.h"
 #include "conexiones.h"
 
+t_list * parcial;
+
 void cargarEstructurasDeadlock(int recursosTotales[], int recursosDisponibles[],
 		int **asignados, int **requeridos, int cantidadPokenest,
 		int numeroDeProcesos, t_mapa * mapa);
@@ -25,5 +27,16 @@ t_list * detectarDeadlock(t_mapa * datosMapa);
 void * deteccionDeadlock(void * datos);
 
 void peticionesDePokemones(t_list * listaDeadlock) ;
+
+void loguearListaDeadlock(t_list *listaDeadlock);
+
+int encontrarEntrenadorQueRetieneRecurso(t_entrenador *entrenadorAux,
+		t_list *listaDeadlock,t_mapa * mapa,t_entrenador *entrenador);
+
+void rearmarListaDeadlock(t_list * listaDeadlock,t_mapa * mapa);
+
+void borrarDeListaPrincipal(t_list *listaDeadlock);
+
+void removerDeListaSecundaria();
 
 #endif /* LIB_DEADLOCK_H_ */

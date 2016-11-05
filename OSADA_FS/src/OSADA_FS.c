@@ -65,13 +65,12 @@ int main(void) {
 	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
 //	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
 
-
 //	int i=0;
 //	char** directorios = leerDirectorio("/");
-//		while (directorios[i] != NULL) {
-//			printf("%s\n",directorios[i]);
-//			i++;
-//		}
+//	while (directorios[i] != NULL) {
+//		printf("%s\n",directorios[i]);
+//		i++;
+//	}
 
 	int b= cambiarNombre("/Vermilion City/Pokemons/EduGroso", "NuevoNombre");
 	//int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");

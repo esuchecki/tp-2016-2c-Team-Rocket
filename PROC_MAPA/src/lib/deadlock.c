@@ -14,8 +14,7 @@
  * @NAME: esUnicoEsteEntrenador
  * @DESC: Se utiliza para validar que el algoritmo de deteccion de deadlock, no me agrege 2 veces al mismo entrenador en la lista de deadlock.
  */
-bool esUnicoEsteEntrenador (t_list* listaDeadlock, char simboloEntrenador);
-
+bool esUnicoEsteEntrenador(t_list* listaDeadlock, char simboloEntrenador);
 
 int calcularRecursosAsignados(t_entrenador *entrenadorBloqueado,
 		t_pokeNest *pokenest) {
@@ -159,10 +158,10 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 		if (Finish[i] == false) {
 			t_entrenador *entrenador = list_get(colaBloqueados, i);
 
-			if(entrenador != NULL){
-			//le pido al algoritmo de deadlock que si el entrenador estaba en la cola, no lo vuelva a agregar.
-			if (esUnicoEsteEntrenador(listaDeadlock, entrenador->simbolo))
-				list_add(listaDeadlock, entrenador);
+			if (entrenador != NULL) {
+				//le pido al algoritmo de deadlock que si el entrenador estaba en la cola, no lo vuelva a agregar.
+				if (esUnicoEsteEntrenador(listaDeadlock, entrenador->simbolo))
+					list_add(listaDeadlock, entrenador);
 			}
 		}
 	}
@@ -185,26 +184,23 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 
 }
 
-bool esUnicoEsteEntrenador (t_list* listaDeadlock, char simboloEntrenador)
-{
+bool esUnicoEsteEntrenador(t_list* listaDeadlock, char simboloEntrenador) {
 	//defino la condicion (que no exista el item)
-	bool _yaExistiaEsteId(void * nodo)
-	{
-		if ( ((t_entrenador *) nodo)->simbolo == simboloEntrenador)	//sabemos que idDelItem es un char.
-		{
+	bool _yaExistiaEsteId(void * nodo) {
+		if (((t_entrenador *) nodo)->simbolo == simboloEntrenador) //sabemos que idDelItem es un char.
+				{
 			return 1;	//Ese id ya existe
-	 	}
+		}
 		return 0;
 	}
 
 	//devuelvo 0-false si NO es unico.
-	if (list_count_satisfying( listaDeadlock, (void *) _yaExistiaEsteId ) > 0)
+	if (list_count_satisfying(listaDeadlock, (void *) _yaExistiaEsteId) > 0)
 		return 0;
 
 	//devuelvo 1-true xq es unico.
 	return 1;
 }
-
 
 void * deteccionDeadlock(void * datos) {
 
@@ -214,38 +210,57 @@ void * deteccionDeadlock(void * datos) {
 		usleep(mapa->metadata->tiempoChequeadoDeadlock);
 		t_list * listaDeadlock = detectarDeadlock(mapa);
 		/*
-		t_list * listaDeadlock = list_create();
-		sleep(40);
-		list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,0));
-		list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,1));
-		log_info(myArchivoDeLog, "---------%s", string_itoa(list_size(listaDeadlock)));*/
-		if ((mapa->metadata->batalla[0] == '1') && (listaDeadlock != NULL))
-		{
-			log_info(myArchivoDeLog, "Resolucion de deadlock por batalla");
-			peticionesDePokemones(listaDeadlock);
+		 t_list * listaDeadlock = list_create();
+		 sleep(40);
+		 list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,0));
+		 list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,1));
+		 log_info(myArchivoDeLog, "---------%s", string_itoa(list_size(listaDeadlock)));*/
+		if ((mapa->metadata->batalla[0] == '1') && (listaDeadlock != NULL)) {
+			loguearListaDeadlock(listaDeadlock);
+			parcial = list_create();
+			while (list_size(listaDeadlock) != 0) {
+				log_info(myArchivoDeLog, "Resolucion de deadlock por batalla");
 
-			t_entrenador * loser = batallarListaDePkmn(listaDeadlock);
+				rearmarListaDeadlock(listaDeadlock, mapa);
 
-			if (loser == NULL)
-			{
-				//TODO: si entro aca se mandaron algun moco...que hago!??
+				peticionesDePokemones(parcial);
+
+				t_entrenador * loser = batallarListaDePkmn(parcial);
+
+				if (loser == NULL) {
+					//TODO: si entro aca se mandaron algun moco...que hago!??
+				} else {
+					int null_data = 0;
+					t_data *paquetePerdisteBatalla = pedirPaquete(
+							perdisteBatalla, sizeof(int), &null_data);
+					common_send(loser->nroDesocket, paquetePerdisteBatalla);
+					free(paquetePerdisteBatalla);
+
+
+					desconectarEntrenador(loser->nroDesocket, mapa,
+							sockets_activos, socketMasGrande);
+
+					borrarDeListaPrincipal(listaDeadlock);
+
+					removerDeListaSecundaria();
+
+					loguearListaDeadlock(listaDeadlock);
+					//		rearmarListaDeadlock(listaDeadlock, mapa);
+					//		list_destroy(listaDeadlock);
+					//		loguearListaDeadlock(parcial);
+
+				}
 			}
-			else
-			{
-				int null_data = 0;
-				t_data *paquetePerdisteBatalla = pedirPaquete(perdisteBatalla, sizeof(int), &null_data);
-				common_send(loser->nroDesocket, paquetePerdisteBatalla);
-				free(paquetePerdisteBatalla);
-
-				desconectarEntrenador(loser->nroDesocket, mapa, sockets_activos, socketMasGrande);
-
-				list_destroy(listaDeadlock);
+			log_debug(myArchivoDeLog,"TERMINE DE ATENDER LA LISTA DE DEADLOCK\n\n");
+			log_debug(myArchivoDeLog,"LISTA-DEADLOCK CANT: %d\nLISTA-PARCIAL CANT:%d",list_size(listaDeadlock),list_size(parcial));
+			if(list_size(parcial) != 0){
+				t_entrenador * entrenador = list_get(parcial,0);
+				log_debug(myArchivoDeLog,"QUEDO ESTE ENTRENADOR: %C",entrenador->simbolo);
 			}
 		}
 	}
 	return NULL;
 }
-
 
 void peticionesDePokemones(t_list * listaDeadlock) {
 	int i;
@@ -261,12 +276,12 @@ void peticionesDePokemones(t_list * listaDeadlock) {
 
 			entrenador->mejorPokemon = malloc(sizeof(t_pokemon));
 
-			char * auxSpecies = malloc(50*sizeof(char));
-			void * buffer = malloc(sizeof(t_pokemon)+50*sizeof(char));
+			char * auxSpecies = malloc(50 * sizeof(char));
+			void * buffer = malloc(sizeof(t_pokemon) + 50 * sizeof(char));
 			buffer = paquete->data;
 
 			memcpy(entrenador->mejorPokemon, buffer, sizeof(t_pokemon));
-			memcpy(auxSpecies, buffer+ sizeof(t_pokemon), 50*sizeof(char));
+			memcpy(auxSpecies, buffer + sizeof(t_pokemon), 50 * sizeof(char));
 
 			entrenador->mejorPokemon->species = auxSpecies;
 		} else {
@@ -274,4 +289,91 @@ void peticionesDePokemones(t_list * listaDeadlock) {
 		}
 	}
 
+}
+
+void loguearListaDeadlock(t_list *listaDeadlock) {
+	log_info(myArchivoDeLog, "Cantidad lista deadlock = %d",
+			list_size(listaDeadlock));
+	if (list_size(listaDeadlock) > 2) {
+		int i;
+		log_info(myArchivoDeLog, "LISTA - DEADLOCK:");
+		for (i = 0; i < list_size(listaDeadlock); i++) {
+			t_entrenador * entrenador = list_get(listaDeadlock, i);
+			log_info(myArchivoDeLog, "Entrenador - %c", entrenador->simbolo);
+		}
+	}
+}
+
+void rearmarListaDeadlock(t_list * listaDeadlock, t_mapa *mapa) {
+	t_entrenador * entrenador = list_get(listaDeadlock, 0);
+	t_entrenador * entrenadorAux = malloc(sizeof(t_entrenador));
+
+	entrenadorAux = entrenador;
+
+	list_add(parcial, entrenadorAux);
+
+	int resultado = encontrarEntrenadorQueRetieneRecurso(entrenadorAux,
+			listaDeadlock, mapa, entrenador);
+	if (resultado == 0) {
+		log_error(myArchivoDeLog, "No encontre la espera circular");
+	} else {
+		log_info(myArchivoDeLog, "ENCONTRE LA ESPERA CIRCULAR");
+	}
+}
+
+void borrarDeListaPrincipal(t_list *listaDeadlock) {
+	int i;
+	for (i = 0; i < list_size(parcial); i++) {
+		t_entrenador * entrenador = list_get(parcial, i);
+		bool mismoEntrenador(void *nodo) {
+			return ((t_entrenador *) nodo)->simbolo == entrenador->simbolo;
+		}
+		list_remove_by_condition(listaDeadlock, mismoEntrenador);
+
+	}
+}
+
+int encontrarEntrenadorQueRetieneRecurso(t_entrenador *entrenadorAux,
+		t_list *listaDeadlock, t_mapa * mapa, t_entrenador *entrenador) {
+
+	bool segunPokemonEntrenador(void * nodo) {
+		return entrenadorAux->pokemonSolicitado
+				== ((t_pokeNest *) nodo)->identificador;
+	}
+
+	t_pokeNest *pokenest;
+	seguir: pokenest = list_find(mapa->pokeNest, segunPokemonEntrenador);
+
+	int i;
+	for (i = 0; i < list_size(pokenest->pokemones); i++) {
+		t_pokemonEnPokeNest * pokemon = list_get(pokenest->pokemones, i);
+		//t_entrenador * alguno = list_get(listaDeadlock, i);
+		bool mismoSimbolo(void *nodo) {
+			return ((t_entrenador*) nodo)->simbolo
+					== pokemon->capturadoPorEntrenador;
+		}
+		t_entrenador * alguno = list_find(listaDeadlock, mismoSimbolo);
+		entrenadorAux = alguno;
+		if (entrenador->simbolo == entrenadorAux->simbolo) {
+			return 1;
+			//return alguno;
+		} else {
+			list_add(parcial, entrenadorAux);
+			//encontrarEntrenadorQueRetieneRecurso(entrenadorAux,listaDeadlock,mapa,entrenador);
+			entrenadorAux = alguno;
+			goto seguir;
+
+		}
+	}
+	return 0;
+}
+
+void removerDeListaSecundaria(){
+	seguir:
+	;
+	int i;
+	for(i = 0; i < list_size(parcial) ; i++){
+		list_remove(parcial,i);
+		goto seguir;
+	}
 }

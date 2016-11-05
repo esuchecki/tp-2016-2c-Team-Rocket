@@ -5,7 +5,7 @@ TiempoChequeoDeadlock=2000000
 Batalla=1
 
 #Algoritmos RR o SRDF
-algoritmo=SRDF
+algoritmo=RR
 
 #Quantum aplicable a RR
 quantum=3

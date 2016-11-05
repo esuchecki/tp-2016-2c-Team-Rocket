@@ -28,14 +28,14 @@ endif
 all: PROC_POKEDEX_SERVIDOR
 
 dependents:
-	-cd /home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) all
-	-cd /home/utnso/git/tp-2016-2c-Team-Rocket/OSADA_FS/Debug && $(MAKE) all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) clean all
+	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug && $(MAKE) clean all
 
 # Tool invocations
-PROC_POKEDEX_SERVIDOR: $(OBJS) $(USER_OBJS) /home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so /home/utnso/git/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS
+PROC_POKEDEX_SERVIDOR: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so /home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "PROC_POKEDEX_SERVIDOR" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "PROC_POKEDEX_SERVIDOR" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -46,7 +46,7 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utnso/git/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
-/home/utnso/git/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS:
+/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
+/home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS:
 
 -include ../makefile.targets
