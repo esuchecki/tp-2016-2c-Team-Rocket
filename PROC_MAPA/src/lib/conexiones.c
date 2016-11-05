@@ -69,7 +69,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 				entrenador->pokenest = *(char*) paquete->data;
 
 				//usleep(mapa->metadata->retardo);
-				sleep(2);
+				sleep(1);
 
 				resultadoSend = common_send(i, nuevoPaquete);
 
@@ -112,7 +112,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 			}
 
 			//usleep(mapa->metadata->retardo);
-			sleep(2);
+			sleep(1);
 
 			if(strcmp(mapa->metadata->algoritmo,"RR")==0){
 				flag = consumirQuantum(i, mapa->metadata->quantum);
@@ -152,7 +152,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		agregarAColaDeBloqueados(entrenador);
 
 		//usleep(mapa->metadata->retardo);
-		sleep(2);
+		sleep(1);
 
 		sem_post(&entrenador_bloqueado);
 
