@@ -54,24 +54,24 @@ int main(void) {
 //	atributos = obtenerAtributos("/Pokemons/001.txt");
 //	printf("%d\n",atributos[0]);
 //	printf("%d\n",atributos[1]);
-	osada_block* archivo = obtenerArchivoPorPath("Pokemons/007.txt");
-	printf("%s\n",archivo);
+//	osada_block* archivo = obtenerArchivoPorPath("Pokemons/007.txt");
+//	printf("%s\n",archivo);
 //	int primeroLibre = obtenerEspacioLibreTablaArchivos();
 
 //	char* padre =  obtenerPathPadre("/Vermilion City/Pokemons");
 //	printf("%s\n",padre);
 
 	//ejemplo de prueba.
-//	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
-//	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
+	int a= crearDirectorio("/asd");
+	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
 
 
-//	int i=0;
-//	char** directorios = leerDirectorio("/");
-//		while (directorios[i] != NULL) {
-//			printf("%s\n",directorios[i]);
-//			i++;
-//		}
+	int i=0;
+	char** directorios = leerDirectorio("/");
+		while (directorios[i] != NULL) {
+			printf("%s\n",directorios[i]);
+			i++;
+		}
 
 
 	//int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");

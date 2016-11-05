@@ -162,13 +162,14 @@ int buscarArchivoEnFS(char* nombre, int padre){
 // with false:	-> resultado = EduGroso.
 //
 int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indice del archivo en la tabla de archivos
-	int resultado;
+	int resultado = -1;
 	if(strcmp("/",path)!=0){
 		char** array = string_split(path, "/");
 		int i = 0;
 		int j=0;
 		if (quieroElAnteUltimo)	j++;	//apunta al indice siguiente.
 
+		resultado = ROOT_INDEX;
 		int padre = ROOT_INDEX;
 		while(array[j]!= NULL){
 			resultado = buscarArchivoEnFS(array[i], padre);
@@ -176,6 +177,7 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indi
 			i++;
 			j++;
 		}
+		//resultado = padre;
 	} else {
 		resultado = -1;
 	}
@@ -363,7 +365,7 @@ char* obtenerPathPadre(char* path){
  */
 int crearDirectorio(char* path){
 	int existeDirectorio = buscarArchivoPorPath(path, false);
-	int resultado;
+	int resultado = -1;
 	int espacioLibre = obtenerEspacioLibreTablaArchivos();
 	if(existeDirectorio>-1 && espacioLibre>-1){
 		resultado = -1;
@@ -383,6 +385,7 @@ int crearDirectorio(char* path){
 		}
 		tablaArchivos[espacioLibre].parent_directory = padre;
 		tablaArchivos[espacioLibre].state = 2;
+		resultado = 0;
 	}
 	return resultado;
 }

@@ -12,7 +12,6 @@
 
 t_log * logServidor;
 
-#define pathConfig "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/config_servidor.txt"
 
 /**
  * @NAME: InicializarLogServidor
