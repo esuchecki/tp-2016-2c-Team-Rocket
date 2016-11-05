@@ -66,4 +66,6 @@ int crearDirectorio(char* path);
 
 int borrarDirectorio(char* path);
 
+int cambiarNombre(char* path, char* nombreNuevo);
+
 #endif /* OSADA_FUNCTIONS_H_ */

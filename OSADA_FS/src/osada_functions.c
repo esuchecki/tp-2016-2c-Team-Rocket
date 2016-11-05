@@ -404,3 +404,16 @@ int borrarDirectorio(char* path){
 	}
 	return resultado;
 }
+
+int cambiarNombre(char* path, char* nombreNuevo){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio>-1){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+		resultado = 0;
+	} else {
+		resultado = -1;
+	}
+	return resultado;
+}
