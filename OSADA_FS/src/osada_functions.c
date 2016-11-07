@@ -280,14 +280,13 @@ char** leerDirectorio(char* path, long bytes, long offset){
 long* obtenerAtributos(char* path){
 	long* atributos = malloc(sizeof(long) * 2);
 	int indiceDirectorio = buscarArchivoPorPath(path, false);
-	if(indiceDirectorio>=0){
+	if(indiceDirectorio>archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		atributos[0] = tablaArchivos[indiceDirectorio].state;
 		atributos[1] = tablaArchivos[indiceDirectorio].file_size;
 	} else {
-		atributos[0]= poke_errorGetAttr;
+		atributos[0]= archivoNoEncontrado;
 	}
-
 	return atributos;
 }
 
@@ -308,7 +307,7 @@ int obtenerEspacioLibreTablaArchivos(){
 		i--;
 		k = i;
 	} else {
-		k = -1;
+		k = noHayEspacioLibre;
 	}
 	return k;
 }
@@ -366,10 +365,10 @@ char* obtenerPathPadre(char* path){
  */
 int crearDirectorio(char* path){
 	int existeDirectorio = buscarArchivoPorPath(path, false);
-	int resultado = -1;
+	int resultado = archivoNoEncontrado;
 	int espacioLibre = obtenerEspacioLibreTablaArchivos();
-	if(existeDirectorio>-1 && espacioLibre>-1){
-		resultado = -1;
+	if(existeDirectorio!=archivoNoEncontrado && espacioLibre!=noHayEspacioLibre){
+		resultado = archivoNoEncontrado;
 	} else {
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		tablaArchivos[espacioLibre].file_size = 0;
@@ -395,16 +394,20 @@ int borrarDirectorio(char* path){
 	int resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	if(existeDirectorio>-1 && tablaArchivos[existeDirectorio].state == 2){
-		tablaArchivos[existeDirectorio].file_size = 0;
-		tablaArchivos[existeDirectorio].first_block = -1;
-		memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
-		tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
-		tablaArchivos[existeDirectorio].parent_directory = -1;
-		tablaArchivos[existeDirectorio].state = 0;
-		resultado = 0;
+	if(existeDirectorio>archivoNoEncontrado){
+		if(tablaArchivos[existeDirectorio].state == 2){
+			tablaArchivos[existeDirectorio].file_size = 0;
+			tablaArchivos[existeDirectorio].first_block = -1;
+			memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
+			tablaArchivos[existeDirectorio].parent_directory = -1;
+			tablaArchivos[existeDirectorio].state = 0;
+			resultado = 0;
+		} else {
+			resultado = elPathNoCorrespondeAUnDirectorio;
+		}
 	} else {
-		resultado = -1;
+		resultado = archivoNoEncontrado;
 	}
 	return resultado;
 }
@@ -412,14 +415,33 @@ int borrarDirectorio(char* path){
 int cambiarNombre(char* path, char* nombreNuevo){
 	int resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
-	if(existeDirectorio>-1){
+	if(existeDirectorio>archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
 		resultado = 0;
 	} else {
-		resultado = -1;
+		resultado = archivoNoEncontrado;
 	}
 	return resultado;
+}
+
+
+/*
+ * Retorna el largo del ultimo elemento del path
+ */
+int largoUltimoElementoPath (char* path){
+	char* pathAlReves = string_reverse(path);
+	char** array = string_split(pathAlReves, "/");
+	int largo = string_length(array[0]);
+	return largo;
+}
+
+char* obtenerPathSinArchivo(char* path){
+	char* pathAlReves = string_reverse(path);
+	int largo = largoUltimoElementoPath(path);
+	char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
+	char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
+	return pathSinArchivo;
 }
 
 /*
@@ -436,11 +458,7 @@ int checkearPath(char* path){
 	int resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	if(existeDirectorio!=rootPath && existeDirectorio==archivoNoEncontrado){
-		char* pathAlReves = string_reverse(path);
-		char** array = string_split(pathAlReves, "/");
-		int largo = string_length(array[0]);
-		char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
-		char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
+		char* pathSinArchivo = obtenerPathSinArchivo(path);
 		int existeDirectorioPadre = buscarArchivoPorPath(pathSinArchivo, false);
 		if(existeDirectorioPadre > archivoNoEncontrado){
 			resultado = archivoInexistenteConDirCorrecto;
@@ -455,8 +473,8 @@ int checkearPath(char* path){
 
 int truncar(char* path, long bytes){
 	int resultado;
-	int existeDirectorio = buscarArchivoPorPath(path, false);
-	if(existeDirectorio>-1){
+	int existeDirectorio = checkearPath(path);
+	if(existeDirectorio == archivoInexistenteConDirCorrecto){
 
 	} else {
 		resultado = -1;
