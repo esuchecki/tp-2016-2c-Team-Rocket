@@ -393,8 +393,8 @@ int crearDirectorio(char* path){
 int borrarDirectorio(char* path){
 	int resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
-	if(existeDirectorio>-1){
-		osada_file* tablaArchivos = obtenerTablaArchivos();
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	if(existeDirectorio>-1 && tablaArchivos[existeDirectorio].state == 2){
 		tablaArchivos[existeDirectorio].file_size = 0;
 		tablaArchivos[existeDirectorio].first_block = -1;
 		memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
