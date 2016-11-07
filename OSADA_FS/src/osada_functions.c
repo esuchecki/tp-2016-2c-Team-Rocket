@@ -12,6 +12,7 @@
 #include <commons/bitarray.h>
 #include <commons/string.h>
 #include "osada_functions.h"
+#include <so/libSockets.h>
 
 #define ROOT_INDEX     65535
 
@@ -142,7 +143,7 @@ void imprimirEstructuraArchivos(){
  * de archivos
  */
 int buscarArchivoEnFS(char* nombre, int padre){
-	int retorno = -1;
+	int retorno = archivoNoEncontrado;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int i,j = 1;
 	for ( i = 0 ; (j>0 && retorno == -1 && i<2048); i++ ) {
@@ -162,7 +163,7 @@ int buscarArchivoEnFS(char* nombre, int padre){
 // with false:	-> resultado = EduGroso.
 //
 int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indice del archivo en la tabla de archivos
-	int resultado = -1;
+	int resultado = archivoNoEncontrado;
 	if(strcmp("/",path)!=0){
 		char** array = string_split(path, "/");
 		int i = 0;
@@ -179,7 +180,7 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indi
 		}
 		//resultado = padre;
 	} else {
-		resultado = -1;
+		resultado = rootPath;
 	}
 	return resultado;
 }
@@ -247,7 +248,7 @@ osada_block* obtenerArchivoPorPath(char* path){
 	return resultado;
 }
 
-char** leerDirectorio(char* path){
+char** leerDirectorio(char* path, long bytes, long offset){
 	int subdirectoriosMax[2048]; //Cantidad máxima de subdirectorios
 	int padre;
 	if(strcmp("/",path)==0){
@@ -284,7 +285,7 @@ long* obtenerAtributos(char* path){
 		atributos[0] = tablaArchivos[indiceDirectorio].state;
 		atributos[1] = tablaArchivos[indiceDirectorio].file_size;
 	} else {
-		atributos[0]=-1;
+		atributos[0]= poke_errorGetAttr;
 	}
 
 	return atributos;
@@ -420,3 +421,47 @@ int cambiarNombre(char* path, char* nombreNuevo){
 	}
 	return resultado;
 }
+
+/*
+ * Retorna el indice del archivo si existe,
+ * archivoNoEncontrado si no existe o
+ * archivoInexistenteConDirCorrecto si el archivo no existe
+ * pero el path pasado es correcto.
+ * Ejemplo:
+ * 		checkearPath("/home/utn/so/archivo.txt") y el directorio /home/utn/so no existe
+ * 		retorna archivoNoEncontrado, si /home/utn/so existiera pero el archivo no, retorna
+ * 		archivoInexistenteConDirCorrecto
+ */
+int checkearPath(char* path){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio!=rootPath && existeDirectorio==archivoNoEncontrado){
+		char* pathAlReves = string_reverse(path);
+		char** array = string_split(pathAlReves, "/");
+		int largo = string_length(array[0]);
+		char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
+		char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
+		int existeDirectorioPadre = buscarArchivoPorPath(pathSinArchivo, false);
+		if(existeDirectorioPadre > archivoNoEncontrado){
+			resultado = archivoInexistenteConDirCorrecto;
+		} else {
+			resultado = archivoNoEncontrado;
+		}
+	} else {
+		resultado = existeDirectorio;
+	}
+	return resultado;
+}
+
+int truncar(char* path, long bytes){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio>-1){
+
+	} else {
+		resultado = -1;
+	}
+	return resultado;
+}
+
+

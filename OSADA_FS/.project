@@ -3,6 +3,7 @@
 	<name>OSADA_FS</name>
 	<comment></comment>
 	<projects>
+		<project>libTeamRocket</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

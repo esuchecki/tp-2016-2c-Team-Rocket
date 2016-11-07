@@ -26,7 +26,7 @@ int main(void) {
 //	char* total = "Total Blocks";
 //	printf("%s\n", total);
 //	printf("%d\n", header->fs_blocks);
-	imprimirEstructuraArchivos();
+//	imprimirEstructuraArchivos();
 //	osada_block* archivo = obtenerArchivoPorPath("/README.txt");
 //	char** directorios = leerDirectorio("/Vermilion City/Pokemons/");
 //	int indice = buscarArchivoPorPath("Pokemons/001.txt");
@@ -62,7 +62,7 @@ int main(void) {
 //	printf("%s\n",padre);
 
 	//ejemplo de prueba.
-	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
+//	int a= crearDirectorio("/Vermilion City/Pokemons/EduGroso");
 //	printf("Resultado crearDirectorio: %s\n", (a==0 ? "Se creo!!" : "No se creo :("));
 
 //	int i=0;
@@ -72,8 +72,15 @@ int main(void) {
 //		i++;
 //	}
 
-	int b= cambiarNombre("/Vermilion City/Pokemons/EduGroso", "NuevoNombre");
+//	int b= cambiarNombre("/Vermilion City/Pokemons/EduGroso", "NuevoNombre");
 	//int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");
-	imprimirEstructuraArchivos();
+//	imprimirEstructuraArchivos();
+	char* path = "/Vermilion City/Pokemons/EduGroso.txt";
+	char* pathAlReves = string_reverse(path);
+	char** array = string_split(pathAlReves, "/");
+	int largo = string_length(array[0]);
+	char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
+	char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
+	printf("%s\n", pathSinArchivo);
 	return EXIT_SUCCESS;
 }

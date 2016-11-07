@@ -68,6 +68,12 @@ enum actividad {
 	noActividad = 5
 };
 
+enum respuestasOSADA {
+	archivoNoEncontrado = -1,
+	archivoInexistenteConDirCorrecto = -2,
+	rootPath = -3,
+};
+
 /*
  * @NAME: common_setup
  * @DESC: devuelve las configuraciones para utilizar sockets, tanto para el servidor como el cliente

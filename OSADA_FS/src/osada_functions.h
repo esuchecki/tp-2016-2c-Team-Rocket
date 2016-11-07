@@ -54,7 +54,7 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 
 osada_block* obtenerArchivoPorPath(char* path);
 
-char** leerDirectorio(char* path);
+char** leerDirectorio(char* path, long bytes, long offset);
 
 long* obtenerAtributos(char* path);
 
