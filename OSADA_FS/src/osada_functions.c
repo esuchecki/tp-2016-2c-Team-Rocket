@@ -236,7 +236,7 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 }
 
 
-osada_block* obtenerArchivoPorPath(char* path){
+osada_block* obtenerArchivoPorPath(char* path, long bytes, long offset){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int index = buscarArchivoPorPath(path, false);
 	osada_block* resultado;
@@ -248,7 +248,7 @@ osada_block* obtenerArchivoPorPath(char* path){
 	return resultado;
 }
 
-char** leerDirectorio(char* path, long bytes, long offset){
+char** leerDirectorio(char* path){
 	int subdirectoriosMax[2048]; //Cantidad máxima de subdirectorios
 	int padre;
 	if(strcmp("/",path)==0){
@@ -471,13 +471,20 @@ int checkearPath(char* path){
 	return resultado;
 }
 
+int crearDirectorio(char* path, long bytes,long offset){
+	int resultado;
+	return resultado;
+}
+
 int truncar(char* path, long bytes){
 	int resultado;
 	int existeDirectorio = checkearPath(path);
 	if(existeDirectorio == archivoInexistenteConDirCorrecto){
-
+		resultado = crearDirectorio(path,bytes,0);
+	} else if(existeDirectorio > archivoNoEncontrado) {
+		//logica jodida
 	} else {
-		resultado = -1;
+		resultado = archivoNoEncontrado;
 	}
 	return resultado;
 }
