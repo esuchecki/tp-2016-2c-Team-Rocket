@@ -355,7 +355,7 @@ void reintentar(t_entrenadorFisico * unEntrenador) {
 		unEntrenador->misEstadisticas.cant_reintentos ++;
 		unEntrenador->metadata->vidas = 1;	//le dejo una vida! :D
 		borrarDirectorioDeBill(unEntrenador);
-		//TODO: borrar medallas.
+		borrarDirectorioDeMedallas(unEntrenador);
 		setearEstadoDelEntrenador(unEntrenador, setearmeEnReiniciarHojaDeViaje);
 	}
 	else	//Si no quiere reintentar lo finalizo.

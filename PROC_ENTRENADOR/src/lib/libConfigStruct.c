@@ -184,7 +184,7 @@ t_mapa * crearNuevoNodo(char * aQueMapasMeTengoQueConectar,
 	nuevoNodo->objetivosDelMapa = objetivoDeEsteMapa;
 
 	hayAlgunObjetivoDuplicado(objetivoDeEsteMapa, miEntrenador, nuevoNodo);
-	//free (keyObjMapa);
+	free (keyObjMapa);
 
 	return nuevoNodo;
 }
@@ -312,4 +312,25 @@ void crearFolderMedallas(t_entrenadorFisico * unEntrenador)
 		return;
 	}
 	free(directorioMedallas);
+}
+
+
+void borrarDirectorioDeMedallas(t_entrenadorFisico * unEntrenador)
+{
+	log_info(myArchivoDeLog, "Voy a vaciar el directorio de medallas");
+	char * directorioDeBill;
+	directorioDeBill = malloc((sizeof(char)) * PATH_MAX + 1);
+
+	sprintf(directorioDeBill, "/%s/%s/%s/%s", unEntrenador->directorioPokeDex,__ubicacionEntrenadores, unEntrenador->nombre, __ubicacionDirDeMedallas);
+
+	if ( deleteDirectoryContent(directorioDeBill) )	//Lo borro. Si hubo algun error lo handleo
+	{
+		log_warning(myArchivoDeLog, "%s", directorioDeBill);
+		free(directorioDeBill);
+		log_warning(myArchivoDeLog,"Quise borrar el dir de medallas y rm me dijo que finalizo incorrectamente.");
+		finalizarEntrenador(unEntrenador);	//lo esta borrando igual, asi que por ahora lo comento!
+		//TODO: revisar que aca aveces dice que no finalizo correctamente..
+		return;
+	}
+	free(directorioDeBill);
 }

@@ -66,7 +66,7 @@
  * @NAME: dibujarMapa
  * @DESC: dibuja el mapa en pantalla en base a la estructura t_mapa
  */
-void dibujarMapa (t_mapa * mapa);
+void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConexiones, pthread_t hiloBloqueados,pthread_t hiloDeadlock);
 
 /*
  * @NAME: borrarMapa

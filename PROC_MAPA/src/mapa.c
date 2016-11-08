@@ -62,7 +62,7 @@ int main( int argc, char *argv[] )
 	//TODO: no inicializar 2 procesos mapa con el mismo nombre en el sistema...
 	//Nota: esto se hace revisando que al inicializar las conexiones el puerto no este ocupado!!
 
-	dibujarMapa (mapa);
+	dibujarMapa (mapa, hiloPlanificador, hiloBloqueados, hiloConexiones, hiloDeadlock);
 
 	pthread_join(hiloPlanificador,NULL);
 	pthread_join(hiloConexiones,NULL);

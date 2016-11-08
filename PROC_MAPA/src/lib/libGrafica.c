@@ -6,8 +6,11 @@
  */
 
 #include "libGrafica.h"
+#include <pthread.h>				//para cerrar gui
+//#include "libPlanificador.h"		//para cerrar gui
+//#include "conexiones.h"				//para cerrar gui
 
-
+void freeForPokeNest (t_mapa * mapa);
 int fcAuxiliarEstaDentroDelMargenDelMapa(int pos_x, int pos_y, int guiRows, int guiCols);
 void actualizarEstadoEntrenador(int respuesta, int * newPos_x, int * newPos_y);
 
@@ -30,11 +33,36 @@ char * decimeComoSeLlamaEstaPokeNest (char * ubicacionActual);
 
 
 
-void dibujarMapa (t_mapa * mapa)
+void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConexiones, pthread_t hiloBloqueados,pthread_t hiloDeadlock)
 {
 	while ( 1 )
 	{
-		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void *) &finalizarGui, (void* ) &accionDelMapaAnteSIGUSR2 );
+		if (_SIGINT_flag == 1 || _SIGTERM_flag == 1)
+		{
+			log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGINT.**" );
+
+			//pthread_mutex_lock(&mutex_sock);
+			pthread_cancel(hiloConexiones);
+
+			//sem_wait(&mapa_libre);
+			pthread_cancel(hiloPlanificador);
+
+			mapa->metadata->batalla[0] = '0';
+			//usleep(mapa->metadata->tiempoChequeadoDeadlock);
+			sleep(1);
+			pthread_cancel(hiloDeadlock);
+
+			//sem_trywait(&entrenador_bloqueado);
+			pthread_cancel(hiloBloqueados);
+
+
+
+
+
+			finalizarGui(mapa);
+			_SIGINT_flag = 0;	//reseteo el flag.
+		}
+
 		if (!_mapaEnModoDebug)
 			nivel_gui_dibujar(mapa->items, mapa->nombre);
 
@@ -51,22 +79,28 @@ void borrarMapa (t_mapa * mapa)
 	if (mapa->metadata != NULL)
 		freeForMetadataMapa (mapa);
 
-	//TODO: recorrer listas y borrar.
-
-
-	//free(mapa->metadata);
-
 	/*
-	BorrarItem(items, '#');
-	BorrarItem(items, '@');
+	if (mapa->directorioPokeDex != NULL);
+	{
+		free(mapa->directorioPokeDex);
+		mapa->directorioPokeDex = NULL;
+	}
 
-	BorrarItem(items, '1');
-	BorrarItem(items, '2');
+	if (mapa->nombre != NULL);
+	{
+		free(mapa->nombre);
+		mapa->nombre = NULL;
+	}
+	 */
 
-	BorrarItem(items, 'H');
-	BorrarItem(items, 'M');
-	BorrarItem(items, 'F');
-	*/
+	if (mapa->items != NULL);
+	{
+		list_clean_and_destroy_elements(mapa->items, (void *) free);
+		mapa->items = NULL;
+	}
+
+	if (mapa->pokeNest != NULL);
+		freeForPokeNest(mapa);
 }
 
 
@@ -101,11 +135,18 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
 	nuevoMapa->metadata = nuevaMetadataMapa;
 
-	nuevaMetadataMapa->tiempoChequeadoDeadlock = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Deadlock, nuevoMapa, (void *) finalizarGui);
+	char * temporal;
+	temporal = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Deadlock, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->tiempoChequeadoDeadlock = atoll(temporal);
+	free(temporal);
+
+	temporal = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Retardo, nuevoMapa, (void *) finalizarGui);
+	nuevaMetadataMapa->retardo = atoll(temporal);
+	free(temporal);
+
 	nuevaMetadataMapa->batalla = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Batalla, nuevoMapa, (void *) finalizarGui);
 	nuevaMetadataMapa->algoritmo = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Algoritmo, nuevoMapa, (void *) finalizarGui);
 	nuevaMetadataMapa->quantum = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Quantum, nuevoMapa, (void *) finalizarGui);
-	nuevaMetadataMapa->retardo = _mapa_configLeerInt(metadataMapa, __nombreEnConfig_Retardo, nuevoMapa, (void *) finalizarGui);
 	nuevaMetadataMapa->ip = _mapa_configLeerString(metadataMapa, __nombreEnConfig_IP, nuevoMapa, (void *) finalizarGui);
 	nuevaMetadataMapa->puerto = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Puerto, nuevoMapa, (void *) finalizarGui);
 
@@ -352,11 +393,16 @@ void levantarConfigPokeNest (char * nombreDirectorio, t_mapa * nuevoMapa)
 
 void loguearEstructuraDelMapa(t_mapa * nuevoMapa)
 {
-	log_info(myArchivoDeLog,"tiempoChequeadoDeadlock= %s", string_itoa(nuevoMapa->metadata->tiempoChequeadoDeadlock) );
+	char str[256];
+	sprintf(str, "%lld", nuevoMapa->metadata->tiempoChequeadoDeadlock);
+
+	log_info(myArchivoDeLog,"tiempoChequeadoDeadlock= %s", str );
 	log_info(myArchivoDeLog,"ModoBatalla= %s", nuevoMapa->metadata->batalla );
 	log_info(myArchivoDeLog,"Algoritmo= %s", nuevoMapa->metadata->algoritmo );
 	log_info(myArchivoDeLog,"Quantum= %s", string_itoa(nuevoMapa->metadata->quantum) );
-	log_info(myArchivoDeLog,"Retardo= %s", string_itoa(nuevoMapa->metadata->retardo) );
+
+	sprintf(str, "%lld", nuevoMapa->metadata->retardo);
+	log_info(myArchivoDeLog,"Retardo= %s", str );
 	log_info(myArchivoDeLog,"IP= %s", nuevoMapa->metadata->ip );
 	log_info(myArchivoDeLog,"Puerto= %s", nuevoMapa->metadata->puerto );
 }
@@ -399,16 +445,34 @@ bool esUnicoEsteIdentificador (t_list* items, char idDelItem)
 void freeForMetadataMapa (t_mapa * unMapa)
 {
 	//borro todos los strings primero
-	//free(unMapa->metadata->algoritmo);
-	//free(unMapa->metadata->batalla);
-	//free(unMapa->metadata->ip);
-	//free(unMapa->metadata->puerto);
+	free(unMapa->metadata->algoritmo);
+	free(unMapa->metadata->batalla);
+	free(unMapa->metadata->ip);
+	free(unMapa->metadata->puerto);
 
 	free(unMapa->metadata);
 	unMapa->metadata = NULL;
 	log_info(myArchivoDeLog,"Libere de memoria la estructura unMapa->metadata." );
 }
 
+void freeForPokeNest (t_mapa * mapa)
+{
+	int i=0, j=0;
+	for (i=0; i < list_size(mapa->pokeNest); i++)
+	{
+		t_pokeNest * temporal = list_get(mapa->pokeNest, i);
+		for (j=0; j < list_size(temporal->pokemones); j++)
+		{
+			t_pokemonEnPokeNest * temporal2 = list_get(temporal->pokemones, j);
+			free(temporal2->pokemonNNNdat);
+			temporal2->pokemonNNNdat = NULL;
+		}
+		list_clean_and_destroy_elements(temporal->pokemones, (void *) &free);
+		temporal->pokemones = NULL;
+	}
+	list_clean_and_destroy_elements(mapa->pokeNest, (void *) &free);
+	mapa->pokeNest = NULL;
+}
 
 void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa)
 {
@@ -467,18 +531,24 @@ char * decimeComoSeLlamaEstaPokeNest (char * ubicacionActual)
 	 * 	En una segunda instancia, hago la logica para recorrer los pokemones de la pokenest.
 	 */
 
-	char * nombrePokeNest = malloc ( (sizeof (char)) * PATH_MAX +1);
+
+	char * nombrePokeNest;
+	char * nombrePokeNest2;	//variable temporal
 	nombrePokeNest = string_duplicate(ubicacionActual);
 	if (nombrePokeNest != NULL)
 	{
 		//este es el path de *1
-		nombrePokeNest = string_substring(nombrePokeNest,0, (string_length(nombrePokeNest) - sizeof(__ubicacionMetadataMapas)) );
+		nombrePokeNest2 = string_substring(nombrePokeNest,0, (string_length(nombrePokeNest) - sizeof(__ubicacionMetadataMapas)) );
+		free(nombrePokeNest);	//string_substring hace malloc internamente.
+		nombrePokeNest = nombrePokeNest2;
 
 		//Aca voy a validar que el substring se haya hecho bien, y no hayan quedado alguna contrabarra en medio.
 		int i =0;
 		while ( ((*nombrePokeNest)*i) != '/')
 		{
-			nombrePokeNest = string_substring(nombrePokeNest,1, string_length(nombrePokeNest));
+			nombrePokeNest2 = string_substring(nombrePokeNest,1, string_length(nombrePokeNest));
+			free(nombrePokeNest);	//string_substring hace malloc internamente.
+			nombrePokeNest = nombrePokeNest2;
 			i++;
 		}
 

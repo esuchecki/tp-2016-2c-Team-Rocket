@@ -19,11 +19,11 @@
 
 typedef struct
 {
-	uint16_t tiempoChequeadoDeadlock;
+	long long int tiempoChequeadoDeadlock;
 	char * batalla;
 	char * algoritmo;
 	uint16_t quantum;
-	uint16_t retardo;	//Valor en milisegundos
+	long long int retardo;	//Valor en milisegundos
 	char * ip;
 	char * puerto;
 } t_metadataMapa ;

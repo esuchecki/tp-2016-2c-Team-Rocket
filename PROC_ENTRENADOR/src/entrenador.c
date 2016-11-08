@@ -55,6 +55,7 @@ int main(int argc, char *argv[]) {
 	crearFolderDirDeBill(miEntrenador);		//Por si no estaba creada
 	crearFolderMedallas(miEntrenador);		//Por si no estaba creada
 	borrarDirectorioDeBill(miEntrenador);
+	borrarDirectorioDeMedallas(miEntrenador);
 
 	inicializarTiemposDelEntrenador(&miEntrenador->misEstadisticas);
 	inicializarSenialesEntrenador(miEntrenador);

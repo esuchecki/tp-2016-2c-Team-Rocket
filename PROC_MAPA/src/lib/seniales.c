@@ -6,6 +6,13 @@
  */
 #include "seniales.h"
 
+/*
+ * @NAME: tratarLaSenialRecibida
+ * @DESC: uso exclusivo de revisarRecepcionDeSeniales
+ */
+void tratarLaSenialRecibida (int senial);
+
+
 void inicializarSenialesMapa (t_mapa * unMapa, void (*fc) (t_mapa *))
 {
 	//TODO: Que hilo deberia revisar las señales? Gui? Planificador? Etc..
@@ -54,11 +61,11 @@ void tratarLaSenialRecibida (int senial)
 
 }
 
-void funcionesQueQuieroEjecutarSegunLaSenial (t_mapa * unMapa, void (*fcAbortiva) (t_mapa *), void (*fcSIGUSR2) (t_mapa *) )
+void funcionesQueQuieroEjecutarSegunLaSenial (t_mapa * unMapa, void (*fcSIGUSR2) (t_mapa *) )
 {
 	//TODO: revisar si hay que hacer alguna otra cosa para 'encolar' señales o enrealidad bloquearlas (si no quiero que me interrumpan algo)
 
-
+/*
 	//Primero cierro correctamente la gui
 	if (_SIGINT_flag == 1)
 	{
@@ -72,7 +79,7 @@ void funcionesQueQuieroEjecutarSegunLaSenial (t_mapa * unMapa, void (*fcAbortiva
 		fcAbortiva(unMapa);
 		_SIGTERM_flag = 0;	//reseteo el flag.
 	}
-
+*/
 
 	//Segundo hago releer la metadata del mapa, segun enunciado con señal SIGUSR2
 	if (_SIGUSR2_flag == 1)

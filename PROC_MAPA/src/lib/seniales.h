@@ -35,15 +35,11 @@ void inicializarSenialesMapa (t_mapa * unMapa, void (*fc) (t_mapa *));
  * @NAME: funcionesQueQuieroEjecutarSegunLaSenial
  * @DESC: Inicia una rutina para revisar si el programa recibio alguna senial.. En caso de error abortivo, cierra correctamente la gui con la fc y el parametro unMapa.
  *
- * NOTA: si llamas a este metodo, en tu linea anterior deberias haber llamado a  revisarRecepcionDeSeniales!!!
+ * NOTA: si llamas a este metodo, en tu linea anterior deberias haber llamado a  inicializarSenialesMapa!!!
  */
-void funcionesQueQuieroEjecutarSegunLaSenial (t_mapa * unMapa, void (*fcAbortiva) (t_mapa *), void (*fcSIGUSR2) (t_mapa *) );
+void funcionesQueQuieroEjecutarSegunLaSenial (t_mapa * unMapa, void (*fcSIGUSR2) (t_mapa *) );
 
-/*
- * @NAME: tratarLaSenialRecibida
- * @DESC: uso exclusivo de revisarRecepcionDeSeniales
- */
-void tratarLaSenialRecibida (int senial);
+
 
 
 

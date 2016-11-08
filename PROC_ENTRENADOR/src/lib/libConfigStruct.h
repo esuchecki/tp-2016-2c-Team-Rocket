@@ -49,6 +49,12 @@ void cualEsLaIpDeEsteMapa (t_entrenadorFisico * miEntrenador, char * nombreMapa,
 void borrarDirectorioDeBill(t_entrenadorFisico * unEntrenador);
 
 /*
+ * @NAME: borrarDirectorioDeMedallas
+ * @DESC: Borra el contenido del directorio de medallas..!
+ */
+void borrarDirectorioDeMedallas(t_entrenadorFisico * unEntrenador);
+
+/*
  * @NAME: crearFolderDirDeBill
  * @DESC: crea la carpeta Dir de Bill
  */

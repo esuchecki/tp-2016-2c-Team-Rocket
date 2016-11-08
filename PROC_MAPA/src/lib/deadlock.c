@@ -177,6 +177,7 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 	 free(requeridos);
 	 */
 	if (list_size(listaDeadlock) < 2) {
+		list_destroy(listaDeadlock);
 		return NULL;
 	} else {
 		return listaDeadlock;
@@ -251,6 +252,7 @@ void * deteccionDeadlock(void * datos) {
 
 				}
 			}
+			list_destroy(listaDeadlock);
 			log_debug(myArchivoDeLog,"TERMINE DE ATENDER LA LISTA DE DEADLOCK\n\n");
 			log_debug(myArchivoDeLog,"LISTA-DEADLOCK CANT: %d\nLISTA-PARCIAL CANT:%d",list_size(listaDeadlock),list_size(parcial));
 			if(list_size(parcial) != 0){
