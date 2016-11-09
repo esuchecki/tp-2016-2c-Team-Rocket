@@ -13,6 +13,7 @@
 #include "osada_functions.h"
 #include <commons/bitarray.h>
 #include <commons/string.h>
+#include "osada-utils/osada.h"
 
 
 int main(void) {
@@ -82,12 +83,12 @@ int main(void) {
 //	char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
 //	char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
 //	printf("%s\n", pathSinArchivo);
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	int i = 0;
-	int j = 0;
-	while(i<2048){
-		printf("%d\n", tablaAsignaciones[i]);
-		i++;
-	}
+//	int* tablaAsignaciones = obtenerTablaAsignaciones();
+//	int i = 0;
+//	int j = 0;
+//	while(i<2048){
+//		printf("%d\n", tablaAsignaciones[i]);
+//		i++;
+//	}
 	return EXIT_SUCCESS;
 }

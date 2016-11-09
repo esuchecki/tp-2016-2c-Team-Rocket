@@ -122,13 +122,13 @@ osada_block* obtenerBloqueDatos(){
 
 void imprimirEstructuraArchivos(){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	int j = 1;
+	osada_file_state j = REGULAR;
 	int i,k;
 	char* guion = "-";
 	for ( i = 0 ; i<2048 ; i++ ) {
 	   j = tablaArchivos[i].state;
 	   k = tablaArchivos[i].parent_directory;
-	   if(j>0){
+	   if(j!=DELETED){
 		   while(k!=ROOT_INDEX){
 			   printf("%s", guion);
 			   k = tablaArchivos[k].parent_directory;
@@ -145,10 +145,11 @@ void imprimirEstructuraArchivos(){
 int buscarArchivoEnFS(char* nombre, int padre){
 	int retorno = archivoNoEncontrado;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	int i,j = 1;
-	for ( i = 0 ; (j>0 && retorno == archivoNoEncontrado && i<2048); i++ ) {
+	int i= 1;
+	osada_file_state j = REGULAR;
+	for ( i = 0 ; (j!=DELETED && retorno == archivoNoEncontrado && i<2048); i++ ) {
 	   j = tablaArchivos[i].state;
-	   if(j>0){
+	   if(j!=DELETED){
 		   if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
 			   retorno = i;
 		   }
@@ -256,10 +257,10 @@ char** leerDirectorio(char* path){
 		padre = buscarArchivoPorPath(path, false);
 	}
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	int j = 1;
+	osada_file_state j = REGULAR;
 	int i,k;
 	k = 0;
-	for ( i = 0 ; j>0 ; i++ ) {
+	for ( i = 0 ; j!=DELETED ; i++ ) {
 	   j = tablaArchivos[i].state;
 	   if(tablaArchivos[i].parent_directory==padre){
 		   subdirectoriosMax[k]=i;
@@ -296,9 +297,10 @@ long* obtenerAtributos(char* path){
  * de archivos
  */
 int obtenerEspacioLibreTablaArchivos(){
-	int i,j = 1;
+	int i = 1;
+	osada_file_state j = REGULAR;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	for ( i = 0 ; (j>0 && i<2048); i++ ) {
+	for ( i = 0 ; (j!=DELETED && i<2048); i++ ) {
 	   j = tablaArchivos[i].state;
 	}
 	int k;
@@ -383,7 +385,7 @@ int crearDirectorio(char* path){
 			padre = ROOT_INDEX;
 		}
 		tablaArchivos[espacioLibre].parent_directory = padre;
-		tablaArchivos[espacioLibre].state = 2;
+		tablaArchivos[espacioLibre].state = DIRECTORY;
 		resultado = 0;
 	}
 	return resultado;
@@ -400,7 +402,7 @@ int borrarDirectorio(char* path){
 			memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
 			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
 			tablaArchivos[existeDirectorio].parent_directory = -1;
-			tablaArchivos[existeDirectorio].state = 0;
+			tablaArchivos[existeDirectorio].state = DELETED;
 			resultado = 0;
 		} else {
 			resultado = elPathNoCorrespondeAUnDirectorio;
@@ -548,7 +550,7 @@ int crearArchivo(char* path, long bytes){
 			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
-			tablaArchivos[espacioLibreTablaArchivos].state = 1;
+			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
 			marcarTablaAsignaciones(primerBloqueLibre,totalBloquesNecesarios);
 		} else {
 			resultado = noHayBloquesLibres;
@@ -568,21 +570,29 @@ int obtenerUltimoBloqueActual(int primerBloque){
 	return ultimoActual;
 }
 
-void liberarTablaAsignaciones(int primerBloque, int bloquesNecesarios){
+void liberarTablaAsignaciones(int primerBloque, int bloquesALiberar){
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int indice = primerBloque;
-	int contadorBloques = 0;
 	int valorActual;
 	while(tablaAsignaciones[indice] != finDeArchivo){
 		valorActual = tablaAsignaciones[indice];
-		if(bloquesNecesarios == contadorBloques){
-			tablaAsignaciones[indice] = finDeArchivo;
-		} else if(contadorBloques > bloquesNecesarios) {
-			tablaAsignaciones[indice] = bloqueLibre;
-		}
+		tablaAsignaciones[indice] = bloqueLibre;
 		indice = valorActual;
-		contadorBloques++;
 	}
+	tablaAsignaciones[indice] = bloqueLibre;
+	tablaAsignaciones[primerBloque] = finDeArchivo;
+}
+
+int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
+	int primerBloqueALiberar;
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int indice = primerBloque;
+	bloquesNecesarios--; //Empiezo con primerBloque, asi que es 1 menos al total
+	while(bloquesNecesarios > 0){
+		indice = tablaAsignaciones[indice];
+		bloquesNecesarios--;
+	}
+	return indice;
 }
 
 int redimencionar(int indiceArchivo, long bytesNecesarios){
@@ -608,7 +618,8 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 	} else if(bytesActuales > bytesNecesarios){ // Achicar
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
 		int primerBloque = tablaArchivos[indiceArchivo].first_block;
-		liberarTablaAsignaciones(primerBloque, bloquesNecesarios);
+		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
+		liberarTablaAsignaciones(primerBloqueALiberar, bloquesNecesarios);
 		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 		resultado = operacionExitosa;
 	}
@@ -626,6 +637,22 @@ int truncar(char* path, long bytes){
 		resultado = redimencionar(existeDirectorio,bytes);
 	} else {
 		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+int borrarArchivo(char* path){
+	int resultado;
+	int existeDirectorio = checkearPath(path);
+	if(existeDirectorio > archivoNoEncontrado){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		int primerBloque = tablaArchivos[existeDirectorio].first_block;
+		int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[existeDirectorio].file_size);
+		liberarTablaAsignaciones(primerBloque,cantidadDeBloques);
+		tablaArchivos[existeDirectorio].state = DELETED;
+		resultado = operacionExitosa;
+	} else {
+		resultado = existeDirectorio;
 	}
 	return resultado;
 }
