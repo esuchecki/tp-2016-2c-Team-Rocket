@@ -519,8 +519,7 @@ int obtenerSiguienteBloqueLibre(){
 	return siguienteLibre;
 }
 
-int marcarTablaAsignaciones(int primerBloque, int totalBloques){
-	int resultado;
+void marcarTablaAsignaciones(int primerBloque, int totalBloques){
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int i = primerBloque;
 	while(totalBloques>1){
@@ -530,7 +529,6 @@ int marcarTablaAsignaciones(int primerBloque, int totalBloques){
 		totalBloques--;
 	}
 	tablaAsignaciones[i] = finDeArchivo;
-	return resultado;
 }
 
 int crearArchivo(char* path, long bytes){
@@ -561,13 +559,69 @@ int crearArchivo(char* path, long bytes){
 	return resultado;
 }
 
+int obtenerUltimoBloqueActual(int primerBloque){
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int ultimoActual = primerBloque;
+	while(tablaAsignaciones[ultimoActual] != -1){
+		ultimoActual = tablaAsignaciones[ultimoActual];
+	}
+	return ultimoActual;
+}
+
+void liberarTablaAsignaciones(int primerBloque, int bloquesNecesarios){
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int indice = primerBloque;
+	int contadorBloques = 0;
+	int valorActual;
+	while(tablaAsignaciones[indice] != finDeArchivo){
+		valorActual = tablaAsignaciones[indice];
+		if(bloquesNecesarios == contadorBloques){
+			tablaAsignaciones[indice] = finDeArchivo;
+		} else if(contadorBloques > bloquesNecesarios) {
+			tablaAsignaciones[indice] = bloqueLibre;
+		}
+		indice = valorActual;
+		contadorBloques++;
+	}
+}
+
+int redimencionar(int indiceArchivo, long bytesNecesarios){
+	int resultado;
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	long bytesActuales = tablaArchivos[indiceArchivo].file_size;
+	if(bytesActuales == bytesNecesarios){
+		resultado = operacionExitosa; //Nada que hacer
+	} else if (bytesActuales < bytesNecesarios){ // Agrandar
+		int bloquesActuales = calcularCantidadBloques(bytesActuales);
+		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
+		int bloquesTotalesNecesarios = bloquesNecesarios - bloquesActuales;
+		int bloquesLibres = obtenerCantidadBloquesLibres();
+		if(bloquesLibres >= bloquesTotalesNecesarios){
+			int primerBloque = tablaArchivos[indiceArchivo].first_block;
+			int ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
+			marcarTablaAsignaciones(ultimoBloqueActual,bloquesTotalesNecesarios);
+			resultado = operacionExitosa;
+		} else {
+			resultado = noHayBloquesLibres;
+		}
+	} else if(bytesActuales > bytesNecesarios){ // Achicar
+		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
+		int primerBloque = tablaArchivos[indiceArchivo].first_block;
+		liberarTablaAsignaciones(primerBloque, bloquesNecesarios);
+		resultado = operacionExitosa;
+	}
+	return resultado;
+}
+
 int truncar(char* path, long bytes){
 	int resultado;
 	int existeDirectorio = checkearPath(path);
 	if(existeDirectorio == archivoInexistenteConDirCorrecto){
+		//el archivo no existe pero el path es correcto
 		resultado = crearArchivo(path,bytes);
 	} else if(existeDirectorio > archivoNoEncontrado) {
-		//logica jodida
+		//el archivo existe, se debe redimencionar
+		resultado = redimencionar(existeDirectorio,bytes);
 	} else {
 		resultado = archivoNoEncontrado;
 	}
