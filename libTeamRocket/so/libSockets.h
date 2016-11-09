@@ -69,9 +69,15 @@ enum actividad {
 };
 
 enum respuestasOSADA {
-	archivoNoEncontrado = -1,
+	operacionExitosa = 0,
+	finDeArchivo = -1,
 	archivoInexistenteConDirCorrecto = -2,
 	rootPath = -3,
+	noHayEspacioLibreTablaArchivos = -4,
+	elPathNoCorrespondeAUnDirectorio = -5,
+	noHayBloquesLibres = -6,
+	bloqueLibre = -7,
+	archivoNoEncontrado = -8
 };
 
 /*

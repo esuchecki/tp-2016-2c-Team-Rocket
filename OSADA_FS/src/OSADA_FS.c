@@ -90,5 +90,6 @@ int main(void) {
 //		printf("%d\n", tablaAsignaciones[i]);
 //		i++;
 //	}
+	imprimirEstructuraArchivos();
 	return EXIT_SUCCESS;
 }
