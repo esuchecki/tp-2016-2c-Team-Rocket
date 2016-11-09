@@ -600,6 +600,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 			int primerBloque = tablaArchivos[indiceArchivo].first_block;
 			int ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
 			marcarTablaAsignaciones(ultimoBloqueActual,bloquesTotalesNecesarios);
+			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 			resultado = operacionExitosa;
 		} else {
 			resultado = noHayBloquesLibres;
@@ -608,6 +609,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
 		int primerBloque = tablaArchivos[indiceArchivo].first_block;
 		liberarTablaAsignaciones(primerBloque, bloquesNecesarios);
+		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 		resultado = operacionExitosa;
 	}
 	return resultado;
