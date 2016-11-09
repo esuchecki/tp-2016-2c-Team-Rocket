@@ -70,4 +70,6 @@ int cambiarNombre(char* path, char* nombreNuevo);
 
 int crearArchivo(char* path, long bytes);
 
+int borrarArchivo(char* path);
+
 #endif /* OSADA_FUNCTIONS_H_ */
