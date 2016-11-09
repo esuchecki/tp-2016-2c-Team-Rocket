@@ -75,12 +75,19 @@ int main(void) {
 //	int b= cambiarNombre("/Vermilion City/Pokemons/EduGroso", "NuevoNombre");
 	//int resultado = borrarDirectorio("/Vermilion City/Pokemons/EduGroso");
 //	imprimirEstructuraArchivos();
-	char* path = "/Vermilion City/Pokemons/EduGroso.txt";
-	char* pathAlReves = string_reverse(path);
-	char** array = string_split(pathAlReves, "/");
-	int largo = string_length(array[0]);
-	char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
-	char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
-	printf("%s\n", pathSinArchivo);
+//	char* path = "/Vermilion City/Pokemons/EduGroso.txt";
+//	char* pathAlReves = string_reverse(path);
+//	char** array = string_split(pathAlReves, "/");
+//	int largo = string_length(array[0]);
+//	char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
+//	char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
+//	printf("%s\n", pathSinArchivo);
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int i = 0;
+	int j = 0;
+	while(i<2048){
+		printf("%d\n", tablaAsignaciones[i]);
+		i++;
+	}
 	return EXIT_SUCCESS;
 }

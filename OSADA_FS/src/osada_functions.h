@@ -48,7 +48,7 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo);
 
 int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques);
 
-int calcularCantidadBloques(int tamanioEnBytes);
+int calcularCantidadBloques(long tamanioEnBytes);
 
 osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo);
 
@@ -67,5 +67,7 @@ int crearDirectorio(char* path);
 int borrarDirectorio(char* path);
 
 int cambiarNombre(char* path, char* nombreNuevo);
+
+int crearArchivo(char* path, long bytes);
 
 #endif /* OSADA_FUNCTIONS_H_ */
