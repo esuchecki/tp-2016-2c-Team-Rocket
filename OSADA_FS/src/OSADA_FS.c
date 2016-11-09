@@ -14,12 +14,13 @@
 #include <commons/bitarray.h>
 #include <commons/string.h>
 #include "osada-utils/osada.h"
+#include <so/libSockets.h>
 
 
 int main(void) {
 
 	abrirArchivo();
-//	osada_header* header = obtenerHeader();
+	osada_header* header = obtenerHeader();
 //	char* magicNumber = "Magic Number";
 //	char* magic_number = malloc(8);
 //	magic_number = string_duplicate(header->magic_number);
@@ -86,10 +87,19 @@ int main(void) {
 //	int* tablaAsignaciones = obtenerTablaAsignaciones();
 //	int i = 0;
 //	int j = 0;
-//	while(i<2048){
+//	while(i<header->data_blocks){
 //		printf("%d\n", tablaAsignaciones[i]);
 //		i++;
 //	}
-	imprimirEstructuraArchivos();
-	return EXIT_SUCCESS;
+//	imprimirEstructuraArchivos();
+//	int resultado = borrarArchivo("/Vermilion City/Pokemons/114.txt");
+//	printf("%d\n", resultado);
+	int bloquesLibres = obtenerCantidadBloquesLibres();
+	printf("%d\n", bloquesLibres);
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	int primerBloque =tablaArchivos[170].first_block;
+	liberarBloquesBitmap(primerBloque);
+	bloquesLibres = obtenerCantidadBloquesLibres();
+	printf("%d\n", bloquesLibres);
+//	return EXIT_SUCCESS;
 }

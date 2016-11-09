@@ -76,8 +76,10 @@ enum respuestasOSADA {
 	noHayEspacioLibreTablaArchivos = -4,
 	elPathNoCorrespondeAUnDirectorio = -5,
 	noHayBloquesLibres = -6,
-	bloqueLibre = -7,
-	archivoNoEncontrado = -8
+	bloqueLibre = 0,
+	bloqueOcupado = 1,
+	archivoNoEncontrado = -8,
+	noEsUnArchivo = -9
 };
 
 /*

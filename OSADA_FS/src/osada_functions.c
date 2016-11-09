@@ -25,11 +25,16 @@ int totalBloques() {
 	return header->fs_blocks;
 }
 
+osada_header* obtenerHeader(){
+	header = (osada_header*)bloques_archivo;
+	return header;
+}
+
 int calcularBloques(int estructura) {
 	int cantidad_bloques = TAMANIO_BYTES / __tamanioBloque;
 	int bloques_bitmap = cantidad_bloques / 8 / __tamanioBloque;
-	int bloques_asignaciones = (cantidad_bloques - 1 - bloques_bitmap - 1024)
-			* 4 / __tamanioBloque;
+	osada_header* header = obtenerHeader();
+	int bloques_asignaciones = header->data_blocks;
 	int retorno = 0;
 	switch (estructura) {
 	case __estructuraHeader:
@@ -45,8 +50,7 @@ int calcularBloques(int estructura) {
 		retorno = bloques_asignaciones;
 		break;
 	case __estructuraBloqueDatos:
-		retorno = (cantidad_bloques - 1 - bloques_bitmap - 1024
-				- bloques_asignaciones);
+		retorno = bloques_asignaciones;
 		break;
 	default:
 		retorno = 0;
@@ -88,11 +92,6 @@ void abrirArchivo(){
 	fd_osada= open(__pathArchivo,O_RDWR);
 	fstat(fd_osada,&osadaStat);
 	bloques_archivo= mmap(0, osadaStat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_osada, 0);
-}
-
-osada_header* obtenerHeader(){
-	header = (osada_header*)bloques_archivo;
-	return header;
 }
 
 t_bitarray* obtenerBitmap(){
@@ -479,11 +478,13 @@ int checkearPath(char* path){
 }
 
 int obtenerCantidadBloquesLibres(){
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	t_bitarray* bitmap = obtenerBitmap();
+	osada_header* header = obtenerHeader();
+	int totalBlocks = header->data_blocks;
 	int i = 0;
 	int bloquesLibres = 0;
-	while(i<2048){
-		if(tablaAsignaciones[i]== bloqueLibre){
+	while(i<totalBlocks){
+		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
 			bloquesLibres++;
 		}
 		i++;
@@ -492,11 +493,11 @@ int obtenerCantidadBloquesLibres(){
 }
 
 int obtenerPrimerBloqueLibre(){
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	t_bitarray* bitmap = obtenerBitmap();
 	int i = 0;
 	int primerBloqueLibre = -1;
 	while(primerBloqueLibre != -1){
-		if(tablaAsignaciones[i]== bloqueLibre){
+		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
 			primerBloqueLibre = i;
 		}
 		i++;
@@ -504,33 +505,18 @@ int obtenerPrimerBloqueLibre(){
 	return primerBloqueLibre;
 }
 
-int obtenerSiguienteBloqueLibre(){
-	int siguienteLibre = -1;
-	int marcaSegundo = 0;
-	int i = 0;
+void marcarBloques(int primerBloque, int totalBloques){
+	t_bitarray* bitmap = obtenerBitmap();
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	while(siguienteLibre == -1){
-		if(tablaAsignaciones[i]== bloqueLibre && marcaSegundo == 1){
-			siguienteLibre = i;
-		}
-		if(tablaAsignaciones[i]== bloqueLibre){
-			marcaSegundo = 1;
-		}
-		i++;
-	}
-	return siguienteLibre;
-}
-
-void marcarTablaAsignaciones(int primerBloque, int totalBloques){
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	int i = primerBloque;
-	while(totalBloques>1){
-		int siguienteLibre = obtenerSiguienteBloqueLibre();
-		tablaAsignaciones[i] = siguienteLibre;
-		i = siguienteLibre;
+	int actual = primerBloque;
+	int siguiente;
+	while(totalBloques>0){
+		bitarray_set_bit(bitmap,actual);
+		siguiente = obtenerPrimerBloqueLibre();
+		tablaAsignaciones[actual] = siguiente;
 		totalBloques--;
 	}
-	tablaAsignaciones[i] = finDeArchivo;
+	tablaAsignaciones[siguiente] = finDeArchivo;
 }
 
 int crearArchivo(char* path, long bytes){
@@ -551,7 +537,7 @@ int crearArchivo(char* path, long bytes){
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
-			marcarTablaAsignaciones(primerBloqueLibre,totalBloquesNecesarios);
+			marcarBloques(primerBloqueLibre,totalBloquesNecesarios);
 		} else {
 			resultado = noHayBloquesLibres;
 		}
@@ -564,27 +550,24 @@ int crearArchivo(char* path, long bytes){
 int obtenerUltimoBloqueActual(int primerBloque){
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int ultimoActual = primerBloque;
-	while(tablaAsignaciones[ultimoActual] != -1){
+	while(tablaAsignaciones[ultimoActual] != finDeArchivo){
 		ultimoActual = tablaAsignaciones[ultimoActual];
 	}
 	return ultimoActual;
 }
 
-void liberarTablaAsignaciones(int primerBloque, int bloquesALiberar){
+void liberarBloquesBitmap(int primerBloque){
+	t_bitarray* bitmap = obtenerBitmap();
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int indice = primerBloque;
-	int valorActual;
 	while(tablaAsignaciones[indice] != finDeArchivo){
-		valorActual = tablaAsignaciones[indice];
-		tablaAsignaciones[indice] = bloqueLibre;
-		indice = valorActual;
+		bitarray_clean_bit(bitmap,indice);
+		indice = tablaAsignaciones[indice];
 	}
-	tablaAsignaciones[indice] = bloqueLibre;
-	tablaAsignaciones[primerBloque] = finDeArchivo;
+	bitarray_clean_bit(bitmap,indice);
 }
 
 int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
-	int primerBloqueALiberar;
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int indice = primerBloque;
 	bloquesNecesarios--; //Empiezo con primerBloque, asi que es 1 menos al total
@@ -609,7 +592,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		if(bloquesLibres >= bloquesTotalesNecesarios){
 			int primerBloque = tablaArchivos[indiceArchivo].first_block;
 			int ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
-			marcarTablaAsignaciones(ultimoBloqueActual,bloquesTotalesNecesarios);
+			marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios);
 			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 			resultado = operacionExitosa;
 		} else {
@@ -619,7 +602,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
 		int primerBloque = tablaArchivos[indiceArchivo].first_block;
 		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
-		liberarTablaAsignaciones(primerBloqueALiberar, bloquesNecesarios);
+		liberarBloquesBitmap(primerBloqueALiberar);
 		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 		resultado = operacionExitosa;
 	}
@@ -646,11 +629,14 @@ int borrarArchivo(char* path){
 	int existeDirectorio = checkearPath(path);
 	if(existeDirectorio > archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
-		int primerBloque = tablaArchivos[existeDirectorio].first_block;
-		int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[existeDirectorio].file_size);
-		liberarTablaAsignaciones(primerBloque,cantidadDeBloques);
-		tablaArchivos[existeDirectorio].state = DELETED;
-		resultado = operacionExitosa;
+		if(tablaArchivos[existeDirectorio].state == REGULAR){
+			int primerBloque = tablaArchivos[existeDirectorio].first_block;
+			liberarBloquesBitmap(primerBloque);
+			tablaArchivos[existeDirectorio].state = DELETED;
+			resultado = operacionExitosa;
+		} else {
+			resultado = noEsUnArchivo;
+		}
 	} else {
 		resultado = existeDirectorio;
 	}

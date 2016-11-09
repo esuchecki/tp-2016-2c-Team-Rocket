@@ -72,4 +72,8 @@ int crearArchivo(char* path, long bytes);
 
 int borrarArchivo(char* path);
 
+int obtenerCantidadBloquesLibres();
+
+void liberarBloquesBitmap(int primerBloque);
+
 #endif /* OSADA_FUNCTIONS_H_ */
