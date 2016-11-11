@@ -235,14 +235,35 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 }
 
 
-osada_block* obtenerArchivoPorPath(char* path, long bytes, long offset){
+osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint32_t * tamanioCopiarSockets){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int index = buscarArchivoPorPath(path, false);
 	osada_block* resultado;
 	if(index>0){
-		int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[index].file_size);
-		int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
-		resultado = obtenerArchivo(bloquesArchivo,cantidadDeBloques,tablaArchivos[index].file_size);
+		uint32_t tamanio= tablaArchivos[index].file_size;
+
+		//valido que el offset que me pidieron sea menor al archivo.
+		if ( (tamanio>0) && (tamanio> offset) )
+		{
+			int cantidadDeBloques = calcularCantidadBloques( tamanio );
+			int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
+			osada_block* archivoCompleto;
+			archivoCompleto = obtenerArchivo(bloquesArchivo,cantidadDeBloques, tamanio );
+
+			//Con esto ajusto el archivo a la solicitud, osea al offset y longitud pedida.
+			uint32_t bytesParaCopiar = 0;
+			if ( (offset+bytes) > tamanio )
+				bytesParaCopiar = tamanio - offset;
+			else
+				bytesParaCopiar = bytes;
+
+			printf("-->Voy a copiar: size: %d, offset: %jd\n", bytesParaCopiar, (intmax_t) offset);
+			//finalmente lo copio
+			resultado = malloc(bytesParaCopiar * sizeof(unsigned char));
+			memcpy( resultado, ((unsigned char*)archivoCompleto)+offset , bytesParaCopiar * sizeof(unsigned char));
+			free(archivoCompleto);
+			*tamanioCopiarSockets = bytesParaCopiar;
+		}
 	}
 	return resultado;
 }

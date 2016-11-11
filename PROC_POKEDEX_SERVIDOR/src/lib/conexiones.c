@@ -162,11 +162,18 @@ void atenderConexion(int socket_conexion) {
 		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
 
 		//TODO: leer el archivo con path "path", tamanio size,y offset "offset"
-		osada_block* archivo = obtenerArchivoPorPath(path, size, offset);
-		//printf("%s\n",archivo);
-		//Hardcodeo el 556 para que lea README.txt
-		paquete = pedirPaquete(poke_respuestaLectura, 556, archivo);
-		common_send(socket_conexion, paquete);
+		uint32_t tamanioCopiarSockets = 0;
+		osada_block* archivo = obtenerArchivoPorPath(path, size, offset, &tamanioCopiarSockets);
+		if ( (tamanioCopiarSockets >0) )
+		{
+			paquete = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
+			common_send(socket_conexion, paquete);
+		}
+		else
+		{
+			paquete = pedirPaquete(poke_respuestaLectura, 0, archivo);
+			common_send(socket_conexion, paquete);
+		}
 
 		break;
 	case poke_escribirArchivo:
