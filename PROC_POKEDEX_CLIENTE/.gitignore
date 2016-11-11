@@ -1,2 +1,4 @@
 /Debug/
-!*makefile
+/log
+/log.txt
+/logs/
