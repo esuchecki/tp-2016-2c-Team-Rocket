@@ -112,7 +112,7 @@ void atenderConexion(int socket_conexion) {
 			paquete = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
 			common_send(socket_conexion, paquete);
 			break;
-		case -1:
+		default:
 			;
 			null_data = 0;
 			paquete = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
@@ -128,7 +128,7 @@ void atenderConexion(int socket_conexion) {
 		//printf("Rta= %d\n", directorio);
 
 		paquete = pedirPaquete(poke_respuestaCreacion, sizeof(int),
-					&directorio);
+				&directorio);
 		common_send(socket_conexion, paquete);
 		break;
 
@@ -136,9 +136,17 @@ void atenderConexion(int socket_conexion) {
 		printf("Me pidieron borrar el dir: %s\n", path);
 
 		int directorioABorrar = borrarDirectorio(path);
-			paquete = pedirPaquete(poke_respuestaBorrado, sizeof(int),
-					&directorioABorrar);
-			common_send(socket_conexion, paquete);
+		paquete = pedirPaquete(poke_respuestaBorrado, sizeof(int),
+				&directorioABorrar);
+		common_send(socket_conexion, paquete);
+		break;
+	case poke_borrarArchivo:
+		printf("Me pidieron borrar el file: %s\n", path);
+
+		int archivoABorrar = borrarArchivo(path);
+		paquete = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
+				&archivoABorrar);
+		common_send(socket_conexion, paquete);
 		break;
 	case poke_abrirArchivo:
 		//este no se si va a ser un mensaje que le pida el cliente
@@ -154,7 +162,7 @@ void atenderConexion(int socket_conexion) {
 		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
 
 		//TODO: leer el archivo con path "path", tamanio size,y offset "offset"
-		osada_block* archivo = obtenerArchivoPorPath(path);
+		osada_block* archivo = obtenerArchivoPorPath(path, size, offset);
 		//printf("%s\n",archivo);
 		//Hardcodeo el 556 para que lea README.txt
 		paquete = pedirPaquete(poke_respuestaLectura, 556, archivo);
@@ -164,6 +172,39 @@ void atenderConexion(int socket_conexion) {
 	case poke_escribirArchivo:
 		break;
 		//case -1:
+	case poke_renombrar:
+		;
+		/*
+		 *
+		 * ESTO NO IRIA... VERSION CON BUFFER
+		 int largoPath;
+
+		 memcpy(&largoPath, paquete->data,sizeof(int));
+
+		 char* path = malloc(largoPath);
+
+		 memcpy(&path , paquete->data+sizeof(int), largoPath);
+
+		 int largoName;
+
+		 memcpy(&largoName, paquete->data + sizeof(int) + largoPath,sizeof(int));
+
+		 char* nombre = malloc(largoName);
+
+		 memcpy(&nombre , paquete->data+sizeof(int)+largoPath+largoName, largoName);
+		 */
+		t_data *paquete2 = leer_paquete(socket_conexion);
+		printf("leyo paquete2 \n");
+
+		char* nombre = paquete2->data;
+		printf("Me pidieron renombrar: %s, %s \n", path, nombre);
+		int renombro = cambiarNombre(path, nombre);
+		//int renombro = cambiarNombre( lectura2->data, path);
+		paquete = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
+				&renombro);
+		common_send(socket_conexion, paquete);
+
+		break;
 	default:
 		;
 		pthread_exit(0);
@@ -292,38 +333,38 @@ void establecerConexion(void * data) {
 }
 
 /*
-char * guardarConCentinela(char **paquete, int * sizeOfBuffer) {
-	int i;
-	char caracter;
-	char centinela = '\0';
+ char * guardarConCentinela(char **paquete, int * sizeOfBuffer) {
+ int i;
+ char caracter;
+ char centinela = '\0';
 
-	for (i = 0; caracter != centinela; i++) {
+ for (i = 0; caracter != centinela; i++) {
 
-		caracter = paquete[i];
+ caracter = paquete[i];
 
-		if (caracter == centinela) {
-			i++;
-			break;
-		}
-	}
+ if (caracter == centinela) {
+ i++;
+ break;
+ }
+ }
 
-	char * buffer = malloc(sizeof(char) * i);
+ char * buffer = malloc(sizeof(char) * i);
 
-	caracter = paquete[0];
+ caracter = paquete[0];
 
-	for (i = 0; caracter != centinela; i++) {
-		caracter = paquete[i];
-		if (caracter == centinela) {
-			break;
-		}
-		memcpy(buffer + i, paquete + i, sizeof(char));
-	}
+ for (i = 0; caracter != centinela; i++) {
+ caracter = paquete[i];
+ if (caracter == centinela) {
+ break;
+ }
+ memcpy(buffer + i, paquete + i, sizeof(char));
+ }
 
-	buffer[i] = '\0';
+ buffer[i] = '\0';
 
-	return buffer;
-}
-*/
+ return buffer;
+ }
+ */
 
 //Codigo de Maxi Santos
 void escucharNuevasConexiones(char* ip, char *puerto) {

@@ -255,7 +255,7 @@ static int teamRocket_mkdir(const char *path, mode_t mode) {
 	free(newPath);
 	if (lectura->header == poke_respuestaCreacion) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if (( *((int*) lectura->data)) == 0)
+		if ((*((int*) lectura->data)) == 0)
 			return 0;
 	}
 	return -ENOENT;
@@ -276,7 +276,7 @@ static int teamRocket_rmdir(const char *path) {
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaBorrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ( (*((int*) lectura->data)) == 0)
+		if ((*((int*) lectura->data)) == 0)
 			return 0;
 	}
 	return -ENOENT;
@@ -313,10 +313,70 @@ static int teamRocket_rmdir(const char *path) {
  };
  */
 
+static int teamRocket_unlink(const char * path) {
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	t_data * paquete = pedirPaquete(poke_borrarArchivo, strlen(newPath) + 1,
+			newPath);
+	common_send(socketConexion, paquete);
+	log_debug(logCliente, "quiere borrar el file %s", path);
+
+	free(newPath);
+	t_data * lectura = leer_paquete(socketConexion);
+	if (lectura->header == poke_respuestaBorradoArchivo) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == 0)
+			return 0;
+	}
+	return -ENOENT;
+
+}
+;
+
+static int teamRocket_rename(const char *path, const char *nombre) {
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+	char * newName = malloc(strlen(nombre) + 1);
+	strcpy(newName, nombre);
+/*
+	int largo = strlen(newPath) + strlen(newName) + 2 * sizeof(int);
+	void * buffer = calloc(1,largo);
+
+	memcpy(&buffer, strlen(newPath) + 1, sizeof(int));
+	memcpy(&buffer+sizeof(int), newPath, strlen(newPath));
+
+	memcpy(&buffer+strlen(newPath), strlen(newName) + 1, sizeof(int));
+	memcpy(&buffer+sizeof(int), newName, strlen(newName));
+*/
+
+	t_data * paquete = pedirPaquete(poke_renombrar, strlen(newPath) + 1, newPath);
+	common_send(socketConexion, paquete);
+
+	t_data * paquete2 = pedirPaquete(poke_renombrar, strlen(newName) + 1, newName);
+		common_send(socketConexion, paquete2);
+
+	log_debug(logCliente, "quiere renombrar %s con el nombre %s\n", path, newName);
+
+	free(newPath);
+	free(newName);
+	t_data * lectura = leer_paquete(socketConexion);
+	if (lectura->header == poke_respuestaRenombrado) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == 0)
+			return 0;
+	}
+	return -ENOENT;
+
+	return 1;
+}
+;
+
 static struct fuse_operations teamRocket_oper = { .getattr = teamRocket_getAttr,
 		.readdir = teamRocket_readDir, .read = teamRocket_read, .write =
 				teamRocket_write, .mkdir = teamRocket_mkdir, .rmdir =
-				teamRocket_rmdir, };
+				teamRocket_rmdir, .rename = teamRocket_rename, .unlink =
+				teamRocket_unlink };
 
 int iniciarFuse(int argc, char*argv[]) {
 	/*
