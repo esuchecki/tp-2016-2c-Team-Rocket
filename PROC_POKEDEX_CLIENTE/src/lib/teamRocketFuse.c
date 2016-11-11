@@ -326,7 +326,7 @@ static int teamRocket_unlink(const char * path) {
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaBorradoArchivo) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == 0)
+		if ((*((int*) lectura->data)) == operacionExitosa)
 			return 0;
 	}
 	return -ENOENT;
@@ -354,7 +354,7 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 	common_send(socketConexion, paquete);
 
 	t_data * paquete2 = pedirPaquete(poke_renombrar, strlen(newName) + 1, newName);
-		common_send(socketConexion, paquete2);
+	common_send(socketConexion, paquete2);
 
 	log_debug(logCliente, "quiere renombrar %s con el nombre %s\n", path, newName);
 
@@ -367,8 +367,6 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 			return 0;
 	}
 	return -ENOENT;
-
-	return 1;
 }
 ;
 

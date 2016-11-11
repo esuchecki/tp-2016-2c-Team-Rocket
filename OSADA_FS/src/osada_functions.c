@@ -146,7 +146,7 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int i= 1;
 	osada_file_state j = REGULAR;
-	for ( i = 0 ; (j!=DELETED && retorno == archivoNoEncontrado && i<2048); i++ ) {
+	for ( i = 0 ; (retorno == archivoNoEncontrado && i<2048); i++ ) {
 	   j = tablaArchivos[i].state;
 	   if(j!=DELETED){
 		   if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
@@ -259,9 +259,9 @@ char** leerDirectorio(char* path){
 	osada_file_state j = REGULAR;
 	int i,k;
 	k = 0;
-	for ( i = 0 ; j!=DELETED ; i++ ) {
+	for ( i = 0 ; i<2048 ; i++ ) {
 	   j = tablaArchivos[i].state;
-	   if(tablaArchivos[i].parent_directory==padre){
+	   if(tablaArchivos[i].parent_directory==padre && (j !=DELETED)){
 		   subdirectoriosMax[k]=i;
 		   k++;
 	   }
@@ -412,12 +412,32 @@ int borrarDirectorio(char* path){
 	return resultado;
 }
 
-int cambiarNombre(char* path, char* nombreNuevo){
+
+
+int cambiarNombre(char* path, char* pathNuevo){
 	int resultado;
+	//pathNuevo es un path, Ej: /tmp/prueba
+	//entonces limitamos el cambiar nombre a que solo lo llame como el ulitmo elemento ("prueba")
+	//sin importar donde lo renombraron, sino validamos el path padre.
+	unsigned char * nombreNuevo = obtenerUltimoElemento(pathNuevo);
+	int longitudCopiar = string_length((char*)nombreNuevo);
+	if (string_length((char*)nombreNuevo) < 1)
+		return archivoNoEncontrado;	//Enrealidad el nuevo nombre es muy corto
+
+	//limito el nuevo largo del string al tamaño de osada
+	if (longitudCopiar > (OSADA_FILENAME_LENGTH -1))
+	{
+		//En caso de decidir truncar el nombre usar este codigo:
+		//longitudCopiar = 16;
+		//nombreNuevo[16] = '\0';
+
+		return archivoNoEncontrado;	//Enrealidad el nuevo nombre es muy largo
+	}
+
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	if(existeDirectorio>archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
-		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, (longitudCopiar+1)* sizeof (unsigned char));
 		resultado = 0;
 	} else {
 		resultado = archivoNoEncontrado;
