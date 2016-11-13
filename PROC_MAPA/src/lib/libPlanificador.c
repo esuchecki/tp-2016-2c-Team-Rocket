@@ -19,12 +19,16 @@
 #include <commons/collections/list.h>
 #include <string.h>
 #include <so/libSockets.h>
+#include <time.h>
 
 void inicializar_estructuras_planificador() {
 	sem_init(&entrenador_listo, 1, 0);
 	sem_init(&entrenador_bloqueado, 1, 0);
 	sem_init(&mapa_libre, 1, 0);
+	sem_init(&semaforoGraficar, 1, 0);
+
 	sem_post(&mapa_libre);
+	sem_post(&semaforoGraficar);
 	pthread_mutex_init(&mutex_listos, NULL);
 	pthread_mutex_init(&mutex_algoritmo, NULL);
 	pthread_mutex_init(&mutex_bloqueados, NULL);
@@ -51,7 +55,6 @@ void * ejecutarPlanificador(void * datos) {
 	t_mapa *mapa = datos;
 
 	while (1) {
-
 		sem_wait(&mapa_libre);
 		sem_wait(&entrenador_listo);
 
@@ -64,7 +67,6 @@ void * ejecutarPlanificador(void * datos) {
 
 		log_info(myArchivoDeLog,"ESCUCHO AL ENTRENADOR-SOCKET %d",entrenadorElegido->nroDesocket);
 		atenderConexion(entrenadorElegido->nroDesocket, mapa,sockets_activos);
-
 	}
 
 	return NULL;
@@ -264,6 +266,7 @@ void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
 
 void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 		fd_set sockets_activos, int socketMasGrande) {
+
 	bool seDesconecto(void * data) {
 		t_entrenador * alguno = data;
 		return alguno->nroDesocket == nroDesocket;
@@ -299,11 +302,11 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 	agregarAColaDeFinalizados(entrenadorAEliminar);
 
 	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
+	sem_post(&semaforoGraficar);
 
 	//liberarRecursos(entrenadorAEliminar);
 
 	sem_post(&mapa_libre);
-
 	sem_post(&entrenador_bloqueado);
 
 

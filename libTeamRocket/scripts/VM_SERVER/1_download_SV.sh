@@ -6,7 +6,7 @@ BUILD_PATH="~/tp-2016-2c-Team-Rocket/Build/"
 
 #Vamos a trabajar en este directorio x default.
 #mkdir ~/tp-2016-2c-Team-Rocket
-#cd ~/tp-2016-2c-Team-Rocket
+cd ~/tp-2016-2c-Team-Rocket
 
 #empezamos con las commons
 git clone https://github.com/sisoputnfrba/so-commons-library.git

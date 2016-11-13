@@ -38,7 +38,7 @@ void detectarDesconexion(t_data * paquete, int socket_recepcion,
 
 int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 	int flag = -1;
-	int resultadoSend;
+	int resultadoSend = -1;
 	t_data * paquete;
 	proceder: paquete = leer_paquete(i);
 	log_debug(myArchivoDeLog, "Atiendo al socket %d,con el header %d ", i,
@@ -69,7 +69,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 				entrenador->pokenest = *(char*) paquete->data;
 
 				//usleep(mapa->metadata->retardo);
-				sleep(1);
+				//sleep(1);
 
 				resultadoSend = common_send(i, nuevoPaquete);
 
@@ -112,7 +112,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 			}
 
 			//usleep(mapa->metadata->retardo);
-			sleep(1);
+			//sleep(1);
 
 			if(strcmp(mapa->metadata->algoritmo,"RR")==0){
 				flag = consumirQuantum(i, mapa->metadata->quantum);
@@ -152,7 +152,7 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		agregarAColaDeBloqueados(entrenador);
 
 		//usleep(mapa->metadata->retardo);
-		sleep(1);
+		//sleep(1);
 
 		sem_post(&entrenador_bloqueado);
 
@@ -170,11 +170,16 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		 return 1;*/
 		break;
 	}
+
 	log_info(myArchivoDeLog,"VALOR FLAG:%d",flag);
 	if (resultadoSend == 0 || paquete->header <= 0) {
 		desconectarEntrenador(i, mapa, sockets_activos, socketMasGrande);
 		return 0;
 	}
+
+	sleepInMiliSegundos(mapa->metadata->retardo);
+	sem_post(&semaforoGraficar);
+
 	if (flag == 0 || flag == -1) {
 		goto proceder;
 	}
@@ -192,7 +197,6 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 
 		agregarAColaDeListos(unEntrenador);
 
-		//TODO: tenemos que resolver como hacemos las delegaciones, pero asi cargamos el entrenador..
 		if (unEntrenador->simbolo != '\0') {
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
 			if (cargarEntrenador(mapa->items, unEntrenador->simbolo)) {
@@ -218,13 +222,12 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 
 		common_send(socket_nueva_conexion, paquete);
 
+		sem_post(&semaforoGraficar);
 		sem_post(&entrenador_listo);
 
 	} else {
 
 		log_error(myArchivoDeLog, "No se pudo conectar, fallo el handshake\n");
-		//TODO: este exit_failure esta raro aca!!
-		//exit(EXIT_FAILURE);
 		finalizarGui(mapa);
 	}
 }
@@ -247,7 +250,10 @@ int atenderConexiones(void * data) {
 	FD_ZERO(&sockets_activos);
 	FD_SET(socketEscucha, &sockets_activos);
 
+
 	while (1) {
+		sleepInMiliSegundos(1);
+
 		pthread_mutex_lock(&mutex_sock);
 		sockets_para_revisar = sockets_activos;
 		pthread_mutex_unlock(&mutex_sock);

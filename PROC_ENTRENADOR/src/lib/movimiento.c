@@ -1,5 +1,5 @@
 #include "movimiento.h"
-
+#include "so/tiempos.h"
 
 
 enum tipoDeEstadoEntrenador {
@@ -181,6 +181,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 			unEntrenador->moverseEnMapa->indexMapaActual++;
 			log_info(myArchivoDeLog, "Termine mis tareas en el mapa actual.");
 		}
+		sleepInMiliSegundos(1000);	//hacemos un retardo entre conexion y conexion de mapas.
 	}
 	//En teoria aca se convirtio en maestro pokemon..
 	soyMaestroPokemon(unEntrenador);
@@ -189,7 +190,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 
 void soyMaestroPokemon(t_entrenadorFisico * unEntrenador) {
 	//TODO: completar con lo demas...
-	puts("Soy maestro pokemon");
+	puts("***** Soy maestro pokemon *****");
 	mostrarEstadisticas(&unEntrenador->misEstadisticas);
 }
 
@@ -267,22 +268,22 @@ void actualizarEstado(t_entrenadorFisico * unEntrenador, int socketConection,
 	case moverDerecha:
 		unEntrenador->moverseEnMapa->e_posX++;
 		unEntrenador->moverseEnMapa->ultimoMov = 'X';
-		puts("muevoDerecha");
+		puts("\t\t---->>>");
 		break;
 	case moverArriba:
 		unEntrenador->moverseEnMapa->e_posY--;
 		unEntrenador->moverseEnMapa->ultimoMov = 'Y';
-		puts("muevoArriba");
+		puts("\tmuevoArriba");
 		break;
 	case moverIzquierda:
 		unEntrenador->moverseEnMapa->e_posX--;
 		unEntrenador->moverseEnMapa->ultimoMov = 'X';
-		puts("muevoIzquierda");
+		puts("<<<----");
 		break;
 	case moverAbajo:
 		unEntrenador->moverseEnMapa->e_posY++;
 		unEntrenador->moverseEnMapa->ultimoMov = 'Y';
-		puts("muevoAbajo");
+		puts("\tmuevoAbajo");
 		break;
 	case noActividad:
 		log_error(myArchivoDeLog, "Error, estoy en switch case noActividad.");
@@ -368,7 +369,7 @@ void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiV
 
 	if (fuiVictimaDeDeadlock)
 	{
-		puts ("Me descontaron una vida por deadlock");
+		puts ("**** Me descontaron una vida por deadlock ****");
 		if (unEntrenador->metadata->vidas > 0)//Minima cantidad de vidas es 0.
 			unEntrenador->metadata->vidas --;
 	}
@@ -505,7 +506,7 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 	switch (info->header) {
 	case otorgarTurno:
 		;
-		puts("Me Movi Bien");
+		//puts("Me Movi Bien");
 		break;
 
 	case ubicacionPokenest:

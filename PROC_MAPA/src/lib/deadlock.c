@@ -208,7 +208,8 @@ void * deteccionDeadlock(void * datos) {
 	t_mapa * mapa = datos;
 
 	while (1) {
-		usleep(mapa->metadata->tiempoChequeadoDeadlock);
+		sleepInMiliSegundos(mapa->metadata->tiempoChequeadoDeadlock);
+
 		t_list * listaDeadlock = detectarDeadlock(mapa);
 		/*
 		 t_list * listaDeadlock = list_create();
