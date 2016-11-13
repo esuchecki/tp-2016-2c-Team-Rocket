@@ -18,7 +18,7 @@
 t_list *colaListos;
 t_list *colaBloqueados;
 t_list *colaFinalizados;
-sem_t entrenador_listo,entrenador_bloqueado,mapa_libre;
+sem_t entrenador_listo,entrenador_bloqueado,mapa_libre, semaforoGraficar;
 pthread_mutex_t mutex_listos,mutex_algoritmo,mutex_bloqueados;
 
 

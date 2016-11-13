@@ -52,7 +52,7 @@ int calcularCantidadBloques(long tamanioEnBytes);
 
 osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, int tamanioArchivo);
 
-osada_block* obtenerArchivoPorPath(char* path, long bytes, long offset);
+osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint32_t * tamanioCopiarSockets);
 
 char** leerDirectorio(char* path);
 

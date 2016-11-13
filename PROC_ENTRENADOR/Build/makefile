@@ -1,5 +1,5 @@
 ################################################################################
-# Automatically-generated file. Do not edit!
+# ESTOS MAKEFILE FUERON MODIFICADOS!!!
 ################################################################################
 
 -include ../makefile.init
@@ -24,26 +24,26 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: mapa
+all: entrenador
 
 dependents:
-	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) clean all
+	-cd /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build && $(MAKE) clean all
 
 # Tool invocations
-mapa: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so
+entrenador: $(OBJS) $(USER_OBJS) /home/utnso/tp-2016-2c-Team-Rocket/Build/liblibTeamRocket.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "mapa" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build" -o "entrenador" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) mapa
+	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) entrenador
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
+/home/utnso/tp-2016-2c-Team-Rocket/Build/liblibTeamRocket.so:
 
 -include ../makefile.targets

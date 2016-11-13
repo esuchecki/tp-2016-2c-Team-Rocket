@@ -33,10 +33,11 @@ char * decimeComoSeLlamaEstaPokeNest (char * ubicacionActual);
 
 
 
-void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConexiones, pthread_t hiloBloqueados,pthread_t hiloDeadlock)
+void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConexiones, pthread_t hiloBloqueados,pthread_t hiloDeadlock, sem_t * semaforoGraficar)
 {
 	while ( 1 )
 	{
+
 		if (_SIGINT_flag == 1 || _SIGTERM_flag == 1)
 		{
 			log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGINT.**" );
@@ -63,10 +64,10 @@ void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConex
 			_SIGINT_flag = 0;	//reseteo el flag.
 		}
 
-		if (!_mapaEnModoDebug)
+		if ( !_mapaEnModoDebug && (sem_trywait(semaforoGraficar) == 0) )
 			nivel_gui_dibujar(mapa->items, mapa->nombre);
 
-		usleep(mapa->metadata->retardo);	//como para poner un tiempo..
+		sleepInMiliSegundos(1);
 	}
 }
 
@@ -699,3 +700,4 @@ void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador)
 
 
 }
+

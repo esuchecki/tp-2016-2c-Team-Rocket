@@ -31,7 +31,3 @@
 # Debug files
 *.dSYM/
 *.su
-/OSADA_FS/
-
-# Dont Ignore (WhiteList)
-!*makefile

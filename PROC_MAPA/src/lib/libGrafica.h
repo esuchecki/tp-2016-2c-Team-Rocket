@@ -36,6 +36,8 @@
 #include "estructurasMapa.h"
 #include "so/constantes.h"
 #include "so/libSockets.h"
+#include <semaphore.h>
+#include "so/tiempos.h"
 
 
 //------------------------------------------//
@@ -66,7 +68,7 @@
  * @NAME: dibujarMapa
  * @DESC: dibuja el mapa en pantalla en base a la estructura t_mapa
  */
-void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConexiones, pthread_t hiloBloqueados,pthread_t hiloDeadlock);
+void dibujarMapa (t_mapa * mapa, pthread_t hiloPlanificador, pthread_t hiloConexiones, pthread_t hiloBloqueados,pthread_t hiloDeadlock, sem_t * semaforoGraficar);
 
 /*
  * @NAME: borrarMapa
@@ -222,6 +224,7 @@ ITEM_NIVEL* encontrameEsteIdEnLaLista (t_mapa * self, char id);
  * @DESC: fc utilizada por el planificador para borrar un entrenador del mapa.
  */
 void borrarEntrenadorDelMapa(t_mapa * unMapa, char simboloEntrenador);
+
 
 //------------------------------------------//
 

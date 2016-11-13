@@ -1,5 +1,5 @@
 ################################################################################
-# Automatically-generated file. Do not edit!
+# ESTOS MAKEFILE FUERON MODIFICADOS!!!
 ################################################################################
 
 -include ../makefile.init
@@ -8,7 +8,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include src/osada_src/subdir.mk
 -include src/lib/subdir.mk
 -include src/subdir.mk
 -include subdir.mk
@@ -25,28 +24,26 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: PROC_POKEDEX_SERVIDOR
+all: mapa
 
 dependents:
-	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug && $(MAKE) clean all
-	-cd /home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug && $(MAKE) clean all
+	-cd /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build && $(MAKE) clean all
 
 # Tool invocations
-PROC_POKEDEX_SERVIDOR: $(OBJS) $(USER_OBJS) /home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so /home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS
+mapa: $(OBJS) $(USER_OBJS) /home/utnso/tp-2016-2c-Team-Rocket/Build/liblibTeamRocket.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug" -o "PROC_POKEDEX_SERVIDOR" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build" -o "mapa" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) PROC_POKEDEX_SERVIDOR
+	-$(RM) $(OBJS)$(C_DEPS)$(EXECUTABLES) mapa
 	-@echo ' '
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utnso/workspace/tp-2016-2c-Team-Rocket/libTeamRocket/Debug/liblibTeamRocket.so:
-/home/utnso/workspace/tp-2016-2c-Team-Rocket/OSADA_FS/Debug/OSADA_FS:
+/home/utnso/tp-2016-2c-Team-Rocket/Build/liblibTeamRocket.so:
 
 -include ../makefile.targets
