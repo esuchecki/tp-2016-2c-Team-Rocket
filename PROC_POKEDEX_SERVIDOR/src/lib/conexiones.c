@@ -212,6 +212,22 @@ void atenderConexion(int socket_conexion) {
 		common_send(socket_conexion, paquete);
 
 		break;
+
+	case poke_truncar:
+			;
+			t_data *paquete3 = leer_paquete(socket_conexion);
+			printf("leyo paquete3 \n");
+			memcpy(&offset, paquete3->data , sizeof(off_t));
+
+
+			printf("Me pidieron truncar: %s, al largo %jd\n", path, (intmax_t)offset);
+
+			int trunco = truncar(path, (int)offset);
+
+			paquete = pedirPaquete(poke_respuestaTruncado, sizeof(int),
+					&trunco);
+			common_send(socket_conexion, paquete);
+			break;
 	default:
 		;
 		pthread_exit(0);

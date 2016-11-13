@@ -16,7 +16,15 @@ static int teamRocket_readDir(const char *path, void *buf,
 static int teamRocket_read(const char *path, char *buf, size_t size,
 		off_t offset, struct fuse_file_info *fi);
 
+static int teamRocket_mkdir(const char *path, mode_t mode);
+
+static int teamRocket_rmdir(const char *path);
+
 void enviarLecturaArchivo(char *path, size_t size, off_t offset);
+
+static int teamRocket_unlink(const char * path);
+
+static int teamRocket_truncar(const char *path, off_t largo);
 
 static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 	int res = 0;
@@ -339,24 +347,27 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 	strcpy(newPath, path);
 	char * newName = malloc(strlen(nombre) + 1);
 	strcpy(newName, nombre);
-/*
-	int largo = strlen(newPath) + strlen(newName) + 2 * sizeof(int);
-	void * buffer = calloc(1,largo);
+	/*
+	 int largo = strlen(newPath) + strlen(newName) + 2 * sizeof(int);
+	 void * buffer = calloc(1,largo);
 
-	memcpy(&buffer, strlen(newPath) + 1, sizeof(int));
-	memcpy(&buffer+sizeof(int), newPath, strlen(newPath));
+	 memcpy(&buffer, strlen(newPath) + 1, sizeof(int));
+	 memcpy(&buffer+sizeof(int), newPath, strlen(newPath));
 
-	memcpy(&buffer+strlen(newPath), strlen(newName) + 1, sizeof(int));
-	memcpy(&buffer+sizeof(int), newName, strlen(newName));
-*/
+	 memcpy(&buffer+strlen(newPath), strlen(newName) + 1, sizeof(int));
+	 memcpy(&buffer+sizeof(int), newName, strlen(newName));
+	 */
 
-	t_data * paquete = pedirPaquete(poke_renombrar, strlen(newPath) + 1, newPath);
+	t_data * paquete = pedirPaquete(poke_renombrar, strlen(newPath) + 1,
+			newPath);
 	common_send(socketConexion, paquete);
 
-	t_data * paquete2 = pedirPaquete(poke_renombrar, strlen(newName) + 1, newName);
+	t_data * paquete2 = pedirPaquete(poke_renombrar, strlen(newName) + 1,
+			newName);
 	common_send(socketConexion, paquete2);
 
-	log_debug(logCliente, "quiere renombrar %s con el nombre %s\n", path, newName);
+	log_debug(logCliente, "quiere renombrar %s con el nombre %s\n", path,
+			newName);
 
 	free(newPath);
 	free(newName);
@@ -370,11 +381,37 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 }
 ;
 
+static int teamRocket_truncar(const char *path, off_t largo) {
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	log_debug(logCliente, "va a leer el paquete 1 \n");
+	t_data * paquete = pedirPaquete(poke_truncar, strlen(newPath) + 1, newPath);
+	common_send(socketConexion, paquete);
+	log_debug(logCliente, "va a leer el paquete 2 \n");
+
+	long* tamanio = (long) &largo;
+	t_data * paquete2 = pedirPaquete(poke_truncar, sizeof(long)+ 1, tamanio);
+	common_send(socketConexion, paquete2);
+
+	log_debug(logCliente, "quiere truncar %s con el largo %l \n", path, largo);
+
+	free(newPath);
+	t_data * lectura = leer_paquete(socketConexion);
+	if (lectura->header == poke_respuestaTruncado) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == 0)
+			return 0;
+	}
+	return -ENOENT;
+}
+;
+
 static struct fuse_operations teamRocket_oper = { .getattr = teamRocket_getAttr,
 		.readdir = teamRocket_readDir, .read = teamRocket_read, .write =
 				teamRocket_write, .mkdir = teamRocket_mkdir, .rmdir =
-				teamRocket_rmdir, .rename = teamRocket_rename, .unlink =
-				teamRocket_unlink };
+				teamRocket_rmdir, .truncate = teamRocket_truncar, .rename =teamRocket_rename,
+				.unlink = teamRocket_unlink };
 
 int iniciarFuse(int argc, char*argv[]) {
 	/*

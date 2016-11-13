@@ -44,7 +44,8 @@ enum enviosPokedexCliente{
 	poke_leerArchivo = 85,
 	poke_escribirArchivo = 86,
 	poke_renombrar=87,
-	poke_borrarArchivo=88
+	poke_borrarArchivo=88,
+	poke_truncar=89
 };
 
 enum enviosPokedexServidor{
@@ -60,7 +61,8 @@ enum enviosPokedexServidor{
 	poke_respuestaLectura = 98,
 	poke_respuestaEscritura = 99,
 	poke_respuestaRenombrado=100,
-	poke_respuestaBorradoArchivo=101
+	poke_respuestaBorradoArchivo=101,
+	poke_respuestaTruncado=102
 };
 
 //MAXIS: son los mensajes "internos" para que el entrenador se mueva.

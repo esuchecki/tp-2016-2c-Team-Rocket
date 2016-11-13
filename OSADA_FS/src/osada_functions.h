@@ -76,4 +76,6 @@ int obtenerCantidadBloquesLibres();
 
 void liberarBloquesBitmap(int primerBloque);
 
+int truncar(char* path, long bytes);
+
 #endif /* OSADA_FUNCTIONS_H_ */
