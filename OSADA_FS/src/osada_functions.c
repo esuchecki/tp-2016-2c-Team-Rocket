@@ -643,4 +643,8 @@ int borrarArchivo(char* path){
 	return resultado;
 }
 
+int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
+
+}
+
 
