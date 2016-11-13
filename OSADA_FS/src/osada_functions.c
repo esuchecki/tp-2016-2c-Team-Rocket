@@ -234,6 +234,19 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 	return archivoConOffset;
 }
 
+//char* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset ){
+// 	osada_file* tablaArchivos = obtenerTablaArchivos();
+// 	int index = buscarArchivoPorPath(path, false);
+// 	int primerBloque = tablaArchivos[index].first_block;
+// 	osada_block* bloquesDeDatos = obtenerBloqueDatos();
+// 	char* arrayDatos = (char*)bloquesDeDatos[primerBloque];
+// 	char* lectura;
+// 	memcpy(&lectura, &arrayDatos[offset], sizeof(char) * bytes);
+//// 	int cantidadDeBloques = calcularCantidadBloques(tablaArchivos[index].file_size);
+//// 	int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
+// 	return lectura;
+// }
+
 
 osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint32_t * tamanioCopiarSockets){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
@@ -685,7 +698,19 @@ int borrarArchivo(char* path){
 }
 
 int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
-
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio > archivoNoEncontrado){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		int primerBloque = tablaArchivos[existeDirectorio].first_block;
+		osada_block* bloquesDatos = obtenerBloqueDatos();
+		char* arrayDatos = (char*)bloquesDatos[primerBloque];
+		memcpy(&arrayDatos[offset], buffer, sizeof(char) * tamanio);
+		resultado = operacionExitosa;
+	} else {
+		resultado = existeDirectorio;
+	}
+	return resultado;
 }
 
 

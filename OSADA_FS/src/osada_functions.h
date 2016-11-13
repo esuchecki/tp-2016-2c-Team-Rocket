@@ -76,4 +76,6 @@ int obtenerCantidadBloquesLibres();
 
 void liberarBloquesBitmap(int primerBloque);
 
+int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset);
+
 #endif /* OSADA_FUNCTIONS_H_ */
