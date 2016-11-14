@@ -86,7 +86,8 @@ enum respuestasOSADA {
 	bloqueLibre = 0,
 	bloqueOcupado = 1,
 	archivoNoEncontrado = -8,
-	noEsUnArchivo = -9
+	noEsUnArchivo = -9,
+	tamanioDeArchivoInsuficiente = -10
 };
 
 /*

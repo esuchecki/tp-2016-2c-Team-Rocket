@@ -102,17 +102,64 @@ int main(void) {
 //	bloquesLibres = obtenerCantidadBloquesLibres();
 //	printf("%d\n", bloquesLibres);
 //	char* archivo = obtenerArchivoPorPath("/Pokemons/001.txt", 5,5);
-	int indice = buscarArchivoPorPath("/Pokemons/002.txt", false);
+//	int indice = buscarArchivoPorPath("/Pokemons/001.txt", false);
+//	osada_file* archivos = obtenerTablaArchivos();
+//	char* arrayDatos = (char*)archivo[0];
+//	printf("%s\n", arrayDatos);
+//	char* texto = "escribo los primeros 29 bytes";
+//	int resultado = escribir("/Pokemons/002.txt", texto, 29,300);
+//	archivo =  obtenerArchivo(bloquesArchivo, cantidadDeBloques, archivos[indice].file_size);
+//	printf("%s\n", archivo);
+//	printf("%d\n", resultado);
+//	int tamanio = archivos[indice].file_size;
+//	printf("Tamanio inicial: %d\n", tamanio);
+//	int resultado = truncar("/Pokemons/004.txt", 0);
+//	int cantidadDeBloques = calcularCantidadBloques(tamanio);
+//	int* bloquesArchivo = obtenerBloquesArchivo(archivos[indice].first_block, cantidadDeBloques);
+//	osada_block* archivo =  obtenerArchivo(bloquesArchivo, cantidadDeBloques, archivos[indice].file_size);
+//	printf("%s\n", archivo);
+//	int cantidadDeBloques = calcularCantidadBloques(tamanio);
+//	int* bloquesArchivo = obtenerBloquesArchivo((int)archivos[indice].first_block, cantidadDeBloques);
+//	printf("%d\n", bloquesArchivo);
+//	archivos = obtenerTablaArchivos();
+//	tamanio = archivos[indice].file_size;
+//	printf("Tamanio 1ra prueba: %d\n", tamanio);
+//	printf("%d\n", resultado);
+//	resultado = truncar("/Pokemons/004.txt", tamanio + 1000);
+//	cantidadDeBloques = calcularCantidadBloques(tamanio);
+//	obtenerBloquesArchivo((int)archivos[indice].first_block, cantidadDeBloques);
+//	printf("%d\n", bloquesArchivo);
+//	archivos = obtenerTablaArchivos();
+//	tamanio = archivos[indice].file_size;
+//	printf("Tamanio 2da prueba: %d\n", tamanio);
+//	printf("%d\n", resultado);
+//	cantidadDeBloques = calcularCantidadBloques(tamanio);
+//	obtenerBloquesArchivo((int)archivos[indice].first_block, cantidadDeBloques);
+//	printf("%d\n", bloquesArchivo);
+	int indice = buscarArchivoPorPath("/Pokemons/008.txt", false);
+	int resultado = truncar("/Pokemons/008.txt", 0);
 	osada_file* archivos = obtenerTablaArchivos();
-	int cantidadDeBloques = calcularCantidadBloques(archivos[indice].file_size);
-	int* bloquesArchivo = obtenerBloquesArchivo((int)archivos[indice].first_block, cantidadDeBloques);
-	osada_block* archivo =  obtenerArchivo(bloquesArchivo, cantidadDeBloques, archivos[indice].file_size);
-	char* arrayDatos = (char*)archivo[0];
-	printf("%s\n", arrayDatos);
-	char* texto = "escribo los primeros 29 bytes";
-	int resultado = escribir("/Pokemons/002.txt", texto, 29,0);
-	archivo =  obtenerArchivo(bloquesArchivo, cantidadDeBloques, archivos[indice].file_size);
-	printf("%s\n", archivo);
-	printf("%d\n", resultado);
+	printf("Tamanio Archivo: %d\n", archivos[indice].file_size);
+	printf("Primer Bloque: %d\n", archivos[indice].first_block);
+	resultado = truncar("/Pokemons/008.txt", 1500);
+	printf("Tamanio Archivo: %d\n", archivos[indice].file_size);
+	printf("Primer Bloque: %d\n", archivos[indice].first_block);
+	int cantidad = calcularCantidadBloques(archivos[indice].file_size);
+	int* bloques = obtenerBloquesArchivo(archivos[indice].first_block, cantidad);
+	int i = 0;
+	//Imprimo todos los bloques que componen el archivo
+	while(i < cantidad){
+		printf("%d\n", bloques[i]);
+		i++;
+	}
+	// Escribo desde el bloque 63, 20 bytes
+	resultado = escribir("/Pokemons/008.txt", "mira Emi, funciono!!", 20,63);
+	osada_block* archivo =  obtenerArchivo(bloques, cantidad, archivos[indice].file_size);
+	int j = 0;
+	char* array = (char*)archivo[0];
+	while(j < 1500){
+		printf("%c", array[j]);
+		j++;
+	}
 	return EXIT_SUCCESS;
 }

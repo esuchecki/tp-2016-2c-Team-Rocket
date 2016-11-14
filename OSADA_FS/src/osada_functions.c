@@ -59,10 +59,15 @@ int calcularBloques(int estructura) {
 }
 
 int calcularCantidadBloques(long tamanioEnBytes){
-	int esDivisor = tamanioEnBytes%OSADA_BLOCK_SIZE;
-	int resultado = tamanioEnBytes / OSADA_BLOCK_SIZE;
-	if(esDivisor > 0){
-		resultado = resultado + 1;
+	int resultado;
+	if(tamanioEnBytes > 0){
+		int esDivisor = tamanioEnBytes%OSADA_BLOCK_SIZE;
+		resultado = tamanioEnBytes / OSADA_BLOCK_SIZE;
+		if(esDivisor > 0){
+			resultado = resultado + 1;
+		}
+	} else {
+		resultado = 0;
 	}
 	return resultado;
 }
@@ -550,7 +555,7 @@ int obtenerPrimerBloqueLibre(){
 	t_bitarray* bitmap = obtenerBitmap();
 	int i = 0;
 	int primerBloqueLibre = -1;
-	while(primerBloqueLibre != -1){
+	while(primerBloqueLibre < 0){
 		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
 			primerBloqueLibre = i;
 		}
@@ -562,12 +567,13 @@ int obtenerPrimerBloqueLibre(){
 void marcarBloques(int primerBloque, int totalBloques){
 	t_bitarray* bitmap = obtenerBitmap();
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	int actual = primerBloque;
 	int siguiente;
+	int actual = primerBloque;
 	while(totalBloques>0){
 		bitarray_set_bit(bitmap,actual);
 		siguiente = obtenerPrimerBloqueLibre();
 		tablaAsignaciones[actual] = siguiente;
+		actual = siguiente;
 		totalBloques--;
 	}
 	tablaAsignaciones[siguiente] = finDeArchivo;
@@ -618,6 +624,7 @@ void liberarBloquesBitmap(int primerBloque){
 		bitarray_clean_bit(bitmap,indice);
 		indice = tablaAsignaciones[indice];
 	}
+	tablaAsignaciones[primerBloque] = finDeArchivo;
 	bitarray_clean_bit(bitmap,indice);
 }
 
@@ -645,7 +652,14 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres >= bloquesTotalesNecesarios){
 			int primerBloque = tablaArchivos[indiceArchivo].first_block;
-			int ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
+			int ultimoBloqueActual;
+			if(primerBloque == finDeArchivo){
+				primerBloque = obtenerPrimerBloqueLibre();
+				tablaArchivos[indiceArchivo].first_block = primerBloque;
+				ultimoBloqueActual = primerBloque;
+			} else {
+				ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
+			}
 			marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios);
 			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 			resultado = operacionExitosa;
@@ -655,6 +669,9 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 	} else if(bytesActuales > bytesNecesarios){ // Achicar
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
 		int primerBloque = tablaArchivos[indiceArchivo].first_block;
+		if(bytesNecesarios == 0){
+			tablaArchivos[indiceArchivo].first_block = finDeArchivo; // -1
+		}
 		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
 		liberarBloquesBitmap(primerBloqueALiberar);
 		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
@@ -697,16 +714,71 @@ int borrarArchivo(char* path){
 	return resultado;
 }
 
+int calcularBloqueOffset(int offset){
+	int resultado;
+	if(offset > 0){
+		resultado = offset/OSADA_BLOCK_SIZE;
+	} else {
+		resultado = 0;
+	}
+	return resultado;
+}
+
+int calcularNumeroDeBloque(int primerBloque, int offset){
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int bloquesNecesario = calcularBloqueOffset(offset);
+	int bloque = primerBloque;
+	while(bloquesNecesario > 0){
+		bloque = tablaAsignaciones[bloque];
+		bloquesNecesario--;
+	}
+	return bloque;
+}
+
+int calcularTotalAEscribir(int offsetDeBloque, int tamanio){
+	int resultado;
+	if(offsetDeBloque > 0){
+		resultado = OSADA_BLOCK_SIZE - offsetDeBloque;
+	} else {
+		if(tamanio < OSADA_BLOCK_SIZE){
+			resultado = tamanio;
+		} else {
+			resultado = OSADA_BLOCK_SIZE;
+		}
+	}
+	return resultado;
+}
+
 int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 	int resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	if(existeDirectorio > archivoNoEncontrado){
+		int total = tamanio + offset;
 		osada_file* tablaArchivos = obtenerTablaArchivos();
-		int primerBloque = tablaArchivos[existeDirectorio].first_block;
-		osada_block* bloquesDatos = obtenerBloqueDatos();
-		char* arrayDatos = (char*)bloquesDatos[primerBloque];
-		memcpy(&arrayDatos[offset], buffer, sizeof(char) * tamanio);
-		resultado = operacionExitosa;
+		if (tablaArchivos[existeDirectorio].file_size > total){
+			int primerBloque = tablaArchivos[existeDirectorio].first_block;
+			int numeroDeBloque = calcularNumeroDeBloque(primerBloque, offset);
+			int bloquesNecesarios = calcularBloqueOffset(offset);
+			int offsetDeBloque = offset - (bloquesNecesarios * OSADA_BLOCK_SIZE);
+			int totalAEscribir;
+			int offsetBuffer = 0;
+			osada_block* bloquesDatos = obtenerBloqueDatos();
+			int* tablaAsignaciones = obtenerTablaAsignaciones();
+			while(tamanio > 0){
+				totalAEscribir = calcularTotalAEscribir(offsetDeBloque, tamanio);
+				tamanio = tamanio - totalAEscribir;
+				char* arrayDatos = (char*)bloquesDatos[numeroDeBloque];
+				memcpy(&arrayDatos[offsetDeBloque], &buffer[offsetBuffer], sizeof(char) * totalAEscribir);
+				if(tamanio > 0){
+					numeroDeBloque = tablaAsignaciones[numeroDeBloque];
+					offsetDeBloque = 0;
+				}
+				offsetBuffer = totalAEscribir;
+			}
+			resultado = operacionExitosa;
+		} else {
+			resultado = tamanioDeArchivoInsuficiente;
+		}
 	} else {
 		resultado = existeDirectorio;
 	}
