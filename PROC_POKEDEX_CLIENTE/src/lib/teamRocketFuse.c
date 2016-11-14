@@ -7,6 +7,7 @@
 
 #include "teamRocketFuse.h"
 #include <so/libSockets.h>
+#include <sys/stat.h>
 
 static int teamRocket_getAttr(const char *path, struct stat *stbuf);
 
@@ -25,6 +26,13 @@ void enviarLecturaArchivo(char *path, size_t size, off_t offset);
 static int teamRocket_unlink(const char * path);
 
 static int teamRocket_truncar(const char *path, off_t largo);
+void enviarEscrituraArchivo(const char *buf, size_t size, off_t offset);
+
+
+
+
+
+
 
 static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 	int res = 0;
@@ -238,14 +246,25 @@ static int teamRocket_read(const char *path, char *buf, size_t size,
 
 }
 
-//TODO
-static int teamRocket_write(const char *path, const char *buf, size_t size,
-		off_t offset, struct fuse_file_info *fi) {
-	int tamanioArchivo = size; //Me imagino que aca tengo el ta
-	/*t_data *paquete = pedirPaquete(escribirArchivo, tamanioArchivo, path);
-	 common_send(socketConexion, paquete);
-	 */
-	return 0;
+
+static int teamRocket_write(const char *path, const char *buf, size_t size,	off_t offset, struct fuse_file_info *fi) {
+	teamRocket_truncar(path, size );
+
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+	t_data * paquete = pedirPaquete(poke_escribirArchivo, strlen(newPath) + 1,	newPath);
+	common_send(socketConexion, paquete);
+
+	enviarEscrituraArchivo(buf, size, offset);
+	t_data * lectura = leer_paquete(socketConexion);
+	free(newPath);
+
+	if (lectura->header == poke_respuestaEscritura) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == operacionExitosa)
+			return size;
+	}
+	return -ENOENT;
 }
 ;
 
@@ -381,7 +400,7 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 }
 ;
 
-static int teamRocket_truncar(const char *path, off_t largo) {
+static int teamRocket_truncar(const char *path, off_t size) {
 	char * newPath = malloc(strlen(path) + 1);
 	strcpy(newPath, path);
 
@@ -390,28 +409,44 @@ static int teamRocket_truncar(const char *path, off_t largo) {
 	common_send(socketConexion, paquete);
 	log_debug(logCliente, "va a leer el paquete 2 \n");
 
-	long* tamanio = (long) &largo;
-	t_data * paquete2 = pedirPaquete(poke_truncar, sizeof(long)+ 1, tamanio);
+	t_data * paquete2 = pedirPaquete(poke_truncar, sizeof(off_t), &size);
 	common_send(socketConexion, paquete2);
 
-	log_debug(logCliente, "quiere truncar %s con el largo %l \n", path, largo);
+	log_debug(logCliente, "quiere truncar %s con el largo %l \n", path, size);
 
 	free(newPath);
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaTruncado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == 0)
+		if ((*((int*) lectura->data)) == operacionExitosa)
 			return 0;
 	}
 	return -ENOENT;
 }
 ;
 
-static struct fuse_operations teamRocket_oper = { .getattr = teamRocket_getAttr,
-		.readdir = teamRocket_readDir, .read = teamRocket_read, .write =
-				teamRocket_write, .mkdir = teamRocket_mkdir, .rmdir =
-				teamRocket_rmdir, .truncate = teamRocket_truncar, .rename =teamRocket_rename,
-				.unlink = teamRocket_unlink };
+static int teamRocket_makeNod(const char *path, mode_t mode, dev_t rdev)
+{
+	if (S_ISREG(mode))
+		return teamRocket_truncar(path, 0);
+
+	return -errno;
+}
+;
+
+static struct fuse_operations teamRocket_oper = {
+		.getattr 	= teamRocket_getAttr,
+		.readdir 	= teamRocket_readDir,
+		.read 		= teamRocket_read,
+		.write 		= teamRocket_write,
+		.mkdir 		= teamRocket_mkdir,
+		.rmdir 		= teamRocket_rmdir,
+		.truncate 	= teamRocket_truncar,
+		.rename 	= teamRocket_rename,
+		.unlink 	= teamRocket_unlink,
+		.mknod		= teamRocket_makeNod,
+		.flag_nullpath_ok = 0,
+};
 
 int iniciarFuse(int argc, char*argv[]) {
 	/*
@@ -485,4 +520,16 @@ void enviarLecturaArchivo(char *path, size_t size, off_t offset) {
 	paquete = pedirPaquete(poke_leerArchivo, tamanio, buffer);
 	common_send(socketConexion, paquete);
 
+}
+
+void enviarEscrituraArchivo(const char *buf, size_t size, off_t offset) {
+	t_data *paquete = pedirPaquete(poke_escribirArchivo, size, buf);
+	common_send(socketConexion, paquete);
+
+	int tamanio = sizeof(size_t) + sizeof(off_t);
+	void*buffer = malloc(tamanio);
+	memcpy(buffer, &size, sizeof(size_t));
+	memcpy(buffer + sizeof(size_t), &offset, sizeof(off_t));
+	paquete = pedirPaquete(poke_escribirArchivo, tamanio, buffer);
+	common_send(socketConexion, paquete);
 }

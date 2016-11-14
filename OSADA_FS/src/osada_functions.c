@@ -506,6 +506,7 @@ char* obtenerNombreDelArchivo (char* path){
 	int largoNombre = largoUltimoElementoPath(path);
 	char* pathAlReves = string_reverse(path);
 	char* nombreArchivo = string_substring(pathAlReves, 0, largoNombre);
+	nombreArchivo = string_reverse(nombreArchivo);
 	return nombreArchivo;
 }
 
@@ -583,21 +584,27 @@ int crearArchivo(char* path, long bytes){
 	int resultado;
 	int espacioLibreTablaArchivos = obtenerEspacioLibreTablaArchivos();
 	if(espacioLibreTablaArchivos!=noHayEspacioLibreTablaArchivos){
-		int totalBloquesNecesarios = calcularCantidadBloques(bytes);
+		int totalBloquesNecesarios = 0;
+		totalBloquesNecesarios = calcularCantidadBloques(bytes);
+		if (totalBloquesNecesarios < 1)
+			totalBloquesNecesarios++;
+
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres>=totalBloquesNecesarios){
 			osada_file* tablaArchivos = obtenerTablaArchivos();
-			int primerBloqueLibre = obtenerPrimerBloqueLibre();
+			osada_block_pointer primerBloqueLibre = obtenerPrimerBloqueLibre();
 			char* nombreArchivo = obtenerNombreDelArchivo(path);
 			char* pathPadre = obtenerPathPadre(path);
 			int indicePadre = buscarArchivoPorPath(pathPadre, false);
 			tablaArchivos[espacioLibreTablaArchivos].file_size = bytes;
 			tablaArchivos[espacioLibreTablaArchivos].first_block = primerBloqueLibre;
+			//TODO: Edu, que pasa si el nombre es muy largo? (tenemos que tener un '\0' al final o no?
 			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
 			marcarBloques(primerBloqueLibre,totalBloquesNecesarios);
+			resultado = operacionExitosa;
 		} else {
 			resultado = noHayBloquesLibres;
 		}

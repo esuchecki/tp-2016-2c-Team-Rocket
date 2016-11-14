@@ -181,7 +181,7 @@ void iniciarAventura(t_entrenadorFisico * unEntrenador) {
 			unEntrenador->moverseEnMapa->indexMapaActual++;
 			log_info(myArchivoDeLog, "Termine mis tareas en el mapa actual.");
 		}
-		sleepInMiliSegundos(1000);	//hacemos un retardo entre conexion y conexion de mapas.
+		sleepInMiliSegundos(1);	//hacemos un retardo entre conexion y conexion de mapas.
 	}
 	//En teoria aca se convirtio en maestro pokemon..
 	soyMaestroPokemon(unEntrenador);
