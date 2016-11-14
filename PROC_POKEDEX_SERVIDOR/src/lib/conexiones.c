@@ -174,9 +174,32 @@ void atenderConexion(int socket_conexion) {
 			paquete = pedirPaquete(poke_respuestaLectura, 0, archivo);
 			common_send(socket_conexion, paquete);
 		}
+		free(posiciones);
 
 		break;
 	case poke_escribirArchivo:
+		;
+		//char * path = paquete->data;
+		t_data * paqueteBuffer = leer_paquete(socket_conexion);
+		char *buf = malloc(paqueteBuffer->tamanio);
+		memcpy(buf, paqueteBuffer->data, paqueteBuffer->tamanio);
+
+		t_data * posiciones2 = leer_paquete(socket_conexion);
+		memcpy(&size, posiciones2->data, sizeof(size_t));
+		memcpy(&offset, posiciones2->data + sizeof(size_t), sizeof(off_t));
+
+		printf("Me pidieron escribir el Archivo: %s\n", path);
+		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
+
+		int resultado = escribir(path, buf, size, offset);
+
+		paquete = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
+		common_send(socket_conexion, paquete);
+
+		free(buf);
+		free(paqueteBuffer);
+		free(posiciones2);
+
 		break;
 		//case -1:
 	case poke_renombrar:
@@ -211,23 +234,23 @@ void atenderConexion(int socket_conexion) {
 				&renombro);
 		common_send(socket_conexion, paquete);
 
+		free(paquete2);
 		break;
 
 	case poke_truncar:
-			;
-			t_data *paquete3 = leer_paquete(socket_conexion);
-			printf("leyo paquete3 \n");
-			memcpy(&offset, paquete3->data , sizeof(off_t));
+		;
+		t_data *paquete3 = leer_paquete(socket_conexion);
+		printf("leyo paquete3 \n");
+		memcpy(&offset, paquete3->data , sizeof(off_t));
 
+		printf("Me pidieron truncar: %s, al largo %jd\n", path, (intmax_t)offset);
+		int trunco = truncar(path, (long)offset);
 
-			printf("Me pidieron truncar: %s, al largo %jd\n", path, (intmax_t)offset);
+		paquete = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
+		common_send(socket_conexion, paquete);
 
-			int trunco = truncar(path, (int)offset);
-
-			paquete = pedirPaquete(poke_respuestaTruncado, sizeof(int),
-					&trunco);
-			common_send(socket_conexion, paquete);
-			break;
+		free(paquete3);
+		break;
 	default:
 		;
 		pthread_exit(0);

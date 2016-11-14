@@ -5,15 +5,18 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../so/libConfig.c \
-../so/libSockets.c 
+../so/libSockets.c \
+../so/tiempos.c 
 
 OBJS += \
 ./so/libConfig.o \
-./so/libSockets.o 
+./so/libSockets.o \
+./so/tiempos.o 
 
 C_DEPS += \
 ./so/libConfig.d \
-./so/libSockets.d 
+./so/libSockets.d \
+./so/tiempos.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

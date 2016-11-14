@@ -501,6 +501,7 @@ char* obtenerNombreDelArchivo (char* path){
 	int largoNombre = largoUltimoElementoPath(path);
 	char* pathAlReves = string_reverse(path);
 	char* nombreArchivo = string_substring(pathAlReves, 0, largoNombre);
+	nombreArchivo = string_reverse(nombreArchivo);
 	return nombreArchivo;
 }
 
@@ -550,7 +551,8 @@ int obtenerPrimerBloqueLibre(){
 	t_bitarray* bitmap = obtenerBitmap();
 	int i = 0;
 	int primerBloqueLibre = -1;
-	while(primerBloqueLibre != -1){
+	//TODO: Edu que pasa si no hay bloques libres??
+	while(primerBloqueLibre == -1){
 		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
 			primerBloqueLibre = i;
 		}
@@ -577,21 +579,27 @@ int crearArchivo(char* path, long bytes){
 	int resultado;
 	int espacioLibreTablaArchivos = obtenerEspacioLibreTablaArchivos();
 	if(espacioLibreTablaArchivos!=noHayEspacioLibreTablaArchivos){
-		int totalBloquesNecesarios = calcularCantidadBloques(bytes);
+		int totalBloquesNecesarios = 0;
+		totalBloquesNecesarios = calcularCantidadBloques(bytes);
+		if (totalBloquesNecesarios < 1)
+			totalBloquesNecesarios++;
+
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres>=totalBloquesNecesarios){
 			osada_file* tablaArchivos = obtenerTablaArchivos();
-			int primerBloqueLibre = obtenerPrimerBloqueLibre();
+			osada_block_pointer primerBloqueLibre = obtenerPrimerBloqueLibre();
 			char* nombreArchivo = obtenerNombreDelArchivo(path);
 			char* pathPadre = obtenerPathPadre(path);
 			int indicePadre = buscarArchivoPorPath(pathPadre, false);
 			tablaArchivos[espacioLibreTablaArchivos].file_size = bytes;
 			tablaArchivos[espacioLibreTablaArchivos].first_block = primerBloqueLibre;
+			//TODO: Edu, que pasa si el nombre es muy largo? (tenemos que tener un '\0' al final o no?
 			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
 			marcarBloques(primerBloqueLibre,totalBloquesNecesarios);
+			resultado = operacionExitosa;
 		} else {
 			resultado = noHayBloquesLibres;
 		}
@@ -644,8 +652,8 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		int bloquesTotalesNecesarios = bloquesNecesarios - bloquesActuales;
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres >= bloquesTotalesNecesarios){
-			int primerBloque = tablaArchivos[indiceArchivo].first_block;
-			int ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
+			osada_block_pointer primerBloque = tablaArchivos[indiceArchivo].first_block;
+			osada_block_pointer ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
 			marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios);
 			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 			resultado = operacionExitosa;
@@ -653,9 +661,13 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 			resultado = noHayBloquesLibres;
 		}
 	} else if(bytesActuales > bytesNecesarios){ // Achicar
-		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
-		int primerBloque = tablaArchivos[indiceArchivo].first_block;
-		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
+		int bloquesNecesarios = 0;
+		bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
+		if (bloquesNecesarios < 1)
+			bloquesNecesarios++;
+
+		osada_block_pointer primerBloque = tablaArchivos[indiceArchivo].first_block;
+		osada_block_pointer primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
 		liberarBloquesBitmap(primerBloqueALiberar);
 		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 		resultado = operacionExitosa;
