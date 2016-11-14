@@ -54,6 +54,7 @@ int main(int argc, char*argv[]) {
 		log_debug(logServidor,"Voy a atender conexiones en la ip %s",IP);
 		*/
 	//atenderConexiones(IP,PUERTO);
+	pthread_rwlock_init(&lecturaEscritura,NULL);
 	escucharNuevasConexiones(IP,PUERTO);
 
 	return 0;

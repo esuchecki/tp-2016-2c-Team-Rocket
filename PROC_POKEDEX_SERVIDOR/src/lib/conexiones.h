@@ -20,6 +20,7 @@ typedef struct {
 } nodo_hilo;
 
 pthread_mutex_t mutex_mayor;
+pthread_rwlock_t lecturaEscritura;
 
 int atenderConexiones();
 

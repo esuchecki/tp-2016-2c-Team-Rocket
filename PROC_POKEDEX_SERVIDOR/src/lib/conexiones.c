@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
 //TODO: cambiar estos include de lugar!.
 #include "../OSADA_FS/src/OSADA_Constants.h"
 #include "../OSADA_FS/src/osada-utils/osada.h"
@@ -34,16 +35,15 @@ void atenderConexion(int socket_conexion) {
 	size_t size = 0;
 	off_t offset = 0;
 	int null_data;
-	//TODO: ver el tema de la sincronizacion.
-	//pense que podriamos crear una lista con los archivos que se abrieron y el modo
-	//en el que lo abrieron si para escritura o lectura cosa de que cada vez
-	//que alguien haga alguna solicitud se fije ahi si puede realizarla o no.
 
 	switch (paquete->header) {
 	case poke_solicitudReadDir:
 		;
 		printf("Me pidieron el readDir de: %s\n", path);
+
+		pthread_rwlock_rdlock(&lecturaEscritura);
 		char ** directorios = leerDirectorio(path);
+		pthread_rwlock_unlock(&lecturaEscritura);
 
 		int temp = 0;
 		int aux = sizeof(char) * (OSADA_FILENAME_LENGTH + 1);
@@ -88,7 +88,10 @@ void atenderConexion(int socket_conexion) {
 
 		//TODO: ver si el path es directorio o archivo
 		printf("Me pidieron el getAttr de: %s\n", path);
+
+		pthread_rwlock_rdlock(&lecturaEscritura);
 		long* atributos = obtenerAtributos(path);
+		pthread_rwlock_unlock(&lecturaEscritura);
 
 		switch (atributos[0]) {
 		case REGULAR:
@@ -124,8 +127,13 @@ void atenderConexion(int socket_conexion) {
 	case poke_crearDirectorio:
 		printf("Me pidieron crear el dir: %s\n", path);
 		int directorio = -1;
+
+		pthread_rwlock_wrlock(&lecturaEscritura);
 		directorio = crearDirectorio(path);
+		pthread_rwlock_unlock(&lecturaEscritura);
+
 		//printf("Rta= %d\n", directorio);
+
 
 		paquete = pedirPaquete(poke_respuestaCreacion, sizeof(int),
 				&directorio);
@@ -135,7 +143,10 @@ void atenderConexion(int socket_conexion) {
 	case poke_borrarDirectorio:
 		printf("Me pidieron borrar el dir: %s\n", path);
 
+		pthread_rwlock_wrlock(&lecturaEscritura);
 		int directorioABorrar = borrarDirectorio(path);
+		pthread_rwlock_unlock(&lecturaEscritura);
+
 		paquete = pedirPaquete(poke_respuestaBorrado, sizeof(int),
 				&directorioABorrar);
 		common_send(socket_conexion, paquete);
@@ -143,7 +154,10 @@ void atenderConexion(int socket_conexion) {
 	case poke_borrarArchivo:
 		printf("Me pidieron borrar el file: %s\n", path);
 
+		pthread_rwlock_wrlock(&lecturaEscritura);
 		int archivoABorrar = borrarArchivo(path);
+		pthread_rwlock_unlock(&lecturaEscritura);
+
 		paquete = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
 				&archivoABorrar);
 		common_send(socket_conexion, paquete);
@@ -163,7 +177,11 @@ void atenderConexion(int socket_conexion) {
 
 		//TODO: leer el archivo con path "path", tamanio size,y offset "offset"
 		uint32_t tamanioCopiarSockets = 0;
+
+		pthread_rwlock_rdlock(&lecturaEscritura);
 		osada_block* archivo = obtenerArchivoPorPath(path, size, offset, &tamanioCopiarSockets);
+		pthread_rwlock_unlock(&lecturaEscritura);
+
 		if ( (tamanioCopiarSockets >0) )
 		{
 			paquete = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
@@ -191,7 +209,9 @@ void atenderConexion(int socket_conexion) {
 		printf("Me pidieron escribir el Archivo: %s\n", path);
 		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
 
+		pthread_rwlock_wrlock(&lecturaEscritura);
 		int resultado = escribir(path, buf, size, offset);
+		pthread_rwlock_unlock(&lecturaEscritura);
 
 		paquete = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
 		common_send(socket_conexion, paquete);
@@ -228,7 +248,11 @@ void atenderConexion(int socket_conexion) {
 
 		char* nombre = paquete2->data;
 		printf("Me pidieron renombrar: %s, %s \n", path, nombre);
+
+		pthread_rwlock_wrlock(&lecturaEscritura);
 		int renombro = cambiarNombre(path, nombre);
+		pthread_rwlock_unlock(&lecturaEscritura);
+
 		//int renombro = cambiarNombre( lectura2->data, path);
 		paquete = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
 				&renombro);
@@ -244,7 +268,10 @@ void atenderConexion(int socket_conexion) {
 		memcpy(&offset, paquete3->data , sizeof(off_t));
 
 		printf("Me pidieron truncar: %s, al largo %jd\n", path, (intmax_t)offset);
+
+		pthread_rwlock_wrlock(&lecturaEscritura);
 		int trunco = truncar(path, (long)offset);
+		pthread_rwlock_unlock(&lecturaEscritura);
 
 		paquete = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
 		common_send(socket_conexion, paquete);
