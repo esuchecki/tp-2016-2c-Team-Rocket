@@ -152,13 +152,24 @@ int main(void) {
 		printf("%d\n", bloques[i]);
 		i++;
 	}
-	// Escribo desde el bloque 63, 20 bytes
+	// Escribo desde el byte 63, 20 bytes
 	resultado = escribir("/Pokemons/008.txt", "mira Emi, funciono!!", 20,63);
 	osada_block* archivo =  obtenerArchivo(bloques, cantidad, archivos[indice].file_size);
 	int j = 0;
 	char* array = (char*)archivo[0];
-	while(j < 1500){
-		printf("%c", array[j]);
+	while(j < 20){
+		printf("%c", array[63 + j]);
+		j++;
+	}
+	printf("\n");
+	// Escribo desde el byte 1000, 35 bytes
+	resultado = escribir("/Pokemons/008.txt", "otra prueba para verificar que anda", 35,1000);
+	archivo =  obtenerArchivo(bloques, cantidad, archivos[indice].file_size);
+	j = 0;
+	char* otroarray = (char*)archivo[0];
+	// Leo del byte 1000 en adelante 35 bytes
+	while(j < 35){
+		printf("%c", otroarray[1000 + j]);
 		j++;
 	}
 	return EXIT_SUCCESS;

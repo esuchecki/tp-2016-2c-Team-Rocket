@@ -745,7 +745,12 @@ int calcularNumeroDeBloque(int primerBloque, int offset){
 int calcularTotalAEscribir(int offsetDeBloque, int tamanio){
 	int resultado;
 	if(offsetDeBloque > 0){
-		resultado = OSADA_BLOCK_SIZE - offsetDeBloque;
+		int total = offsetDeBloque + tamanio;
+		if(total > OSADA_BLOCK_SIZE){
+			resultado = OSADA_BLOCK_SIZE - offsetDeBloque;
+		} else {
+			resultado = tamanio;
+		}
 	} else {
 		if(tamanio < OSADA_BLOCK_SIZE){
 			resultado = tamanio;
