@@ -242,27 +242,34 @@ static int teamRocket_read(const char *path, char *buf, size_t size,
 		memcpy(buf, lectura->data, lectura->tamanio);
 		return lectura->tamanio;
 	}
+	//En caso de else o recibir "poke_errorEnLectura" devuelve 0.
 	return 0;
 
 }
 
 
 static int teamRocket_write(const char *path, const char *buf, size_t size,	off_t offset, struct fuse_file_info *fi) {
-	teamRocket_truncar(path, size );
-
 	char * newPath = malloc(strlen(path) + 1);
 	strcpy(newPath, path);
-	t_data * paquete = pedirPaquete(poke_escribirArchivo, strlen(newPath) + 1,	newPath);
-	common_send(socketConexion, paquete);
 
-	enviarEscrituraArchivo(buf, size, offset);
-	t_data * lectura = leer_paquete(socketConexion);
-	free(newPath);
+	if ( teamRocket_truncar(newPath, (size+offset) ) == 0)
+	{
 
-	if (lectura->header == poke_respuestaEscritura) {
-		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == operacionExitosa)
-			return size;
+		t_data * paquete = pedirPaquete(poke_escribirArchivo, strlen(newPath) + 1,	newPath);
+		common_send(socketConexion, paquete);
+
+		enviarEscrituraArchivo(buf, size, offset);
+		t_data * lectura = leer_paquete(socketConexion);
+		free(newPath);
+
+		if (lectura->header == poke_respuestaEscritura) {
+			//Si no le devolvieron un 0, entonces devuelvo problema.
+			if ((*((int*) lectura->data)) == operacionExitosa)
+				return size;
+		}
+	}else
+	{
+		free(newPath);
 	}
 	return -ENOENT;
 }

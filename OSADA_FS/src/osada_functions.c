@@ -195,7 +195,7 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indi
  * bloques que componen al archivo
  */
 int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
-	int* bloques = malloc(sizeof(int) * cantidadDeBloques);
+	int* bloques = malloc(sizeof(int) * (cantidadDeBloques +1));
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int i = numeroBloqueInicial;
 	int j= 0;
@@ -252,18 +252,26 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 // 	return lectura;
 // }
 
+/*
+ * Funcion utilizada desde pokedex para leer un archivo.
+ * Recibe el path "/Pokemones/001.txt", un size= 100(bytes), un offset=0(bytes) y devuelve un bloque de bytes
+ * como cuarto parametro un puntero a un uint32_t en el que le va a devolver el tamaño que tiene ese bloque de datos.
+ * ejemplo si el archivo pesaba 2bytes (para el ejemplo de arriba, le devuelve tamanioCopiarSockets=2.
+ *
+ */
 
 osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint32_t * tamanioCopiarSockets){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int index = buscarArchivoPorPath(path, false);
+	*tamanioCopiarSockets = 0;	//Por defecto no le copiaron nada
 	osada_block* resultado;
 	if(index>0){
 		uint32_t tamanio= tablaArchivos[index].file_size;
+		int cantidadDeBloques = calcularCantidadBloques( tamanio );
 
 		//valido que el offset que me pidieron sea menor al archivo.
-		if ( (tamanio>0) && (tamanio> offset) )
+		if ( (tamanio>0) && (tamanio> offset) && (cantidadDeBloques>0) )
 		{
-			int cantidadDeBloques = calcularCantidadBloques( tamanio );
 			int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
 			osada_block* archivoCompleto;
 			archivoCompleto = obtenerArchivo(bloquesArchivo,cantidadDeBloques, tamanio );
@@ -277,8 +285,8 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 
 			printf("-->Voy a copiar: size: %d, offset: %jd\n", bytesParaCopiar, (intmax_t) offset);
 			//finalmente lo copio
-			resultado = malloc(bytesParaCopiar * sizeof(unsigned char));
-			memcpy( resultado, ((unsigned char*)archivoCompleto)+offset , bytesParaCopiar * sizeof(unsigned char));
+			resultado = malloc(bytesParaCopiar * sizeof(char));
+			memcpy( resultado, ((char*)archivoCompleto)+offset , bytesParaCopiar * sizeof(unsigned char));
 			free(archivoCompleto);
 			*tamanioCopiarSockets = bytesParaCopiar;
 		}
@@ -565,15 +573,23 @@ int obtenerPrimerBloqueLibre(){
 	return primerBloqueLibre;
 }
 
-void marcarBloques(int primerBloque, int totalBloques){
+void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 	t_bitarray* bitmap = obtenerBitmap();
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	int siguiente;
+	int siguiente = primerBloque;
 	int actual = primerBloque;
-	while(totalBloques>0){
+
+	if (yaAsigneUnBloque)
+	{
 		bitarray_set_bit(bitmap,actual);
+		totalBloques--;
+		//actual = obtenerPrimerBloqueLibre();
+	}
+
+	while(totalBloques>0){
 		siguiente = obtenerPrimerBloqueLibre();
 		tablaAsignaciones[actual] = siguiente;
+		bitarray_set_bit(bitmap,siguiente);
 		actual = siguiente;
 		totalBloques--;
 	}
@@ -584,10 +600,7 @@ int crearArchivo(char* path, long bytes){
 	int resultado;
 	int espacioLibreTablaArchivos = obtenerEspacioLibreTablaArchivos();
 	if(espacioLibreTablaArchivos!=noHayEspacioLibreTablaArchivos){
-		int totalBloquesNecesarios = 0;
-		totalBloquesNecesarios = calcularCantidadBloques(bytes);
-		if (totalBloquesNecesarios < 1)
-			totalBloquesNecesarios++;
+		int totalBloquesNecesarios = calcularCantidadBloques(bytes);
 
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres>=totalBloquesNecesarios){
@@ -597,13 +610,26 @@ int crearArchivo(char* path, long bytes){
 			char* pathPadre = obtenerPathPadre(path);
 			int indicePadre = buscarArchivoPorPath(pathPadre, false);
 			tablaArchivos[espacioLibreTablaArchivos].file_size = bytes;
-			tablaArchivos[espacioLibreTablaArchivos].first_block = primerBloqueLibre;
+			if (bytes == 0)
+				tablaArchivos[espacioLibreTablaArchivos].first_block = finDeArchivo;
+			else
+			{
+				tablaArchivos[espacioLibreTablaArchivos].first_block = primerBloqueLibre;
+				marcarBloques(primerBloqueLibre,totalBloquesNecesarios, true);
+			}
+
 			//TODO: Edu, que pasa si el nombre es muy largo? (tenemos que tener un '\0' al final o no?
-			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+			int longitudDelString = 0;
+			longitudDelString = string_length(nombreArchivo);
+			if (longitudDelString >= OSADA_FILENAME_LENGTH || longitudDelString<1)
+			{
+				return revisarElLargoDelPath;
+			}
+
+			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, (longitudDelString+1) * sizeof (unsigned char));
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
-			marcarBloques(primerBloqueLibre,totalBloquesNecesarios);
 			resultado = operacionExitosa;
 		} else {
 			resultado = noHayBloquesLibres;
@@ -665,10 +691,12 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 				primerBloque = obtenerPrimerBloqueLibre();
 				tablaArchivos[indiceArchivo].first_block = primerBloque;
 				ultimoBloqueActual = primerBloque;
+				marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, true);
 			} else {
 				ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
+				marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, false);
 			}
-			marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios);
+			//marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, true);
 			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 			tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
 			resultado = operacionExitosa;
@@ -770,7 +798,7 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 	if(existeDirectorio > archivoNoEncontrado){
 		int total = tamanio + offset;
 		osada_file* tablaArchivos = obtenerTablaArchivos();
-		if (tablaArchivos[existeDirectorio].file_size > total){
+		if (tablaArchivos[existeDirectorio].file_size >= total){
 			int primerBloque = tablaArchivos[existeDirectorio].first_block;
 			int numeroDeBloque = calcularNumeroDeBloque(primerBloque, offset);
 			int bloquesNecesarios = calcularBloqueOffset(offset);
@@ -788,7 +816,7 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 					numeroDeBloque = tablaAsignaciones[numeroDeBloque];
 					offsetDeBloque = 0;
 				}
-				offsetBuffer = totalAEscribir;
+				offsetBuffer += totalAEscribir;
 			}
 			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
 			resultado = operacionExitosa;

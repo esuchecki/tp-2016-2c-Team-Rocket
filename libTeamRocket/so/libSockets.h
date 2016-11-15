@@ -59,10 +59,11 @@ enum enviosPokedexServidor{
 	poke_respuestaBorrado = 96,
 	poke_respuestaApertura = 97,
 	poke_respuestaLectura = 98,
-	poke_respuestaEscritura = 99,
-	poke_respuestaRenombrado=100,
-	poke_respuestaBorradoArchivo=101,
-	poke_respuestaTruncado=102
+	poke_errorEnLectura = 99,
+	poke_respuestaEscritura = 100,
+	poke_respuestaRenombrado=101,
+	poke_respuestaBorradoArchivo=102,
+	poke_respuestaTruncado=103
 };
 
 //MAXIS: son los mensajes "internos" para que el entrenador se mueva.
@@ -87,7 +88,8 @@ enum respuestasOSADA {
 	bloqueOcupado = 1,
 	archivoNoEncontrado = -8,
 	noEsUnArchivo = -9,
-	tamanioDeArchivoInsuficiente = -10
+	tamanioDeArchivoInsuficiente = -10,
+	revisarElLargoDelPath = -11
 };
 
 /*
