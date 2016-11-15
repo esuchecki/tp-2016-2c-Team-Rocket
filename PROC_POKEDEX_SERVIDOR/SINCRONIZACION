@@ -1,0 +1,87 @@
+FUNCIONES A TENER EN CUENTA PARA SINCRONIZAR:
+
+---> obtenerHeader();
+Sincronizacion: tomarlo como lectura? es un casteo para obtener las estructuras
+
+---> obtenerBitmap();
+Sincronizacion: tomarlo como lectura? es un casteo para obtener las estructuras
+
+---> obtenerTablaArchivos();
+Sincronizacion: tomarlo como lectura? es un casteo para obtener las estructuras
+
+---> obtenerTablaAsignaciones();
+Sincronizacion: tomarlo como lectura? es un casteo para obtener las estructuras
+
+---> obtenerBloqueDatos();
+Sincronizacion: tomarlo como lectura? es un casteo para obtener las estructuras
+
+---> buscarArchivoPorPath();
+Sincronizacion: me parece que no es necesario sincronizarlo. Aunque el problema seria si lo borran y no existe. 
+		aunque ya es algo que se valida porque no lo va a encontrar.
+
+---> obtenerArchivo();
+Sincronizacion: deberiamos tener en cuenta que cuando obtenga el archivo no este siendo escrito
+		   podriamos meter un pthread_rwlock_rlock() -> semaforo de lectura
+
+---> obtenerArchivoPorPath();
+Sincronizacion: Si sincronizamos las anteriores funciones esta no va a ser falta sincronizarla.
+
+---> leerDirectorio();
+Sincronizacion: ...
+
+---> obtenerAtributos();
+Sincronizacion: ... 
+
+---> crearDirectorio();
+Sincronizacion: ...
+
+---> borrarDirectorio();
+Sincronizacion: habra que esperar que todos los que esten usando este directorio lo terminen de usar?
+		cosa de que cuando lo borren a ninguno le haga algun conflicto.
+
+--->cambiarNombre();
+Sincronizacion: ...
+
+--->marcarBloques();
+Sincronizacion: me parece que esto deberia ser con un mutex. que entren de a uno a marcar los bits ocupados, para que no se pisen
+
+--->obtenerPrimerBloqueLibre();
+Sincronizacion: me parece que tendriamos que tener un mutex aca tambien para que no lea cosas sucias
+
+--->crearArchivo();
+Sincronizacion: 
+
+--->obtenerUltimoBloqueActual();
+Sincronizacion: mismo motivo un mutex por aca.
+
+--->liberarBloquesBitmap();
+Sincronizacion: me parece que no necesita.
+
+--->obtenerPrimerBloqueALiberar();
+Sincronizacion:
+
+--->redimencionar();
+Sincronizacion:
+
+--->truncar()
+Sincronizacion: sincronizar.. chequearPath y redimensionar
+
+--->borrarArchivo();
+Sincronizacion: sincronizar.. chequearPath, obtenerTablaArchivos, liberarBloquesBitmap
+
+--->calcularBloqueOffset();
+Sincronizacion: no necesita.
+
+---> calcularNumeroDeBloque();
+Sincronizacion: lectura tabla asignaciones. funcion obtenerTablaAsignaciones();
+
+--->calcularTotalAEscribir();
+Sincronizacion: no necesita.
+
+--->escribir();
+Sincronizacion: funciones que usa.. buscarArchivoPorPath(lectura),obtenerTablaArchivos(lectura),
+					calcularNumeroDeBloque(lectura), obtenerBloqueDeDatos(lectura),
+					obtenerTablaAsignaciones(lectura).
+		la escritura la hace con un memcpy, y actualiza numeroDeBloque y offset
+
+
