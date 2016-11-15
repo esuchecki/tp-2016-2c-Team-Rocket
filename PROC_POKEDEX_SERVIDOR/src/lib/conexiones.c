@@ -22,6 +22,7 @@
 #include "../OSADA_FS/src/osada_functions.h"
 #include "../libTeamRocket/so/libSockets.h"
 
+
 void atender(int socket);
 const char* getRespuestasOSADA(enum respuestasOSADA unNumero) ;
 
