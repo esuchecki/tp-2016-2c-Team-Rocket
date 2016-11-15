@@ -652,6 +652,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 	long bytesActuales = tablaArchivos[indiceArchivo].file_size;
 	if(bytesActuales == bytesNecesarios){
 		resultado = operacionExitosa; //Nada que hacer
+		tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
 	} else if (bytesActuales < bytesNecesarios){ // Agrandar
 		int bloquesActuales = calcularCantidadBloques(bytesActuales);
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
@@ -669,6 +670,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 			}
 			marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios);
 			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
+			tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
 			resultado = operacionExitosa;
 		} else {
 			resultado = noHayBloquesLibres;
@@ -683,6 +685,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		liberarBloquesBitmap(primerBloqueALiberar);
 		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
 		resultado = operacionExitosa;
+		tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
 	}
 	return resultado;
 }
@@ -787,6 +790,7 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 				}
 				offsetBuffer = totalAEscribir;
 			}
+			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
 			resultado = operacionExitosa;
 		} else {
 			resultado = tamanioDeArchivoInsuficiente;
@@ -796,5 +800,31 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 	}
 	return resultado;
 }
+
+int establecerUltimaModificacion(char* path, uint32_t fecha){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	if(existeDirectorio > archivoNoEncontrado){
+		tablaArchivos[existeDirectorio].lastmod = fecha;
+		resultado = operacionExitosa;
+	} else {
+		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+int obtenerUltimaModificacion(char* path){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	if(existeDirectorio > archivoNoEncontrado){
+		resultado = tablaArchivos[existeDirectorio].lastmod;
+	} else {
+		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
 
 

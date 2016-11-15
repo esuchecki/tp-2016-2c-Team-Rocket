@@ -80,4 +80,8 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset);
 
 int truncar(char* path, long bytes);
 
+int obtenerUltimaModificacion(char* path);
+
+int establecerUltimaModificacion(char* path, uint32_t fecha);
+
 #endif /* OSADA_FUNCTIONS_H_ */
