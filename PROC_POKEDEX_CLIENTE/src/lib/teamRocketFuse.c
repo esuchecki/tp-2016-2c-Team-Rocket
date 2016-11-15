@@ -8,6 +8,7 @@
 #include "teamRocketFuse.h"
 #include <so/libSockets.h>
 #include <sys/stat.h>
+#include "so/tiempos.h"
 
 static int teamRocket_getAttr(const char *path, struct stat *stbuf);
 
@@ -36,11 +37,14 @@ void enviarEscrituraArchivo(const char *buf, size_t size, off_t offset);
 
 static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 	int res = 0;
+	struct timespec tiempoDeModificacion;
 
 	//Por defecto el punto de montaje es una carpeta.
 	if (strcmp(path, "/") == 0) {
 		stbuf->st_mode = S_IFDIR | 0755;
 		stbuf->st_nlink = 2;
+		convertirSegundosToTimeSpec(&tiempoDeModificacion,(unsigned) time(NULL));
+		stbuf->st_mtim = tiempoDeModificacion;
 		return res;
 	} else {
 		//memset(stbuf, 0, sizeof(struct stat));
@@ -53,6 +57,8 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 
 		free(newPath);
 		paquete = leer_paquete(socketConexion);
+		uint32_t fechaModificacion;
+		struct timespec time1;
 
 		switch (paquete->header) {
 		case poke_respuestaPorArchivo:
@@ -60,21 +66,47 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 			//log_error(logCliente, "My socket connection is: %s", string_itoa( (long)paquete->data));
 			stbuf->st_mode = S_IFREG | 0666;
 			stbuf->st_nlink = 1;
-			stbuf->st_size = *((long*) paquete->data);
-			//stbuf->st_size = 12312;
+
+			//asigno el tamanio
+			memcpy( &(stbuf->st_size), paquete->data, sizeof(long));
+			memcpy( &fechaModificacion, (paquete->data) + sizeof(long), sizeof(uint32_t));
+
+			//stbuf->st_size = *((long*) paquete->data);
+			//fechaModificacion = *((uint32_t*) (paquete->data+sizeof(long*)));
+			//log_debug(logCliente, "%s", string_itoa(asd));
+
+			if (fechaModificacion != -archivoNoEncontrado)
+			{
+				log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
+				convertirSegundosToTimeSpec(&time1, fechaModificacion);
+				stbuf->st_mtim = time1;
+			}
+			free(paquete);
 			return res;
 			break;
 		case poke_respuestaPorDirectorio:
+			;
+			fechaModificacion = *((uint32_t *) paquete->data);
 			stbuf->st_mode = S_IFDIR | 0755;
 			stbuf->st_nlink = 2;
+
+			if (fechaModificacion != -archivoNoEncontrado)
+			{
+				log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
+				convertirSegundosToTimeSpec(&time1, fechaModificacion);
+				stbuf->st_mtim = time1;
+			}
+			free(paquete);
 			return res;
 			break;
 		case poke_errorGetAttr:
 			res = -ENOENT;
+			free(paquete);
 			return res;
 			break;
 		default:
 			;
+			free(paquete);
 			return -ENOENT;
 			break;
 		}
@@ -189,13 +221,15 @@ static int teamRocket_readDir(const char *path, void *buf,
 //			filler(buf,palabra,NULL,0);
 //			break;
 //		}
+		free(paquete);
 		return 0;
 
 	} else if (paquete->header == poke_errorReadDir) {
 		//TODO: servidor no encontro nada segun el path enviado, que hago?
+		free(paquete);
 		return -ENOENT;
 	}
-
+	free(paquete);
 	return -ENOENT;
 }
 
@@ -240,8 +274,11 @@ static int teamRocket_read(const char *path, char *buf, size_t size,
 	if (lectura->header == poke_respuestaLectura) {
 		//memcpy(buf,lectura->data,size);
 		memcpy(buf, lectura->data, lectura->tamanio);
-		return lectura->tamanio;
+		int tamanioFinal = lectura->tamanio;
+		free(lectura);
+		return tamanioFinal;
 	}
+	free(lectura);
 	//En caso de else o recibir "poke_errorEnLectura" devuelve 0.
 	return 0;
 
@@ -261,12 +298,17 @@ static int teamRocket_write(const char *path, const char *buf, size_t size,	off_
 		enviarEscrituraArchivo(buf, size, offset);
 		t_data * lectura = leer_paquete(socketConexion);
 		free(newPath);
+		free(paquete);
 
 		if (lectura->header == poke_respuestaEscritura) {
 			//Si no le devolvieron un 0, entonces devuelvo problema.
 			if ((*((int*) lectura->data)) == operacionExitosa)
+			{
+				free(lectura);
 				return size;
+			}
 		}
+		free(lectura);
 	}else
 	{
 		free(newPath);
@@ -286,12 +328,18 @@ static int teamRocket_mkdir(const char *path, mode_t mode) {
 	t_data * lectura = leer_paquete(socketConexion);
 	log_debug(logCliente, "quiere crear la ruta %s", path);
 
+	free(paquete);
 	free(newPath);
+
 	if (lectura->header == poke_respuestaCreacion) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		if ((*((int*) lectura->data)) == 0)
+		{
+			free(lectura);
 			return 0;
+		}
 	}
+	free(lectura);
 	return -ENOENT;
 }
 ;
@@ -306,13 +354,19 @@ static int teamRocket_rmdir(const char *path) {
 	common_send(socketConexion, paquete);
 	log_debug(logCliente, "quiere borrar la ruta %s", path);
 
+	free(paquete);
 	free(newPath);
+
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaBorrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		if ((*((int*) lectura->data)) == 0)
+		{
+			free(lectura);
 			return 0;
+		}
 	}
+	free(lectura);
 	return -ENOENT;
 
 }
@@ -357,12 +411,18 @@ static int teamRocket_unlink(const char * path) {
 	log_debug(logCliente, "quiere borrar el file %s", path);
 
 	free(newPath);
+	free(paquete);
+
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaBorradoArchivo) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		if ((*((int*) lectura->data)) == operacionExitosa)
+		{
+			free(lectura);
 			return 0;
+		}
 	}
+	free(lectura);
 	return -ENOENT;
 
 }
@@ -397,12 +457,19 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 
 	free(newPath);
 	free(newName);
+	free(paquete);
+	free(paquete2);
+
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaRenombrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		if ((*((int*) lectura->data)) == 0)
+		{
+			free(lectura);
 			return 0;
+		}
 	}
+	free(lectura);
 	return -ENOENT;
 }
 ;
@@ -422,12 +489,19 @@ static int teamRocket_truncar(const char *path, off_t size) {
 	log_debug(logCliente, "quiere truncar %s con el largo %l \n", path, size);
 
 	free(newPath);
+	free(paquete);
+	free(paquete2);
+
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaTruncado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		if ((*((int*) lectura->data)) == operacionExitosa)
+		{
+			free(lectura);
 			return 0;
+		}
 	}
+	free(lectura);
 	return -ENOENT;
 }
 ;
@@ -438,6 +512,42 @@ static int teamRocket_makeNod(const char *path, mode_t mode, dev_t rdev)
 		return teamRocket_truncar(path, 0);
 
 	return -errno;
+}
+;
+
+static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
+{
+	//Update the last access time of the given object from ts[0]
+	//Update the last modification time from ts[1]
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	log_debug(logCliente, "va a leer el paquete 1 \n");
+	t_data * paquete = pedirPaquete(poke_utimensat, strlen(newPath) + 1, newPath);
+	common_send(socketConexion, paquete);
+
+
+	uint32_t fechaModificacion = (unsigned) ts[1].tv_sec;
+
+	t_data * paquete2 = pedirPaquete(poke_utimensat, sizeof(uint32_t), &fechaModificacion);
+	common_send(socketConexion, paquete2);
+
+	free(newPath);
+	free(paquete);
+	free(paquete2);
+
+	t_data * lectura = leer_paquete(socketConexion);
+	if (lectura->header == poke_respuestaUtimensat) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == operacionExitosa)
+		{
+			free(lectura);
+			return 0;
+		}
+	}
+	free(lectura);
+	return -ENOENT;
+
 }
 ;
 
@@ -452,6 +562,7 @@ static struct fuse_operations teamRocket_oper = {
 		.rename 	= teamRocket_rename,
 		.unlink 	= teamRocket_unlink,
 		.mknod		= teamRocket_makeNod,
+		.utimens 	= teamRocket_utimensat,
 		.flag_nullpath_ok = 0,
 };
 
@@ -527,6 +638,8 @@ void enviarLecturaArchivo(char *path, size_t size, off_t offset) {
 	paquete = pedirPaquete(poke_leerArchivo, tamanio, buffer);
 	common_send(socketConexion, paquete);
 
+	free(buffer);
+	free(paquete);
 }
 
 void enviarEscrituraArchivo(const char *buf, size_t size, off_t offset) {

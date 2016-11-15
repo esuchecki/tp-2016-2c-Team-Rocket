@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "so/tiempos.h"
 //TODO: cambiar estos include de lugar!.
 #include "../OSADA_FS/src/OSADA_Constants.h"
 #include "../OSADA_FS/src/osada-utils/osada.h"
@@ -35,6 +36,7 @@ void atenderConexion(int socket_conexion) {
 	char * path = paquete->data;
 	size_t size = 0;
 	off_t offset = 0;
+	uint32_t ultimaFecha;
 	int null_data;
 	//TODO: ver el tema de la sincronizacion.
 	//pense que podriamos crear una lista con los archivos que se abrieron y el modo
@@ -98,19 +100,36 @@ void atenderConexion(int socket_conexion) {
 		case REGULAR:
 			;
 			//size= (size_t) atributos[1];
-			paquete = pedirPaquete(poke_respuestaPorArchivo, sizeof(long), &atributos[1]);
+			//Envio paquete por sockets
+			ultimaFecha = obtenerUltimaModificacion(path);
+			char * buffer = malloc( (sizeof(long) + sizeof(uint32_t)) *sizeof(char));
+			memcpy(buffer, &atributos[1], sizeof(long));
+			memcpy(buffer+ sizeof(long), &ultimaFecha, sizeof(uint32_t));
+			paquete = pedirPaquete(poke_respuestaPorArchivo, sizeof(long) + sizeof(uint32_t), buffer);
 			common_send(socket_conexion, paquete);
+
+			printf("%d", ultimaFecha);
+			free(buffer);
+
+			//Lo muestro en pantalla.
+			struct tm tiempo;
+			localtime_r((time_t *)&ultimaFecha, &tiempo);
 			printf("\t\tRta: %s\n", "REGULAR");
 			printf("\t\tTamanio: %ld [bytes]\n", atributos[1]);
+			printf("\t\tFecha Mod: %s", asctime(&tiempo));
 			//size = 0;
 			break;
 		case DIRECTORY:
 			;
-			null_data = 0;
-			paquete = pedirPaquete(poke_respuestaPorDirectorio, sizeof(int),
-					&null_data);
+			ultimaFecha = obtenerUltimaModificacion(path);
+			paquete = pedirPaquete(poke_respuestaPorDirectorio, sizeof(uint32_t), &ultimaFecha);
 			common_send(socket_conexion, paquete);
+
+			//Lo muestro en pantalla.
+			struct tm tiempo2;
+			localtime_r((time_t *)&ultimaFecha, &tiempo2);
 			printf("\t\tRta: %s\n", "DIRECTORY");
+			printf("\t\tFecha Mod: %s", asctime(&tiempo2));
 			break;
 		case DELETED:
 			;
@@ -271,6 +290,27 @@ void atenderConexion(int socket_conexion) {
 		printf("\t\tRta: %s\n", getRespuestasOSADA(trunco));
 
 		free(paquete3);
+		break;
+	case poke_utimensat:
+		;
+		t_data *paqueteUtimensat = leer_paquete(socket_conexion);
+		//printf("leyo paquete3 \n");
+		uint32_t ultimaFecha;
+		memcpy(&ultimaFecha, paqueteUtimensat->data , sizeof(uint32_t));
+
+		//Convierto los segundos a un formato que lo pueda imprimir como string.
+		struct tm tiempo;
+		localtime_r((time_t *)&ultimaFecha, &tiempo);
+
+		printf("***]->   utimensat: %s, a: %s\n", path, asctime(&tiempo));
+
+		int utimensat = establecerUltimaModificacion(path, ultimaFecha);
+
+		paquete = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
+		common_send(socket_conexion, paquete);
+		printf("\t\tRta: %s\n", getRespuestasOSADA(utimensat));
+
+		free(paqueteUtimensat);
 		break;
 	default:
 		;
@@ -486,7 +526,15 @@ const char* getRespuestasOSADA(enum respuestasOSADA unNumero)
       case noEsUnArchivo: return "noEsUnArchivo";
       case tamanioDeArchivoInsuficiente: return "tamanioDeArchivoInsuficiente";
       case revisarElLargoDelPath: return "revisarElLargoDelPath";
-      case poke_errorGetAttr: return "poke_errorGetAttr";
-      default: return "noEncontreElNumeroEnElEnum";
+      default:
+    	  ;
+    	  switch ((enum enviosPokedexServidor) unNumero)
+    	  {
+    	  	  case poke_errorGetAttr: return "poke_errorGetAttr";
+    	  	  //case aaaa: return "";
+    	  	  default:
+    	  		  ;
+    	  }
+      	  return "noEncontreElNumeroEnElEnum";
    }
 }

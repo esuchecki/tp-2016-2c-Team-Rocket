@@ -9,6 +9,7 @@
 #define SO_TIEMPOS_H_
 
 #include <stdbool.h>
+#include <stdint.h>	//para el uint32_t
 
 
 
@@ -24,5 +25,12 @@ void sleepInMiliSegundos(unsigned long ms);
  * @DESC: fc utilizada para el nanosleep y el semaforo con espera.
  */
 void convertirMilisegundosToTimeSpec(void *timespec, unsigned long ms, bool tiempoAbsoluto);
+
+/*
+ * @NAME: convertirSegundosToTimeSpec
+ * @DESC: fc utilizada por el OSADA_FS
+ */
+void convertirSegundosToTimeSpec(void *ts, uint32_t ms);
+
 
 #endif /* SO_TIEMPOS_H_ */

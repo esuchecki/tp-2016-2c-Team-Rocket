@@ -843,14 +843,16 @@ int establecerUltimaModificacion(char* path, uint32_t fecha){
 	return resultado;
 }
 
-int obtenerUltimaModificacion(char* path){
-	int resultado;
+//Nota: devuelvo -archivoNoEncontrado porque uint32_t es sin signo.
+//Avisar si se cambia esto, cambiarlo en poke server.
+uint32_t obtenerUltimaModificacion(char* path){
+	uint32_t resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	if(existeDirectorio > archivoNoEncontrado){
 		resultado = tablaArchivos[existeDirectorio].lastmod;
 	} else {
-		resultado = archivoNoEncontrado;
+		resultado = -archivoNoEncontrado;
 	}
 	return resultado;
 }
