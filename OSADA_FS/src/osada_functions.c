@@ -485,7 +485,8 @@ int cambiarNombre(char* path, char* pathNuevo){
 	if(existeDirectorio>archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, (longitudCopiar+1)* sizeof (unsigned char));
-		resultado = 0;
+		tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
+		resultado = operacionExitosa;
 	} else {
 		resultado = archivoNoEncontrado;
 	}
