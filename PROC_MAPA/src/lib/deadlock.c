@@ -48,10 +48,13 @@ void cargarEstructurasDeadlock(int recursosTotales[], int recursosDisponibles[],
 
 			int cantidadPokemonesEntrenador = calcularRecursosAsignados(
 					entrenadorBloqueado, pokenest);
-
+			log_debug(myArchivoDeLog,"CANTIDAD POKEMONES ENTRENADOR:%d",cantidadPokemonesEntrenador);
 			recursosAsignados = recursosAsignados + cantidadPokemonesEntrenador;
+			log_debug(myArchivoDeLog,"RECURSOS ASIGNADOS- %d",recursosAsignados);
 		}
+		log_debug(myArchivoDeLog,"RECURSOS TOTALES: %d - RECURSOS ASIGNADOS %d",recursosTotales[k] ,recursosAsignados);
 		recursosDisponibles[k] = recursosTotales[k] - recursosAsignados;
+		log_debug(myArchivoDeLog,"RECURSOS DISPONIBLES %d",recursosDisponibles[k]);
 	}
 
 	for (i = 0; i < cantidadPokenest; i++) {
@@ -81,7 +84,34 @@ void cargarEstructurasDeadlock(int recursosTotales[], int recursosDisponibles[],
 
 		}
 	}
-
+	log_info(myArchivoDeLog,"--ESTRUCTURAS HILO DEADLOCK--");
+	log_info(myArchivoDeLog,"MATRIZ RECURSOS TOTALES");
+	for(i=0;i<list_size(mapa->pokeNest); i++){
+		t_pokeNest * pokeNest = list_get(mapa->pokeNest, i);
+		recursosTotales[i] = list_size(pokeNest->pokemones);
+		log_info(myArchivoDeLog,"%c -> %d",pokeNest->identificador,recursosTotales[i]);
+	}
+	log_info(myArchivoDeLog,"MATRIZ RECURSOS DISPONIBLES");
+	for(i=0;i<cantidadPokenest;i++){
+		t_pokeNest * pokeNest = list_get(mapa->pokeNest, i);
+		log_info(myArchivoDeLog,"%c -> %d",pokeNest->identificador,recursosDisponibles[i]);
+	}
+	log_info(myArchivoDeLog,"MATRIZ DE RECURSOS ASIGNADOS");
+	for (i = 0; i < cantidadPokenest; i++) {
+			for (j = 0; j < numeroDeProcesos; j++) {
+			t_pokeNest * pokenest = list_get(mapa->pokeNest, i);
+			t_entrenador * entrenadorBloqueado = list_get(colaBloqueados, j);
+			log_info(myArchivoDeLog,"%c -> %c -> %d",entrenadorBloqueado->simbolo,pokenest->identificador,asignados[j][i]);
+		}
+	}
+	log_info(myArchivoDeLog,"MATRIZ DE RECURSOS REQUERIDOS");
+	for (i = 0; i < cantidadPokenest; i++) {
+		for (j = 0; j < numeroDeProcesos; j++) {
+			t_pokeNest * pokenest = list_get(mapa->pokeNest, i);
+			t_entrenador * entrenadorBloqueado = list_get(colaBloqueados, j);
+			log_info(myArchivoDeLog,"%c -> %c -> %d",entrenadorBloqueado->simbolo,pokenest->identificador,requeridos[j][i]);
+		}
+	}
 }
 
 t_list * detectarDeadlock(t_mapa * datosMapa) {
