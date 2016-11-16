@@ -31,9 +31,10 @@ void atenderConexion(int socket_conexion) {
 	//Me llega un mensaje del pokedex cliente
 
 	printf("entro a atender conexion\t");
-	t_data *paquete = leer_paquete(socket_conexion);
+	t_data *paqueteEntrada = leer_paquete(socket_conexion);
+	t_data *paqueteSalida;
 	printf("|\tLeyo paquete\n");
-	char * path = paquete->data;
+	char * path = paqueteEntrada->data;
 	size_t size = 0;
 	off_t offset = 0;
 	uint32_t ultimaFecha;
@@ -43,7 +44,7 @@ void atenderConexion(int socket_conexion) {
 	//en el que lo abrieron si para escritura o lectura cosa de que cada vez
 	//que alguien haga alguna solicitud se fije ahi si puede realizarla o no.
 
-	switch (paquete->header) {
+	switch (paqueteEntrada->header) {
 	case poke_solicitudReadDir:
 		;
 		printf("***]->   readDir de: %s\n", path);
@@ -66,12 +67,12 @@ void atenderConexion(int socket_conexion) {
 
 		if (temp > 0)	//Tenia al menos un archivo el directorio.
 		{
-			paquete = pedirPaquete(poke_respuestaReadDir, aux * (temp), buffer);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_respuestaReadDir, aux * (temp), buffer);
+			common_send(socket_conexion, paqueteSalida);
 			printf("\t\tRta, cant de archivos: %d\n", temp);
 		} else {	//No tiene archivos.
-			paquete = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
 			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorReadDir));
 		}
 
@@ -86,7 +87,9 @@ void atenderConexion(int socket_conexion) {
 		//sendeamos
 		//size_t size;
 
+		//libero memoria
 		free(buffer);
+		free(directorios);
 
 		break;
 	case poke_solicitudGetAttr:
@@ -105,10 +108,10 @@ void atenderConexion(int socket_conexion) {
 			char * buffer = malloc( (sizeof(long) + sizeof(uint32_t)) *sizeof(char));
 			memcpy(buffer, &atributos[1], sizeof(long));
 			memcpy(buffer+ sizeof(long), &ultimaFecha, sizeof(uint32_t));
-			paquete = pedirPaquete(poke_respuestaPorArchivo, sizeof(long) + sizeof(uint32_t), buffer);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_respuestaPorArchivo, sizeof(long) + sizeof(uint32_t), buffer);
+			common_send(socket_conexion, paqueteSalida);
 
-			printf("%d", ultimaFecha);
+			//printf("%d", ultimaFecha);
 			free(buffer);
 
 			//Lo muestro en pantalla.
@@ -122,8 +125,9 @@ void atenderConexion(int socket_conexion) {
 		case DIRECTORY:
 			;
 			ultimaFecha = obtenerUltimaModificacion(path);
-			paquete = pedirPaquete(poke_respuestaPorDirectorio, sizeof(uint32_t), &ultimaFecha);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_respuestaPorDirectorio, sizeof(uint32_t), &ultimaFecha);
+			common_send(socket_conexion, paqueteSalida);
+
 
 			//Lo muestro en pantalla.
 			struct tm tiempo2;
@@ -134,19 +138,20 @@ void atenderConexion(int socket_conexion) {
 		case DELETED:
 			;
 			null_data = 0;
-			paquete = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
 			printf("\t\tRta: %s\n", "DELETED");
 			break;
 		default:
 			;
 			null_data = 0;
-			paquete = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
 			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorGetAttr));
 			break;
 		}
 
+		free(atributos);
 		break;
 	case poke_crearDirectorio:
 		printf("***]->   crearDir: %s\n", path);
@@ -154,9 +159,9 @@ void atenderConexion(int socket_conexion) {
 		directorio = crearDirectorio(path);
 		//printf("Rta= %d\n", directorio);
 
-		paquete = pedirPaquete(poke_respuestaCreacion, sizeof(int),
+		paqueteSalida = pedirPaquete(poke_respuestaCreacion, sizeof(int),
 				&directorio);
-		common_send(socket_conexion, paquete);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(directorio));
 		break;
 
@@ -164,9 +169,9 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   borrarDir: %s\n", path);
 
 		int directorioABorrar = borrarDirectorio(path);
-		paquete = pedirPaquete(poke_respuestaBorrado, sizeof(int),
+		paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int),
 				&directorioABorrar);
-		common_send(socket_conexion, paquete);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(directorioABorrar));
 
 		break;
@@ -174,9 +179,9 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   borrarArchivo: %s\n", path);
 
 		int archivoABorrar = borrarArchivo(path);
-		paquete = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
+		paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
 				&archivoABorrar);
-		common_send(socket_conexion, paquete);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(archivoABorrar));
 
 		break;
@@ -198,19 +203,20 @@ void atenderConexion(int socket_conexion) {
 		osada_block* archivo = obtenerArchivoPorPath(path, size, offset, &tamanioCopiarSockets);
 		if ( (tamanioCopiarSockets >0) )
 		{
-			paquete = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
+			common_send(socket_conexion, paqueteSalida);
 			printf("\t\tRta: %d  [bytes]\n", tamanioCopiarSockets);
+			free(archivo);
 		}
 		else
 		{
 			null_data = 0;
-			paquete = pedirPaquete(poke_errorEnLectura, sizeof(int), &null_data);
-			common_send(socket_conexion, paquete);
+			paqueteSalida = pedirPaquete(poke_errorEnLectura, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
 			printf("\t\tRta: %d [bytes]\n", 0);
 		}
+		free(posiciones->data);
 		free(posiciones);
-
 
 		break;
 	case poke_escribirArchivo:
@@ -231,11 +237,14 @@ void atenderConexion(int socket_conexion) {
 
 		int resultado = escribir(path, buf, size, offset);
 
-		paquete = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
-		common_send(socket_conexion, paquete);
+		paqueteSalida = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(resultado));
+
 		free(buf);
+		free(paqueteBuffer->data);
 		free(paqueteBuffer);
+		free(posiciones2->data);
 		free(posiciones2);
 
 		break;
@@ -268,27 +277,28 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   renombrarArchivo: \n Path1: %s\n Path2:%s \n", path, nombre);
 		int renombro = cambiarNombre(path, nombre);
 		//int renombro = cambiarNombre( lectura2->data, path);
-		paquete = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
+		paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
 				&renombro);
-		common_send(socket_conexion, paquete);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(renombro));
 
+		free(nombre);
 		free(paquete2);
 		break;
 
 	case poke_truncar:
 		;
 		t_data *paquete3 = leer_paquete(socket_conexion);
-		//printf("leyo paquete3 \n");
-		memcpy(&offset, paquete3->data , sizeof(off_t));
+		offset = *((off_t *) paquete3->data);
 
 		printf("***]->   truncate: %s, al largo %jd\n", path, (intmax_t)offset);
 		int trunco = truncar(path, (long)offset);
 
-		paquete = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
-		common_send(socket_conexion, paquete);
+		paqueteSalida = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(trunco));
 
+		free(paquete3->data);
 		free(paquete3);
 		break;
 	case poke_utimensat:
@@ -306,10 +316,11 @@ void atenderConexion(int socket_conexion) {
 
 		int utimensat = establecerUltimaModificacion(path, ultimaFecha);
 
-		paquete = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
-		common_send(socket_conexion, paquete);
+		paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
+		common_send(socket_conexion, paqueteSalida);
 		printf("\t\tRta: %s\n", getRespuestasOSADA(utimensat));
 
+		free(paqueteUtimensat->data);
 		free(paqueteUtimensat);
 		break;
 	default:
@@ -318,7 +329,9 @@ void atenderConexion(int socket_conexion) {
 		break;
 	}
 	printf("\n************** -- **************\n");
-	free(paquete);
+	free(path);
+	free(paqueteEntrada);
+	free(paqueteSalida);	//No le hago free a la data, porque no le pide malloc a eso.
 }
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos) {
@@ -531,6 +544,7 @@ const char* getRespuestasOSADA(enum respuestasOSADA unNumero)
     	  switch ((enum enviosPokedexServidor) unNumero)
     	  {
     	  	  case poke_errorGetAttr: return "poke_errorGetAttr";
+    	  	  case poke_errorReadDir: return "poke_errorReadDir";
     	  	  //case aaaa: return "";
     	  	  default:
     	  		  ;

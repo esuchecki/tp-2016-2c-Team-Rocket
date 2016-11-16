@@ -288,6 +288,7 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 			resultado = malloc(bytesParaCopiar * sizeof(char));
 			memcpy( resultado, ((char*)archivoCompleto)+offset , bytesParaCopiar * sizeof(unsigned char));
 			free(archivoCompleto);
+			free(bloquesArchivo);
 			*tamanioCopiarSockets = bytesParaCopiar;
 		}
 	}
@@ -654,12 +655,16 @@ void liberarBloquesBitmap(int primerBloque){
 	t_bitarray* bitmap = obtenerBitmap();
 	int* tablaAsignaciones = obtenerTablaAsignaciones();
 	int indice = primerBloque;
-	while(tablaAsignaciones[indice] != finDeArchivo){
-		bitarray_clean_bit(bitmap,indice);
-		indice = tablaAsignaciones[indice];
+
+	if (primerBloque != finDeArchivo)
+	{
+		while(tablaAsignaciones[indice] != finDeArchivo){
+			indice = tablaAsignaciones[indice];
+			bitarray_clean_bit(bitmap,indice);
+		}
+		tablaAsignaciones[primerBloque] = finDeArchivo;
+		bitarray_clean_bit(bitmap,primerBloque);
 	}
-	tablaAsignaciones[primerBloque] = finDeArchivo;
-	bitarray_clean_bit(bitmap,indice);
 }
 
 int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){

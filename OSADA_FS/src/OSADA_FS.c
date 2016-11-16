@@ -137,6 +137,8 @@ int main(void) {
 //	obtenerBloquesArchivo((int)archivos[indice].first_block, cantidadDeBloques);
 //	printf("%d\n", bloquesArchivo);
 
+	borrarArchivo("/1/1/2/asd");
+
 //int	resultado = truncar("/prueba4.txt", 0);
 
 	int indice = buscarArchivoPorPath("/special.mp4", false);

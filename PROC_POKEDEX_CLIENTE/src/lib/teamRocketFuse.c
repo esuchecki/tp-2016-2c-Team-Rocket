@@ -551,6 +551,20 @@ static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
 }
 ;
 
+
+static int teamRocket_opendir(const char* path, struct fuse_file_info* fi)
+{
+	return 0;	//dummy esta todo bien.
+}
+;
+
+static int teamRocket_releasedir(const char* path, struct fuse_file_info* fi)
+{
+	return 0;	//dummy esta todo bien.
+}
+;
+
+
 static struct fuse_operations teamRocket_oper = {
 		.getattr 	= teamRocket_getAttr,
 		.readdir 	= teamRocket_readDir,
@@ -563,6 +577,8 @@ static struct fuse_operations teamRocket_oper = {
 		.unlink 	= teamRocket_unlink,
 		.mknod		= teamRocket_makeNod,
 		.utimens 	= teamRocket_utimensat,
+		.opendir 	= teamRocket_opendir,
+		.releasedir	= teamRocket_releasedir,
 		.flag_nullpath_ok = 0,
 };
 

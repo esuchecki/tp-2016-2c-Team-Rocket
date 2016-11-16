@@ -6,7 +6,7 @@
  */
 
 #include "../so/libConfig.h"
-
+#include <sys/stat.h>
 
 
 
@@ -98,6 +98,23 @@ int encontrarEnUnDirectorio (  const char * nombreDirectorio, void (*fc) (const 
 		}
 
 	   	d_name = entry->d_name;
+	   	//agrego esta validacion para el FS_OSADA!
+	   	if (entry->d_type == DT_UNKNOWN)
+	   	{
+	   		struct stat buf;
+	   		char filename[PATH_MAX];
+	   		snprintf(filename, sizeof(filename), "%s/%s", nombreDirectorio, entry->d_name);
+
+	   		if (	stat(filename, &buf) != 0)
+	   		{
+	   			//TODO: loguear error no se pudo abrir el directorio.
+	   			return 0;
+	   		}
+	   		//Chequeo si es un directorio.
+	   		entry->d_type = ( S_ISDIR(buf.st_mode) ? DT_DIR : 0);
+	   	}
+
+
 	   	/*
 	   	//reviso que este directorio que contiene las pokenest, tenga un archivo de "metadata"
 	   	if ( (strcmp (d_name, nombreArchivoMetadata )) == 0 )
