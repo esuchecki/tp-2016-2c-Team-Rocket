@@ -1,0 +1,475 @@
+pthread_mutex_t mutex_sincro;
+pthread_rwlock_t escrituraLectura;
+int totalBloques() {
+	return header->fs_blocks;
+}
+
+osada_header* obtenerHeader(){
+-------	pthread_mutex_lock(&mutex_sincro);
+		header = (osada_header*)bloques_archivo;
+-------	pthread_mutex_unlock(&mutex_sincro);
+	return header;
+}
+
+void abrirArchivo(){
+	int fd_osada;
+	fd_osada= open(__pathArchivo,O_RDWR);
+	fstat(fd_osada,&osadaStat);
+	bloques_archivo= mmap(0, osadaStat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_osada, 0);
+}
+
+t_bitarray* obtenerBitmap(){
+	osada_header* header = obtenerHeader();
+-------	pthread_mutex_lock(&mutex_sincro);
+		t_bitarray* bitmap = bitarray_create( (char *) bloques_archivo[1],header->bitmap_blocks);
+-------	pthread_mutex_unlock(&mutex_sincro);
+	return bitmap;
+}
+
+osada_file* obtenerTablaArchivos(){
+	inicializarHeader();
+-------	pthread_mutex_lock(&mutex_sincro);
+		osada_file* tablaArchivos = (osada_file*)bloques_archivo[1 + header->bitmap_blocks];
+-------	pthread_mutex_lock(&mutex_sincro);
+	return tablaArchivos;
+}
+
+int* obtenerTablaAsignaciones(){
+	inicializarHeader();
+-------	pthread_mutex_lock(&mutex_sincro);
+		int* tablaAsignaciones = (int*) &bloques_archivo[header->allocations_table_offset];
+-------	pthread_mutex_lock(&mutex_sincro);
+	return tablaAsignaciones;
+}
+
+osada_block* obtenerBloqueDatos(){
+	inicializarHeader();
+	int bloquesTablaAsignaciones = ((header->fs_blocks - header->allocations_table_offset) * 4 / OSADA_BLOCK_SIZE)+1;
+-------	pthread_mutex_lock(&mutex_sincro);
+		osada_block * bloqueDatos = &bloques_archivo[header->allocations_table_offset + bloquesTablaAsignaciones];
+-------	pthread_mutex_lock(&mutex_sincro);
+	return bloqueDatos;
+}
+
+/*
+ * Retorna un puntero a un array con los
+ * bloques que componen al archivo
+ */
+int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
+	int* bloques = malloc(sizeof(int) * (cantidadDeBloques +1));
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int i = numeroBloqueInicial;
+	int j= 0;
+	bloques[j] = i;
+	while(tablaAsignaciones[i]!= finDeArchivo){
+		j++;
+-------	pthread_rwlock_rdlock(&escrituraLectura);
+		bloques[j] = tablaAsignaciones[i];
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		i = tablaAsignaciones[i];
+	}
+	return bloques;
+}
+
+/*
+ * Retorna 0 si el directorio se creo
+ * o -1 de lo contrario
+ */
+int crearDirectorio(char* path){
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	int resultado = archivoNoEncontrado;
+	int espacioLibre = obtenerEspacioLibreTablaArchivos();
+	if(existeDirectorio!=archivoNoEncontrado && espacioLibre!=noHayEspacioLibreTablaArchivos){
+		resultado = archivoNoEncontrado;
+	} else {
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		tablaArchivos[espacioLibre].file_size = 0;
+		tablaArchivos[espacioLibre].first_block = -1;
+		memcpy(tablaArchivos[espacioLibre].fname, obtenerUltimoElemento(path), OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+		tablaArchivos[espacioLibre].lastmod = (unsigned)time(NULL);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		int padre;
+		char* pathPadre = obtenerPathPadre(path);
+		int existePadre = buscarArchivoPorPath(path, true);
+		if(existePadre>-1){
+			padre = existePadre;
+		} else {
+			padre = ROOT_INDEX;
+		}
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		tablaArchivos[espacioLibre].parent_directory = padre;
+		tablaArchivos[espacioLibre].state = DIRECTORY;
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		resultado = 0;
+	}
+	return resultado;
+}
+
+int borrarDirectorio(char* path){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	if(existeDirectorio>archivoNoEncontrado){
+		if(tablaArchivos[existeDirectorio].state == 2){
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			tablaArchivos[existeDirectorio].file_size = 0;
+			tablaArchivos[existeDirectorio].first_block = -1;
+			memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
+			tablaArchivos[existeDirectorio].parent_directory = -1;
+			tablaArchivos[existeDirectorio].state = DELETED;
+-------	pthread_rwlock_unlock(&escrituraLectura);
+			resultado = 0;
+		} else {
+			resultado = elPathNoCorrespondeAUnDirectorio;
+		}
+	} else {
+		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+
+
+int cambiarNombre(char* path, char* pathNuevo){
+	int resultado;
+	//pathNuevo es un path, Ej: /tmp/prueba
+	//entonces limitamos el cambiar nombre a que solo lo llame como el ulitmo elemento ("prueba")
+	//sin importar donde lo renombraron, sino validamos el path padre.
+	unsigned char * nombreNuevo = obtenerUltimoElemento(pathNuevo);
+	int longitudCopiar = string_length((char*)nombreNuevo);
+	if (string_length((char*)nombreNuevo) < 1)
+		return archivoNoEncontrado;	//Enrealidad el nuevo nombre es muy corto
+
+	//limito el nuevo largo del string al tamaño de osada
+	if (longitudCopiar > (OSADA_FILENAME_LENGTH -1))
+	{
+		//En caso de decidir truncar el nombre usar este codigo:
+		//longitudCopiar = 16;
+		//nombreNuevo[16] = '\0';
+
+		return archivoNoEncontrado;	//Enrealidad el nuevo nombre es muy largo
+	}
+
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio>archivoNoEncontrado){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, (longitudCopiar+1)* sizeof (unsigned char));
+		tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		resultado = operacionExitosa;
+	} else {
+		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+int obtenerCantidadBloquesLibres(){
+	t_bitarray* bitmap = obtenerBitmap();
+	osada_header* header = obtenerHeader();
+	int totalBlocks = header->data_blocks;
+	int i = 0;
+	int bloquesLibres = 0;
+	while(i<totalBlocks){
+------?	pthread_rwlock_rdlock(&escrituraLectura);
+		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
+			bloquesLibres++;
+		}
+------?	pthread_rwlock_unlock(&escrituraLectura);
+		i++;
+	}
+	return bloquesLibres;
+}
+
+int obtenerPrimerBloqueLibre(){
+	t_bitarray* bitmap = obtenerBitmap();
+	int i = 0;
+	int primerBloqueLibre = -1;
+	while(primerBloqueLibre < 0){
+------?	pthread_rwlock_rdlock(&escrituraLectura);
+		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
+			primerBloqueLibre = i;
+		}
+------?	pthread_rwlock_unlock(&escrituraLectura);
+		i++;
+	}
+	return primerBloqueLibre;
+}
+
+void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
+	t_bitarray* bitmap = obtenerBitmap();
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int siguiente = primerBloque;
+	int actual = primerBloque;
+
+	if (yaAsigneUnBloque)
+	{
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		bitarray_set_bit(bitmap,actual);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		totalBloques--;
+		//actual = obtenerPrimerBloqueLibre();
+	}
+
+	while(totalBloques>0){
+		siguiente = obtenerPrimerBloqueLibre();
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		tablaAsignaciones[actual] = siguiente;
+		bitarray_set_bit(bitmap,siguiente);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		actual = siguiente;
+		totalBloques--;
+	}
+	tablaAsignaciones[siguiente] = finDeArchivo;
+}
+
+int crearArchivo(char* path, long bytes){
+	int resultado;
+	int espacioLibreTablaArchivos = obtenerEspacioLibreTablaArchivos();
+	if(espacioLibreTablaArchivos!=noHayEspacioLibreTablaArchivos){
+		int totalBloquesNecesarios = calcularCantidadBloques(bytes);
+
+		int bloquesLibres = obtenerCantidadBloquesLibres();
+		if(bloquesLibres>=totalBloquesNecesarios){
+			osada_file* tablaArchivos = obtenerTablaArchivos();
+			osada_block_pointer primerBloqueLibre = obtenerPrimerBloqueLibre();
+			char* nombreArchivo = obtenerNombreDelArchivo(path);
+			char* pathPadre = obtenerPathPadre(path);
+			int indicePadre = buscarArchivoPorPath(pathPadre, false);
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			tablaArchivos[espacioLibreTablaArchivos].file_size = bytes;
+			if (bytes == 0)
+				tablaArchivos[espacioLibreTablaArchivos].first_block = finDeArchivo;
+			else
+			{
+				tablaArchivos[espacioLibreTablaArchivos].first_block = primerBloqueLibre;
+				marcarBloques(primerBloqueLibre,totalBloquesNecesarios, true);
+			}
+-------	pthread_rwlock_unlock(&escrituraLectura);
+			//TODO: Edu, que pasa si el nombre es muy largo? (tenemos que tener un '\0' al final o no?
+			int longitudDelString = 0;
+			longitudDelString = string_length(nombreArchivo);
+			if (longitudDelString >= OSADA_FILENAME_LENGTH || longitudDelString<1)
+			{
+				return revisarElLargoDelPath;
+			}
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, (longitudDelString+1) * sizeof (unsigned char));
+			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
+			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
+			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
+-------	pthread_rwlock_unlock(&escrituraLectura);
+			resultado = operacionExitosa;
+		} else {
+			resultado = noHayBloquesLibres;
+		}
+	} else {
+		resultado = noHayEspacioLibreTablaArchivos;
+	}
+	return resultado;
+}
+
+int obtenerUltimoBloqueActual(int primerBloque){
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int ultimoActual = primerBloque;
+	while(tablaAsignaciones[ultimoActual] != finDeArchivo){
+------?	pthread_rwlock_rdlock(&escrituraLectura);
+		ultimoActual = tablaAsignaciones[ultimoActual];
+------?	pthread_rwlock_unlock(&escrituraLectura);
+	}
+	return ultimoActual;
+}
+
+void liberarBloquesBitmap(int primerBloque){
+	t_bitarray* bitmap = obtenerBitmap();
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int indice = primerBloque;
+
+	if (primerBloque != finDeArchivo)
+	{
+		while(tablaAsignaciones[indice] != finDeArchivo){
+			indice = tablaAsignaciones[indice];
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			bitarray_clean_bit(bitmap,indice);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		}
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		tablaAsignaciones[primerBloque] = finDeArchivo;
+		bitarray_clean_bit(bitmap,primerBloque);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+	}
+}
+
+int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	int indice = primerBloque;
+	bloquesNecesarios--; //Empiezo con primerBloque, asi que es 1 menos al total
+	while(bloquesNecesarios > 0){
+		indice = tablaAsignaciones[indice];
+		bloquesNecesarios--;
+	}
+	return indice;
+}
+
+int redimencionar(int indiceArchivo, long bytesNecesarios){
+	int resultado;
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	long bytesActuales = tablaArchivos[indiceArchivo].file_size;
+	if(bytesActuales == bytesNecesarios){
+		resultado = operacionExitosa; //Nada que hacer
+		tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
+	} else if (bytesActuales < bytesNecesarios){ // Agrandar
+		int bloquesActuales = calcularCantidadBloques(bytesActuales);
+		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
+		int bloquesTotalesNecesarios = bloquesNecesarios - bloquesActuales;
+		int bloquesLibres = obtenerCantidadBloquesLibres();
+		if(bloquesLibres >= bloquesTotalesNecesarios){
+			int primerBloque = tablaArchivos[indiceArchivo].first_block;
+			int ultimoBloqueActual;
+			if(primerBloque == finDeArchivo){
+				primerBloque = obtenerPrimerBloqueLibre();
+-------	pthread_rwlock_wlock(&escrituraLectura);
+				tablaArchivos[indiceArchivo].first_block = primerBloque;
+-------	pthread_rwlock_unlock(&escrituraLectura);
+				ultimoBloqueActual = primerBloque;
+				marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, true);
+			} else {
+				ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
+				marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, false);
+			}
+			//marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, true);
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
+			tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
+-------	pthread_rwlock_unlock(&escrituraLectura);
+			resultado = operacionExitosa;
+		} else {
+			resultado = noHayBloquesLibres;
+		}
+	} else if(bytesActuales > bytesNecesarios){ // Achicar
+		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
+		int primerBloque = tablaArchivos[indiceArchivo].first_block;
+		if(bytesNecesarios == 0){
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			tablaArchivos[indiceArchivo].first_block = finDeArchivo; // -1
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		}
+		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
+		liberarBloquesBitmap(primerBloqueALiberar);
+-------	pthread_rwlock_wlock(&escrituraLectura);
+		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
+-------	pthread_rwlock_unlock(&escrituraLectura);
+		resultado = operacionExitosa;
+		tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
+	}
+	return resultado;
+}
+
+int borrarArchivo(char* path){
+	int resultado;
+	int existeDirectorio = checkearPath(path);
+	if(existeDirectorio > archivoNoEncontrado){
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		if(tablaArchivos[existeDirectorio].state == REGULAR){
+			int primerBloque = tablaArchivos[existeDirectorio].first_block;
+			liberarBloquesBitmap(primerBloque);
+-------	pthread_rwlock_wlock(&escrituraLectura);
+			tablaArchivos[existeDirectorio].state = DELETED;
+-------	pthread_rwlock_unlock(&escrituraLectura);
+			resultado = operacionExitosa;
+		} else {
+			resultado = noEsUnArchivo;
+		}
+	} else {
+		resultado = existeDirectorio;
+	}
+	return resultado;
+}
+
+int calcularTotalAEscribir(int offsetDeBloque, int tamanio){
+	int resultado;
+	if(offsetDeBloque > 0){
+		int total = offsetDeBloque + tamanio;
+		if(total > OSADA_BLOCK_SIZE){
+			resultado = OSADA_BLOCK_SIZE - offsetDeBloque;
+		} else {
+			resultado = tamanio;
+		}
+	} else {
+		if(tamanio < OSADA_BLOCK_SIZE){
+			resultado = tamanio;
+		} else {
+			resultado = OSADA_BLOCK_SIZE;
+		}
+	}
+	return resultado;
+}
+
+int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	if(existeDirectorio > archivoNoEncontrado){
+		int total = tamanio + offset;
+		osada_file* tablaArchivos = obtenerTablaArchivos();
+		if (tablaArchivos[existeDirectorio].file_size >= total){
+			int primerBloque = tablaArchivos[existeDirectorio].first_block;
+			int numeroDeBloque = calcularNumeroDeBloque(primerBloque, offset);
+			int bloquesNecesarios = calcularBloqueOffset(offset);
+			int offsetDeBloque = offset - (bloquesNecesarios * OSADA_BLOCK_SIZE);
+			int totalAEscribir;
+			int offsetBuffer = 0;
+			osada_block* bloquesDatos = obtenerBloqueDatos();
+			int* tablaAsignaciones = obtenerTablaAsignaciones();
+			while(tamanio > 0){
+				totalAEscribir = calcularTotalAEscribir(offsetDeBloque, tamanio);
+				tamanio = tamanio - totalAEscribir;
+				char* arrayDatos = (char*)bloquesDatos[numeroDeBloque];
+				memcpy(&arrayDatos[offsetDeBloque], &buffer[offsetBuffer], sizeof(char) * totalAEscribir);
+				if(tamanio > 0){
+					numeroDeBloque = tablaAsignaciones[numeroDeBloque];
+					offsetDeBloque = 0;
+				}
+				offsetBuffer += totalAEscribir;
+			}
+			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
+			resultado = operacionExitosa;
+		} else {
+			resultado = tamanioDeArchivoInsuficiente;
+		}
+	} else {
+		resultado = existeDirectorio;
+	}
+	return resultado;
+}
+
+int establecerUltimaModificacion(char* path, uint32_t fecha){
+	int resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	if(existeDirectorio > archivoNoEncontrado){
+		tablaArchivos[existeDirectorio].lastmod = fecha;
+		resultado = operacionExitosa;
+	} else {
+		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+//Nota: devuelvo -archivoNoEncontrado porque uint32_t es sin signo.
+//Avisar si se cambia esto, cambiarlo en poke server.
+uint32_t obtenerUltimaModificacion(char* path){
+	uint32_t resultado;
+	int existeDirectorio = buscarArchivoPorPath(path, false);
+	osada_file* tablaArchivos = obtenerTablaArchivos();
+	if(existeDirectorio > archivoNoEncontrado){
+		resultado = tablaArchivos[existeDirectorio].lastmod;
+	} else {
+		resultado = -archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+
+
