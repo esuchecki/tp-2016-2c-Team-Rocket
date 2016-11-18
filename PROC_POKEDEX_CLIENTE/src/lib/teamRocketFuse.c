@@ -28,8 +28,12 @@ static int teamRocket_unlink(const char * path);
 
 static int teamRocket_truncar(const char *path, off_t largo);
 void enviarEscrituraArchivo(const char *buf, size_t size, off_t offset);
-
-
+static int teamRocket_opendir(const char* path, struct fuse_file_info* fi);
+static int teamRocket_releasedir(const char* path, struct fuse_file_info* fi);
+static int teamRocket_open(const char* path, struct fuse_file_info* fi);
+static int teamRocket_close(const char* path, struct fuse_file_info* fi);
+int fcAuxiliarOpen(char * path, int enumRespuesta);
+int fcAuxiliarClose(char * path, int enumRespuesta);
 
 
 
@@ -51,65 +55,71 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 		char * newPath = malloc(strlen(path) + 1);
 		strcpy(newPath, path);
 
-		t_data * paquete = pedirPaquete(poke_solicitudGetAttr,
-				strlen(newPath) + 1, newPath);
-		common_send(socketConexion, paquete);
+		if (fcAuxiliarOpen(newPath,poke_solicitudGetAttr) ==0)
+		{
+			t_data * paquete = pedirPaquete(poke_solicitudGetAttr,
+					strlen(newPath) + 1, newPath);
+			common_send(socketConexion, paquete);
 
-		free(newPath);
-		paquete = leer_paquete(socketConexion);
-		uint32_t fechaModificacion;
-		struct timespec time1;
+			free(newPath);
+			paquete = leer_paquete(socketConexion);
+			uint32_t fechaModificacion;
+			struct timespec time1;
 
-		switch (paquete->header) {
-		case poke_respuestaPorArchivo:
-			;
-			//log_error(logCliente, "My socket connection is: %s", string_itoa( (long)paquete->data));
-			stbuf->st_mode = S_IFREG | 0666;
-			stbuf->st_nlink = 1;
+			fcAuxiliarClose(path, poke_solicitudGetAttr);	//que cierre el archivo.
 
-			//asigno el tamanio
-			memcpy( &(stbuf->st_size), paquete->data, sizeof(long));
-			memcpy( &fechaModificacion, (paquete->data) + sizeof(long), sizeof(uint32_t));
+			switch (paquete->header) {
+			case poke_respuestaPorArchivo:
+				;
+				//log_error(logCliente, "My socket connection is: %s", string_itoa( (long)paquete->data));
+				stbuf->st_mode = S_IFREG | 0666;
+				stbuf->st_nlink = 1;
 
-			//stbuf->st_size = *((long*) paquete->data);
-			//fechaModificacion = *((uint32_t*) (paquete->data+sizeof(long*)));
-			//log_debug(logCliente, "%s", string_itoa(asd));
+				//asigno el tamanio
+				memcpy( &(stbuf->st_size), paquete->data, sizeof(long));
+				memcpy( &fechaModificacion, (paquete->data) + sizeof(long), sizeof(uint32_t));
 
-			if (fechaModificacion != -archivoNoEncontrado)
-			{
-				log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
-				convertirSegundosToTimeSpec(&time1, fechaModificacion);
-				stbuf->st_mtim = time1;
+				//stbuf->st_size = *((long*) paquete->data);
+				//fechaModificacion = *((uint32_t*) (paquete->data+sizeof(long*)));
+				//log_debug(logCliente, "%s", string_itoa(asd));
+
+				if (fechaModificacion != -archivoNoEncontrado)
+				{
+					log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
+					convertirSegundosToTimeSpec(&time1, fechaModificacion);
+					stbuf->st_mtim = time1;
+				}
+				free(paquete);
+				return res;
+				break;
+			case poke_respuestaPorDirectorio:
+				;
+				fechaModificacion = *((uint32_t *) paquete->data);
+				stbuf->st_mode = S_IFDIR | 0755;
+				stbuf->st_nlink = 2;
+
+				if (fechaModificacion != -archivoNoEncontrado)
+				{
+					log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
+					convertirSegundosToTimeSpec(&time1, fechaModificacion);
+					stbuf->st_mtim = time1;
+				}
+				free(paquete);
+				return res;
+				break;
+			case poke_errorGetAttr:
+				res = -ENOENT;
+				free(paquete);
+				return res;
+				break;
+			default:
+				;
+				free(paquete);
+				return -ENOENT;
+				break;
 			}
-			free(paquete);
-			return res;
-			break;
-		case poke_respuestaPorDirectorio:
-			;
-			fechaModificacion = *((uint32_t *) paquete->data);
-			stbuf->st_mode = S_IFDIR | 0755;
-			stbuf->st_nlink = 2;
-
-			if (fechaModificacion != -archivoNoEncontrado)
-			{
-				log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
-				convertirSegundosToTimeSpec(&time1, fechaModificacion);
-				stbuf->st_mtim = time1;
-			}
-			free(paquete);
-			return res;
-			break;
-		case poke_errorGetAttr:
-			res = -ENOENT;
-			free(paquete);
-			return res;
-			break;
-		default:
-			;
-			free(paquete);
-			return -ENOENT;
-			break;
 		}
+		free(newPath);
 	}
 	return -ENOENT;
 }
@@ -554,13 +564,124 @@ static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
 
 static int teamRocket_opendir(const char* path, struct fuse_file_info* fi)
 {
-	return 0;	//dummy esta todo bien.
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	int i = fcAuxiliarOpen(newPath, poke_respuestaPorDirectorio);
+	free(newPath);
+	return i;
 }
 ;
 
 static int teamRocket_releasedir(const char* path, struct fuse_file_info* fi)
 {
-	return 0;	//dummy esta todo bien.
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	int i = fcAuxiliarClose(newPath, poke_respuestaPorDirectorio);
+	free(newPath);
+	return i;
+}
+;
+
+int fcAuxiliarOpen(char * path, int enumRespuesta)
+{
+	log_debug(logCliente, "va a leer el paquete 1 \n");
+	t_data * paquete = pedirPaquete(poke_abrirArchivo, strlen(path) + 1, path);
+	common_send(socketConexion, paquete);
+
+	uint8_t modoApertura=enumRespuesta;
+
+	t_data * paquete2 = pedirPaquete(poke_abrirArchivo, sizeof(uint8_t), &modoApertura);
+	common_send(socketConexion, paquete2);
+
+	t_data * lectura = leer_paquete(socketConexion);
+	if (lectura->header == poke_respuestaApertura) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == operacionExitosa)
+		{
+			//chequeo si es un directorio.
+			//paquete = pedirPaquete(poke_solicitudGetAttr, strlen(newPath) + 1, newPath);
+			//common_send(socketConexion, paquete);
+
+
+
+			//paquete = leer_paquete(socketConexion);
+			//if (paquete->header == poke_respuestaPorArchivo)
+			//{
+				free(lectura);
+				free(paquete);
+				return 0;
+			//}
+
+		}
+	}
+	free(lectura);
+	free(paquete);
+//}
+return -ENOENT;
+}
+
+
+int fcAuxiliarClose(char * path, int enumRespuesta)
+{
+	log_debug(logCliente, "va a leer el paquete 1 \n");
+	t_data * paquete = pedirPaquete(poke_cerrarArchivo, strlen(path) + 1, path);
+	common_send(socketConexion, paquete);
+
+	uint8_t modoApertura=enumRespuesta;
+
+	t_data * paquete2 = pedirPaquete(poke_cerrarArchivo, sizeof(uint8_t), &modoApertura);
+	common_send(socketConexion, paquete2);
+
+	t_data * lectura = leer_paquete(socketConexion);
+	if (lectura->header == poke_respuestaClose) {
+		//Si no le devolvieron un 0, entonces devuelvo problema.
+		if ((*((int*) lectura->data)) == operacionExitosa)
+		{
+			//chequeo si es un directorio.
+			//paquete = pedirPaquete(poke_solicitudGetAttr, strlen(newPath) + 1, newPath);
+			//common_send(socketConexion, paquete);
+
+
+
+			//paquete = leer_paquete(socketConexion);
+			//if (paquete->header == poke_respuestaPorArchivo)
+			//{
+				free(lectura);
+				free(paquete);
+				return 0;
+			//}
+
+		}
+	}
+	free(lectura);
+	free(paquete);
+//}
+return -ENOENT;
+}
+
+
+
+static int teamRocket_open(const char* path, struct fuse_file_info* fi)
+{
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	int i = fcAuxiliarOpen(newPath, poke_respuestaPorArchivo);
+	free(newPath);
+	return i;
+}
+;
+
+static int teamRocket_close(const char* path, struct fuse_file_info* fi)
+{
+	char * newPath = malloc(strlen(path) + 1);
+	strcpy(newPath, path);
+
+	int i = fcAuxiliarClose(newPath, poke_respuestaPorArchivo);
+	free(newPath);
+	return i;
 }
 ;
 
@@ -579,6 +700,8 @@ static struct fuse_operations teamRocket_oper = {
 		.utimens 	= teamRocket_utimensat,
 		.opendir 	= teamRocket_opendir,
 		.releasedir	= teamRocket_releasedir,
+		.open		= teamRocket_open,
+		.release	= teamRocket_close,
 		.flag_nullpath_ok = 0,
 };
 

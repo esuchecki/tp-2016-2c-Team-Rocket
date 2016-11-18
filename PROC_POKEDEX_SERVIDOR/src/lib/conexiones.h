@@ -28,7 +28,7 @@ enum modosApertura{
 };
 
 typedef struct {
-	char * nombreArchivo;
+	int ubicacionEnTablaArchivos;
 	int modoApertura;
 	int cantidadDeVecesAbierta;
 	pthread_rwlock_t * sem_rw;

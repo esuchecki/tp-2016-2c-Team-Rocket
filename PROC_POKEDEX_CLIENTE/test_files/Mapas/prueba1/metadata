@@ -11,7 +11,7 @@ algoritmo=SRDF
 quantum=3
 
 #Retardo entre accion y accion en pantalla..
-retardo=200
+retardo=1000
 
 #Ip del servidor del mapa
 IP=127.0.0.1
