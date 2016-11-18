@@ -118,7 +118,9 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 				flag = consumirQuantum(i, mapa->metadata->quantum);
 			}else{
 				setearDistanciaPokenest(i, mapa, entrenador->pokenest);
-				flag = 0;
+				flag = 1;
+				sem_post(&mapa_libre);
+				sem_post(&entrenador_listo);
 			}
 			int null_data = 0;
 			t_data *turno = pedirPaquete(otorgarTurno, sizeof(int), &null_data);

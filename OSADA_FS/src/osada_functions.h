@@ -15,8 +15,10 @@
 #include <commons/bitarray.h>
 #include <string.h>
 #include <stdlib.h>
+#include <commons/collections/list.h>
+#include <pthread.h>
 
-
+pthread_mutex_t mutex_bitmap,mutexTablaAsignaciones,mutexTablaArchivos,mutexBloques;
 
 void establecerTamanio(int tamanio);
 

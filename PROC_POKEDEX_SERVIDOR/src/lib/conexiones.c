@@ -39,16 +39,17 @@ void atenderConexion(int socket_conexion) {
 	off_t offset = 0;
 	uint32_t ultimaFecha;
 	int null_data;
-	//TODO: ver el tema de la sincronizacion.
-	//pense que podriamos crear una lista con los archivos que se abrieron y el modo
-	//en el que lo abrieron si para escritura o lectura cosa de que cada vez
-	//que alguien haga alguna solicitud se fije ahi si puede realizarla o no.
+	nodo_archivo * arch;
 
 	switch (paqueteEntrada->header) {
 	case poke_solicitudReadDir:
 		;
 		printf("***]->   readDir de: %s\n", path);
+
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_rdlock(arch->sem_rw);
 		char ** directorios = leerDirectorio(path);
+		pthread_rwlock_unlock(arch->sem_rw);
 
 		int temp = 0;
 		int aux = sizeof(char) * (OSADA_FILENAME_LENGTH + 1);
@@ -95,9 +96,12 @@ void atenderConexion(int socket_conexion) {
 	case poke_solicitudGetAttr:
 		;
 
-		//TODO: ver si el path es directorio o archivo
 		printf("***]->   getAttr de: %s\n", path);
+
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_rdlock(arch->sem_rw);
 		long* atributos = obtenerAtributos(path);
+		pthread_rwlock_unlock(arch->sem_rw);
 
 		switch (atributos[0]) {
 		case REGULAR:
@@ -156,7 +160,11 @@ void atenderConexion(int socket_conexion) {
 	case poke_crearDirectorio:
 		printf("***]->   crearDir: %s\n", path);
 		int directorio = -1;
+
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		directorio = crearDirectorio(path);
+		pthread_rwlock_unlock(arch->sem_rw);
 		//printf("Rta= %d\n", directorio);
 
 		paqueteSalida = pedirPaquete(poke_respuestaCreacion, sizeof(int),
@@ -168,7 +176,11 @@ void atenderConexion(int socket_conexion) {
 	case poke_borrarDirectorio:
 		printf("***]->   borrarDir: %s\n", path);
 
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		int directorioABorrar = borrarDirectorio(path);
+		pthread_rwlock_unlock(arch->sem_rw);
+
 		paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int),
 				&directorioABorrar);
 		common_send(socket_conexion, paqueteSalida);
@@ -178,7 +190,11 @@ void atenderConexion(int socket_conexion) {
 	case poke_borrarArchivo:
 		printf("***]->   borrarArchivo: %s\n", path);
 
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		int archivoABorrar = borrarArchivo(path);
+		pthread_rwlock_unlock(arch->sem_rw);
+
 		paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
 				&archivoABorrar);
 		common_send(socket_conexion, paqueteSalida);
@@ -187,6 +203,24 @@ void atenderConexion(int socket_conexion) {
 		break;
 	case poke_abrirArchivo:
 		//este no se si va a ser un mensaje que le pida el cliente
+		;
+		int result = buscarArchivoPorPath(paqueteEntrada->data,false);
+		if(result == archivoNoEncontrado){
+			//no existe el archivo
+		}else {
+			arch = verificarAperturasArchivos(paqueteEntrada->data);
+			if(arch == NULL){
+				arch = malloc(sizeof(nodo_archivo));
+				arch->nombreArchivo = malloc(18);
+				arch->sem_rw = malloc(sizeof(pthread_rwlock_t));
+				arch->nombreArchivo = obtenerNombreDelArchivo(paqueteEntrada->data);
+				arch->cantidadDeVecesAbierta++;
+				pthread_rwlock_init(arch->sem_rw,NULL);
+				list_add(tablaArchivosAbiertos,arch);
+			}else{
+				arch->cantidadDeVecesAbierta++;
+			}
+		}
 		break;
 	case poke_leerArchivo:
 		;
@@ -198,9 +232,13 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   read: %s\n", path);
 		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
 
-		//TODO: leer el archivo con path "path", tamanio size,y offset "offset"
 		uint32_t tamanioCopiarSockets = 0;
+
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_rdlock(arch->sem_rw);
 		osada_block* archivo = obtenerArchivoPorPath(path, size, offset, &tamanioCopiarSockets);
+		pthread_rwlock_unlock(arch->sem_rw);
+
 		if ( (tamanioCopiarSockets >0) )
 		{
 			paqueteSalida = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
@@ -235,7 +273,11 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   write: %s\n", path);
 		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
 
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		int resultado = escribir(path, buf, size, offset);
+		pthread_rwlock_unlock(arch->sem_rw);
+
 
 		paqueteSalida = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
 		common_send(socket_conexion, paqueteSalida);
@@ -275,7 +317,12 @@ void atenderConexion(int socket_conexion) {
 
 		char* nombre = paquete2->data;
 		printf("***]->   renombrarArchivo: \n Path1: %s\n Path2:%s \n", path, nombre);
+
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		int renombro = cambiarNombre(path, nombre);
+		pthread_rwlock_unlock(arch->sem_rw);
+
 		//int renombro = cambiarNombre( lectura2->data, path);
 		paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
 				&renombro);
@@ -292,7 +339,12 @@ void atenderConexion(int socket_conexion) {
 		offset = *((off_t *) paquete3->data);
 
 		printf("***]->   truncate: %s, al largo %jd\n", path, (intmax_t)offset);
+
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		int trunco = truncar(path, (long)offset);
+		pthread_rwlock_unlock(arch->sem_rw);
+
 
 		paqueteSalida = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
 		common_send(socket_conexion, paqueteSalida);
@@ -314,7 +366,10 @@ void atenderConexion(int socket_conexion) {
 
 		printf("***]->   utimensat: %s, a: %s\n", path, asctime(&tiempo));
 
+		arch = verificarAperturasArchivos(path);
+		pthread_rwlock_wrlock(arch->sem_rw);
 		int utimensat = establecerUltimaModificacion(path, ultimaFecha);
+		pthread_rwlock_unlock(arch->sem_rw);
 
 		paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
 		common_send(socket_conexion, paqueteSalida);
@@ -551,4 +606,19 @@ const char* getRespuestasOSADA(enum respuestasOSADA unNumero)
     	  }
       	  return "noEncontreElNumeroEnElEnum";
    }
+}
+
+nodo_archivo * verificarAperturasArchivos(char * path){
+	char * nombreArchivo = malloc(18);
+	nombreArchivo = obtenerNombreDelArchivo(path);
+
+	bool estaAbierto(void * datos){
+		return strcmp(((nodo_archivo *)datos)->nombreArchivo,nombreArchivo)== 0;
+	}
+
+	pthread_mutex_lock(&mutex_archivos);
+	nodo_archivo * archivo = list_find(tablaArchivosAbiertos,estaAbierto);
+	pthread_mutex_unlock(&mutex_archivos);
+
+	return archivo;
 }

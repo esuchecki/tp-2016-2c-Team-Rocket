@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <pthread.h>
 #include <so/libConfig.h>
 #include "lib/conexiones.h"
 #include "PROC_POKEDEX_SERVIDOR.h"
@@ -54,7 +55,15 @@ int main(int argc, char*argv[]) {
 		log_debug(logServidor,"Voy a atender conexiones en la ip %s",IP);
 		*/
 	//atenderConexiones(IP,PUERTO);
-	pthread_rwlock_init(&lecturaEscritura,NULL);
+
+	tablaArchivosAbiertos = list_create();
+	pthread_mutex_init(&mutex_archivos,NULL);
+	pthread_mutex_init(&mutex_mayor,NULL);
+	pthread_mutex_init(&mutex_bitmap,NULL);
+	pthread_mutex_init(&mutexTablaAsignaciones,NULL);
+	pthread_mutex_init(&mutexTablaArchivos,NULL);
+	pthread_mutex_init(&mutexBloques,NULL);
+
 	escucharNuevasConexiones(IP,PUERTO);
 
 	return 0;

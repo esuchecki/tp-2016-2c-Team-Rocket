@@ -48,13 +48,9 @@ void cargarEstructurasDeadlock(int recursosTotales[], int recursosDisponibles[],
 
 			int cantidadPokemonesEntrenador = calcularRecursosAsignados(
 					entrenadorBloqueado, pokenest);
-			log_debug(myArchivoDeLog,"CANTIDAD POKEMONES ENTRENADOR:%d",cantidadPokemonesEntrenador);
 			recursosAsignados = recursosAsignados + cantidadPokemonesEntrenador;
-			log_debug(myArchivoDeLog,"RECURSOS ASIGNADOS- %d",recursosAsignados);
 		}
-		log_debug(myArchivoDeLog,"RECURSOS TOTALES: %d - RECURSOS ASIGNADOS %d",recursosTotales[k] ,recursosAsignados);
 		recursosDisponibles[k] = recursosTotales[k] - recursosAsignados;
-		log_debug(myArchivoDeLog,"RECURSOS DISPONIBLES %d",recursosDisponibles[k]);
 	}
 
 	for (i = 0; i < cantidadPokenest; i++) {
@@ -284,12 +280,6 @@ void * deteccionDeadlock(void * datos) {
 				}
 			}
 			list_destroy(listaDeadlock);
-			log_debug(myArchivoDeLog,"TERMINE DE ATENDER LA LISTA DE DEADLOCK\n\n");
-			log_debug(myArchivoDeLog,"LISTA-DEADLOCK CANT: %d\nLISTA-PARCIAL CANT:%d",list_size(listaDeadlock),list_size(parcial));
-			if(list_size(parcial) != 0){
-				t_entrenador * entrenador = list_get(parcial,0);
-				log_debug(myArchivoDeLog,"QUEDO ESTE ENTRENADOR: %C",entrenador->simbolo);
-			}
 		}
 	}
 	return NULL;
