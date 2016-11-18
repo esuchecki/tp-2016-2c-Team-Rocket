@@ -18,11 +18,11 @@ void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador)
 		log_error(myArchivoDeLog, "error al setear la senial SIGUSR1");
 		finalizarEntrenador(unEntrenador);
 	}
-//	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
-//	{
-//		log_error(myArchivoDeLog, "error al setear la senial SIGTERM");
-//		finalizarEntrenador(unEntrenador);
-//	}
+	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
+	{
+		log_error(myArchivoDeLog, "error al setear la senial SIGTERM");
+		finalizarEntrenador(unEntrenador);
+	}
 //	if (signal(SIGINT, tratarLaSenialRecibida)==SIG_ERR)
 //	{
 //		log_error(myArchivoDeLog, "error al setear la senial SIGINT");

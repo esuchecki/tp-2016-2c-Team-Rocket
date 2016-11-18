@@ -202,7 +202,7 @@ int queHago(t_estadoEntrenador* estado) {
 	int respuesta = -1;
 	int distanciaX = estado->p_posX - estado->e_posX;
 	int distanciaY = estado->p_posY - estado->e_posY;
-	if (estado->ultimoMov == 'X') {
+	if ( (distanciaX ==0 ) || ((estado->ultimoMov == 'X') && (distanciaY != 0) )){
 		if (distanciaY < 0) {
 			respuesta = 2;
 		} else if (distanciaY > 0) {
@@ -214,7 +214,7 @@ int queHago(t_estadoEntrenador* estado) {
 		} else {
 			respuesta = 0;
 		}
-	} else if (estado->ultimoMov == 'Y') {
+	} else if ((distanciaY !=0) || ((estado->ultimoMov == 'Y') && (distanciaX !=0))) {
 		if (distanciaX < 0) {
 			respuesta = 3;
 		} else if (distanciaX > 0) {
@@ -226,6 +226,10 @@ int queHago(t_estadoEntrenador* estado) {
 		} else {
 			respuesta = 0;
 		}
+	}else if ((distanciaX == 0) && (distanciaY ==0))
+	{
+		//estoy en la pokenest
+		respuesta = 0;
 	} else {
 		//TODO:en este caso estoy en el primer movimiento... tomo este por defecto, ver cual tomar
 		respuesta = 1;
@@ -333,6 +337,8 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador) {
 	//TODO: ¿Tengo que validar que la metadata este inicializada?
 	unEntrenador->metadata->vidas = unEntrenador->metadata->vidas + _SIGUSR1_flag;	//sumo vidas
+	printf("--> Me sume %d vidas.\tAhora tengo %d vidas\n", _SIGUSR1_flag, unEntrenador->metadata->vidas);
+	log_info(myArchivoDeLog, "--> Me sume %s vidas.\tAhora tengo %s vidas.", string_itoa(_SIGUSR1_flag), string_itoa(unEntrenador->metadata->vidas));
 }
 
 void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
@@ -348,9 +354,10 @@ void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
 }
 void reintentar(t_entrenadorFisico * unEntrenador) {
 	char reintentar;
+	log_info(myArchivoDeLog, "****> Me quede sin vidas. Reintentar?");
 	puts ("No le quedan mas vidas disponibles..");
 	printf("Desea reintentar?S/N \n");
-	scanf("%s", &reintentar);
+	scanf("%c", &reintentar);
 	if (reintentar == 'S' || reintentar == 's')
 	{
 		unEntrenador->misEstadisticas.cant_reintentos ++;
@@ -370,6 +377,7 @@ void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiV
 	if (fuiVictimaDeDeadlock)
 	{
 		puts ("**** Me descontaron una vida por deadlock ****");
+		log_info(myArchivoDeLog, "**** Me descontaron una vida por deadlock ****");
 		if (unEntrenador->metadata->vidas > 0)//Minima cantidad de vidas es 0.
 			unEntrenador->metadata->vidas --;
 	}
@@ -381,6 +389,9 @@ void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiV
 			unEntrenador->metadata->vidas =0;
 
 		puts ("Le quitaron vidas con SIGTERM.");
+
+		printf("--> Me sacaron %d vidas.\tAhora tengo %d vidas\n", _SIGTERM_flag, unEntrenador->metadata->vidas);
+		log_info(myArchivoDeLog, "--> Me sacaron %s vidas.\tAhora tengo %s vidas", string_itoa(_SIGTERM_flag), string_itoa(unEntrenador->metadata->vidas));
 	}
 
 	printf ("Me quedan %d vidas.\n", unEntrenador->metadata->vidas);
@@ -441,6 +452,8 @@ void jugarEnElMapa(t_entrenadorFisico * unEntrenador, t_data * info,
 			actualizarEstado(unEntrenador, socketConexion, tiempoAuxPN);
 		}
 
+		if ( estoyEnEstadoDeReiniciarHojaDeViaje(unEntrenador) )
+				{	return;		break;		}
 
 		if ( estoyEnEstadoDeReiniciarMapaActual(unEntrenador) )
 		{	actualizarTiempoBloqueado(unEntrenador, tiempoAuxPN);
@@ -551,6 +564,11 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		accionDelEntrenadorAnteSIGTERM(unEntrenador, true);	//con esto ejecuta la logica!.
 		break;
 	case ubicacionMedallaMapa: break; //este mensaje quedo desestimado.
+	default:
+		;
+		log_error (myArchivoDeLog, "llegue a default en el switch case de recibirRespuesta.");
+		finalizarEntrenador(unEntrenador);
+		break;
 	}
 	free(info->data);
 	free(info);

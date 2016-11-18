@@ -58,10 +58,11 @@ void * ejecutarPlanificador(void * datos) {
 		sem_wait(&mapa_libre);
 		sem_wait(&entrenador_listo);
 
-		//chequeamos si hay que releer o algo..
+		pthread_mutex_lock(&mutex_algoritmo);
+
+		//chequeo el evento de una senial.
 		funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void* ) &accionDelMapaAnteSIGUSR2 );
 
-		pthread_mutex_lock(&mutex_algoritmo);
 		t_entrenador *entrenadorElegido = ejecutar_algoritmo(mapa->metadata->algoritmo, mapa->metadata->quantum);
 		pthread_mutex_unlock(&mutex_algoritmo);
 

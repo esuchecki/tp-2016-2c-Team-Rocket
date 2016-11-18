@@ -288,8 +288,8 @@ int estaDentroDelMargenDelMapa(int pos_x, int pos_y)
 
 int fcAuxiliarEstaDentroDelMargenDelMapa(int pos_x, int pos_y, int guiRows, int guiCols)
 {
-	log_info(myArchivoDeLog,"%s,%s", string_itoa(guiRows), string_itoa(guiCols));
-	if ( (pos_x > 0) && (pos_x < guiRows) && (pos_y > 0) && (pos_y < guiCols))
+	log_info(myArchivoDeLog,"Terminal Size: %s x %s", string_itoa(guiCols), string_itoa(guiRows));
+	if ( (pos_x > 0) && (pos_x < guiCols ) && (pos_y > 0) && (pos_y < guiRows))
 		return 1;
 
 	return 0;

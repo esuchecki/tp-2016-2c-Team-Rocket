@@ -187,6 +187,11 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 	sleepInMiliSegundos(mapa->metadata->retardo);
 	sem_post(&semaforoGraficar);
 
+	//Valido si llego una senial en el medio.
+	if (_SIGUSR2_flag ==1)
+		return 0;
+
+
 	if (flag == 0 || flag == -1) {
 		goto proceder;
 	}
