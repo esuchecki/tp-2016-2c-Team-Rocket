@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <commons/collections/list.h>
 
 typedef struct {
 	int socketEscucha;
@@ -19,8 +20,25 @@ typedef struct {
 	fd_set sockets_activos;
 } nodo_hilo;
 
+enum modosApertura{
+	modo_lectura = 5,
+	modo_escritura = 8,
+	modo_lectura_escritura = 10,
+	noEstaAbierto = 16
+};
+
+typedef struct {
+	char * nombreArchivo;
+	int modoApertura;
+	int cantidadDeVecesAbierta;
+	pthread_rwlock_t * sem_rw;
+}nodo_archivo;
+
+t_list * tablaArchivosAbiertos;
+
+
 pthread_mutex_t mutex_mayor;
-pthread_rwlock_t lecturaEscritura;
+pthread_mutex_t mutex_archivos;
 
 int atenderConexiones();
 
@@ -30,8 +48,9 @@ void atenderConexion(int socket_conexion);
 
 void establecerConexion(void * data);
 
-
-
 void escucharNuevasConexiones(char* ip,char *puerto);
+
+nodo_archivo * verificarAperturasArchivos(char * path);
+
 
 #endif /* LIB_CONEXIONES_H_ */
