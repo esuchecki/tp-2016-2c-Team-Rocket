@@ -30,6 +30,7 @@ void cerrarConexionesActivas(t_entrenadorFisico * nuevoEntrenador);
 
 
 void finalizarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
+	printf("***] Me estoy cerrando..\n");
 	log_info(myArchivoDeLog, "voy a finalizar al entrenador");
 	cerrarConexionesActivas(nuevoEntrenador);
 	borrarEntrenador(nuevoEntrenador);
@@ -42,11 +43,12 @@ void borrarEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 		return;
 
 	//list_clean(nuevoEntrenador->metadata->hojaDeViaje);
-	if (nuevoEntrenador->metadata->hojaDeViaje != NULL)
-		list_clean_and_destroy_elements(nuevoEntrenador->metadata->hojaDeViaje, &free);
-	//list_destroy(nuevoEntrenador->metadata->hojaDeViaje);
-
-	free(nuevoEntrenador->metadata);
+	if (nuevoEntrenador->metadata != NULL)
+	{
+		if (nuevoEntrenador->metadata->hojaDeViaje != NULL)
+			list_clean_and_destroy_elements(nuevoEntrenador->metadata->hojaDeViaje, &free);
+		free(nuevoEntrenador->metadata);
+	}
 	free(nuevoEntrenador);
 	//free(nuevoEntrenador->directorioPokeDex);
 	//free(nuevoEntrenador->nombre);

@@ -77,8 +77,7 @@ void borrarMapa (t_mapa * mapa)
 	if (mapa == NULL)
 		return;
 
-	if (mapa->metadata != NULL)
-		freeForMetadataMapa (mapa);
+	freeForMetadataMapa (mapa);
 
 	/*
 	if (mapa->directorioPokeDex != NULL);
@@ -96,12 +95,17 @@ void borrarMapa (t_mapa * mapa)
 
 	if (mapa->items != NULL);
 	{
-		list_clean_and_destroy_elements(mapa->items, (void *) free);
-		mapa->items = NULL;
+		if (list_size(mapa->items) >0)
+		{
+			list_clean_and_destroy_elements(mapa->items, (void *) free);
+			mapa->items = NULL;
+		}
+		else
+			list_destroy(mapa->items);
 	}
 
-	if (mapa->pokeNest != NULL);
-		freeForPokeNest(mapa);
+
+	freeForPokeNest(mapa);
 }
 
 
@@ -135,6 +139,11 @@ void leerMetadataDelMapa (t_mapa * nuevoMapa)
 	metadataMapa = config_create_for_metadataMapa(nuevoMapa);
 	t_metadataMapa * nuevaMetadataMapa = malloc(sizeof(t_metadataMapa));	//pedir malloc
 	nuevoMapa->metadata = nuevaMetadataMapa;
+
+	nuevoMapa->metadata->algoritmo=NULL;
+	nuevoMapa->metadata->batalla=NULL;
+	nuevoMapa->metadata->ip=NULL;
+	nuevoMapa->metadata->puerto = NULL;
 
 	char * temporal;
 	temporal = _mapa_configLeerString(metadataMapa, __nombreEnConfig_Deadlock, nuevoMapa, (void *) finalizarGui);
@@ -279,7 +288,8 @@ int estaDentroDelMargenDelMapa(int pos_x, int pos_y)
 
 int fcAuxiliarEstaDentroDelMargenDelMapa(int pos_x, int pos_y, int guiRows, int guiCols)
 {
-	if (pos_x > 0 && pos_x < guiRows && pos_y > 0 && pos_y < guiCols)
+	log_info(myArchivoDeLog,"%s,%s", string_itoa(guiRows), string_itoa(guiCols));
+	if ( (pos_x > 0) && (pos_x < guiRows) && (pos_y > 0) && (pos_y < guiCols))
 		return 1;
 
 	return 0;
@@ -290,7 +300,7 @@ int estosObjetosEstanEspaciados(int pos_x1, int pos_y1, int pos_x2, int pos_y2, 
 {
 	//hice |X1-X2|=d1 y |Y1-Y2|=d2
 	//ahora reviso si: d1 > distanciaMinima (idem d2).
-	if ( distanciaEntreObjetos(pos_x1, pos_x2) > espaciado_x && distanciaEntreObjetos(pos_y1, pos_y2) > espaciado_y)
+	if ( (distanciaEntreObjetos(pos_x1, pos_x2) > espaciado_x) && (distanciaEntreObjetos(pos_y1, pos_y2) > espaciado_y))
 	{
 		return 1;
 	}
@@ -446,33 +456,50 @@ bool esUnicoEsteIdentificador (t_list* items, char idDelItem)
 void freeForMetadataMapa (t_mapa * unMapa)
 {
 	//borro todos los strings primero
-	free(unMapa->metadata->algoritmo);
-	free(unMapa->metadata->batalla);
-	free(unMapa->metadata->ip);
-	free(unMapa->metadata->puerto);
+	if (unMapa->metadata != NULL)
+	{
+		if (unMapa->metadata->algoritmo != NULL)
+			free(unMapa->metadata->algoritmo);
+		if (unMapa->metadata->batalla != NULL)
+			free(unMapa->metadata->batalla);
+		if (unMapa->metadata->ip != NULL)
+			free(unMapa->metadata->ip);
+		if (unMapa->metadata->puerto != NULL)
+			free(unMapa->metadata->puerto);
 
-	free(unMapa->metadata);
-	unMapa->metadata = NULL;
-	log_info(myArchivoDeLog,"Libere de memoria la estructura unMapa->metadata." );
+		free(unMapa->metadata);
+		unMapa->metadata = NULL;
+		log_info(myArchivoDeLog,"Libere de memoria la estructura unMapa->metadata." );
+	}
 }
 
 void freeForPokeNest (t_mapa * mapa)
 {
-	int i=0, j=0;
-	for (i=0; i < list_size(mapa->pokeNest); i++)
+	if (mapa->pokeNest != NULL);
 	{
-		t_pokeNest * temporal = list_get(mapa->pokeNest, i);
-		for (j=0; j < list_size(temporal->pokemones); j++)
+		if (list_size(mapa->pokeNest) <1)
 		{
-			t_pokemonEnPokeNest * temporal2 = list_get(temporal->pokemones, j);
-			free(temporal2->pokemonNNNdat);
-			temporal2->pokemonNNNdat = NULL;
+			list_destroy(mapa->pokeNest);
+			mapa->pokeNest=NULL;
+			return;
 		}
-		list_clean_and_destroy_elements(temporal->pokemones, (void *) &free);
-		temporal->pokemones = NULL;
+
+		int i=0, j=0;
+		for (i=0; i < list_size(mapa->pokeNest); i++)
+		{
+			t_pokeNest * temporal = list_get(mapa->pokeNest, i);
+			for (j=0; j < list_size(temporal->pokemones); j++)
+			{
+				t_pokemonEnPokeNest * temporal2 = list_get(temporal->pokemones, j);
+				free(temporal2->pokemonNNNdat);
+				temporal2->pokemonNNNdat = NULL;
+			}
+			list_clean_and_destroy_elements(temporal->pokemones, (void *) &free);
+			temporal->pokemones = NULL;
+		}
+		list_clean_and_destroy_elements(mapa->pokeNest, (void *) &free);
+		mapa->pokeNest = NULL;
 	}
-	list_clean_and_destroy_elements(mapa->pokeNest, (void *) &free);
-	mapa->pokeNest = NULL;
 }
 
 void accionDelMapaAnteSIGUSR2 (t_mapa * unMapa)

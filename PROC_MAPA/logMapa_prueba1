@@ -6033,3 +6033,180 @@
 [INFO] 08:22:51:253 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3131:3139): Cola de Bloqueados: #
 [INFO] 08:22:51:253 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3131:3139): Cola de Finalizados: #
 [INFO] 08:22:51:253 /home/utnso/workspace/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3131:3139): Cola de Finalizados: @
+[INFO] 01:21:02:25 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5201:5201): -------------------------------------------------------
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): -------------------------------------------------------
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Voy a leer la metadata del mapa.
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): tiempoChequeadoDeadlock= 20000
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): ModoBatalla= 1
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Algoritmo= SRDF
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Quantum= 3
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Retardo= 2000
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): IP= 127.0.0.1
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Puerto= 8001
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Finaliza la lectura de metadata del mapa.
+[INFO] 01:21:14:353 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Voy a leer las PokeNest y cargarlas
+[INFO] 01:23:37:647 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:23:57:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5283:5283): charmander001.dat
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): -------------------------------------------------------
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Voy a leer la metadata del mapa.
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): tiempoChequeadoDeadlock= 20000
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): ModoBatalla= 1
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Algoritmo= SRDF
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Quantum= 3
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Retardo= 2000
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): IP= 127.0.0.1
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Puerto= 8001
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Finaliza la lectura de metadata del mapa.
+[INFO] 01:26:59:170 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Voy a leer las PokeNest y cargarlas
+[INFO] 01:28:50:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:28:50:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): charmander001.dat
+[INFO] 01:28:56:227 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Se creo una Pokenest: [ C | x=6 | y=6 | cant=1 ]
+[INFO] 01:29:17:55 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:29:17:55 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): pikachu001.dat
+[INFO] 01:29:17:60 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Se creo una Pokenest: [ P | x=3 | y=3 | cant=1 ]
+[INFO] 01:29:17:60 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:29:17:60 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): onix001.dat
+[INFO] 01:29:17:73 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Se creo una Pokenest: [ O | x=12 | y=12 | cant=1 ]
+[INFO] 01:29:17:73 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:29:17:73 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): squirtle001.dat
+[INFO] 01:29:17:85 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Se creo una Pokenest: [ S | x=9 | y=9 | cant=1 ]
+[INFO] 01:29:17:85 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5416:5416): Finalizo la carga de PokeNest.
+[INFO] 01:39:27:602 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5982:5982): -------------------------------------------------------
+[INFO] 01:39:38:658 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): -------------------------------------------------------
+[INFO] 01:39:45:618 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Voy a leer la metadata del mapa.
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): tiempoChequeadoDeadlock= 20000
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): ModoBatalla= 1
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Algoritmo= SRDF
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Quantum= 3
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Retardo= 2000
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): IP= 127.0.0.1
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Puerto= 8001
+[INFO] 01:39:45:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Finaliza la lectura de metadata del mapa.
+[INFO] 01:39:50:946 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6074:6074): Voy a leer las PokeNest y cargarlas
+[INFO] 01:40:07:457 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): -------------------------------------------------------
+[INFO] 01:40:07:457 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Voy a leer la metadata del mapa.
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): tiempoChequeadoDeadlock= 20000
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): ModoBatalla= 1
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Algoritmo= SRDF
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Quantum= 3
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Retardo= 2000
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): IP= 127.0.0.1
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Puerto= 8001
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Finaliza la lectura de metadata del mapa.
+[INFO] 01:40:07:496 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6160:6160): Voy a leer las PokeNest y cargarlas
+[INFO] 02:18:39:450 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): -------------------------------------------------------
+[INFO] 02:18:39:450 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Voy a leer la metadata del mapa.
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): tiempoChequeadoDeadlock= 20000
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): ModoBatalla= 1
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Algoritmo= SRDF
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Quantum= 3
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Retardo= 2000
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): IP= 127.0.0.1
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Puerto= 8001
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Finaliza la lectura de metadata del mapa.
+[INFO] 02:18:39:489 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Voy a leer las PokeNest y cargarlas
+[ERROR] 02:18:49:394 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'
+[INFO] 02:18:49:394 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): voy a finalizar la gui
+[INFO] 02:18:49:394 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6644:6644): Libere de memoria la estructura unMapa->metadata.
+[INFO] 02:18:59:905 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): -------------------------------------------------------
+[INFO] 02:18:59:905 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Voy a leer la metadata del mapa.
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): tiempoChequeadoDeadlock= 20000
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): ModoBatalla= 1
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Algoritmo= SRDF
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Quantum= 3
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Retardo= 2000
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): IP= 127.0.0.1
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Puerto= 8001
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Finaliza la lectura de metadata del mapa.
+[INFO] 02:18:59:944 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6706:6706): Voy a leer las PokeNest y cargarlas
+[INFO] 02:23:58:599 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): -------------------------------------------------------
+[INFO] 02:23:58:599 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Voy a leer la metadata del mapa.
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): tiempoChequeadoDeadlock= 20000
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): ModoBatalla= 1
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Algoritmo= SRDF
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Quantum= 3
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Retardo= 2000
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): IP= 127.0.0.1
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Puerto= 8001
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Finaliza la lectura de metadata del mapa.
+[INFO] 02:23:58:636 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Voy a leer las PokeNest y cargarlas
+[INFO] 02:23:58:677 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Voy a contar la cantidad de pokemones en una pokenest
+[ERROR] 02:23:58:677 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'
+[INFO] 02:23:58:677 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): voy a finalizar la gui
+[INFO] 02:23:58:677 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6844:6844): Libere de memoria la estructura unMapa->metadata.
+[INFO] 02:24:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): -------------------------------------------------------
+[INFO] 02:24:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Voy a leer la metadata del mapa.
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): tiempoChequeadoDeadlock= 20000
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): ModoBatalla= 1
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Algoritmo= SRDF
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Quantum= 3
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Retardo= 2000
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): IP= 127.0.0.1
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Puerto= 8001
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Finaliza la lectura de metadata del mapa.
+[INFO] 02:24:09:480 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Voy a leer las PokeNest y cargarlas
+[INFO] 02:25:08:385 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Voy a contar la cantidad de pokemones en una pokenest
+[ERROR] 02:25:12:484 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'
+[INFO] 02:25:12:484 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): voy a finalizar la gui
+[INFO] 02:25:12:484 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(6883:6883): Libere de memoria la estructura unMapa->metadata.
+[INFO] 02:26:05:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): -------------------------------------------------------
+[INFO] 02:26:05:275 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Voy a leer la metadata del mapa.
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): tiempoChequeadoDeadlock= 20000
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): ModoBatalla= 1
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Algoritmo= SRDF
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Quantum= 3
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Retardo= 2000
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): IP= 127.0.0.1
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Puerto= 8001
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Finaliza la lectura de metadata del mapa.
+[INFO] 02:26:05:312 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Voy a leer las PokeNest y cargarlas
+[INFO] 02:26:39:337 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Voy a contar la cantidad de pokemones en una pokenest
+[ERROR] 02:27:38:186 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): problemas en 'encontrarEnUnDirectorio' y la '_funcionOrdenSuperiorQueQuieroEjecutar'
+[INFO] 02:27:39:105 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): voy a finalizar la gui
+[INFO] 02:27:39:105 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7004:7004): Libere de memoria la estructura unMapa->metadata.
+[INFO] 02:27:48:555 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): -------------------------------------------------------
+[INFO] 02:27:48:555 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Voy a leer la metadata del mapa.
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): tiempoChequeadoDeadlock= 20000
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): ModoBatalla= 1
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Algoritmo= SRDF
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Quantum= 3
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Retardo= 2000
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): IP= 127.0.0.1
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Puerto= 8001
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Finaliza la lectura de metadata del mapa.
+[INFO] 02:27:48:593 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Voy a leer las PokeNest y cargarlas
+[INFO] 02:28:32:113 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(7132:7132): Voy a contar la cantidad de pokemones en una pokenest
+[INFO] 01:57:01:56 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): -------------------------------------------------------
+[INFO] 01:57:01:75 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Voy a leer la metadata del mapa.
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): tiempoChequeadoDeadlock= 20000
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): ModoBatalla= 1
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Algoritmo= SRDF
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Quantum= 3
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Retardo= 2000
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): IP= 127.0.0.1
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Puerto= 8001
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Finaliza la lectura de metadata del mapa.
+[INFO] 01:57:01:76 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5729:5729): Voy a leer las PokeNest y cargarlas
+[INFO] 00:47:55:870 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): -------------------------------------------------------
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Voy a leer la metadata del mapa.
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): tiempoChequeadoDeadlock= 30000
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): ModoBatalla= 1
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Algoritmo= SRDF
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Quantum= 3
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Retardo= 200
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): IP= 127.0.0.1
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Puerto= 8001
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Finaliza la lectura de metadata del mapa.
+[INFO] 00:47:55:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Voy a leer las PokeNest y cargarlas
+[INFO] 00:49:44:859 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 00:49:44:859 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): charmander001.dat
+[INFO] 00:53:01:350 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Se creo una Pokenest: [ C | x=6 | y=6 | cant=1 ]
+[INFO] 00:53:03:223 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 00:53:03:223 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): pikachu001.dat
+[INFO] 00:53:03:228 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Se creo una Pokenest: [ P | x=3 | y=3 | cant=1 ]
+[INFO] 00:53:04:95 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 00:53:04:95 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): onix001.dat
+[INFO] 00:53:04:99 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Se creo una Pokenest: [ O | x=12 | y=12 | cant=1 ]
+[INFO] 00:53:07:279 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 00:53:07:279 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): squirtle001.dat
+[INFO] 00:53:26:296 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5908:5908): Se creo una Pokenest: [ S | x=9 | y=9 | cant=1 ]

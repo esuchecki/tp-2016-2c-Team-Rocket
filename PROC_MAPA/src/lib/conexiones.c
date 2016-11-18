@@ -87,8 +87,10 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 			}
 		}
 
-		//TODO: romper el entrenador
-		printf("error en dondeQuedaEstaPokeNest");
+		//romper el entrenador
+		log_error(myArchivoDeLog,"error en donde queda esta pokenest");
+		desconectarEntrenador(i, mapa, sockets_activos, socketMasGrande);
+		return 0;
 
 		break;
 	case movimientoEntrenador:
@@ -129,9 +131,10 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 			break;
 		}
 
-		//TODO: romper el entrenador
-		printf("error en dondeQuedaEstaPokeNest");
-
+		//romper el entrenador
+		log_error(myArchivoDeLog,"error en donde queda esta pokenest");
+		desconectarEntrenador(i, mapa, sockets_activos, socketMasGrande);
+		return 0;
 		break;
 	case capturarPokemon:
 		;
@@ -161,13 +164,15 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 	case mejorPokemon:
 		//TODO: recibe al mejor pokemon para... batalla pokemon?
 		break;
-	case 0:
+	default:
 		/*desconectarEntrenador(i, mapa,sockets_activos,
 		 socketMasGrande);
 
 		 log_debug(myArchivoDeLog, "Se desconecto el numero de socket: %d\n",
 		 i);
 		 return 1;*/
+		log_error(myArchivoDeLog,"estoy en un default de un switch case en atenderConexion");
+		//return 0;
 		break;
 	}
 

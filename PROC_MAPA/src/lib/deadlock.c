@@ -151,21 +151,21 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 	}
 
 	for (i = 0; i < numeroDeProcesos; i++) {
-		for (j = 0; j < cantidadPokenest; j++) {
-			if (asignados[i][j] != 0) {
+//		for (j = 0; j < cantidadPokenest; j++) {
+//			if (asignados[i][j] != 0) {
 				Finish[i] = false;
-				goto vuelta;
-			} else
-				Finish[i] = true;
-		}
-		vuelta: ;
+//				goto vuelta;
+//			} else
+//				Finish[i] = true;
+//		}
+//		vuelta: ;
 	}
 
 	for (i = 0; i < numeroDeProcesos; i++) {
 		if (Finish[i] == false) {
 			t_list * vectorBooleano = list_create();
 			for (j = 0; j < cantidadPokenest; j++) {
-				if (requeridos[i][j] <= work[i]) {
+				if (requeridos[i][j] <= work[j]) {
 
 					list_add(vectorBooleano, (void *) true);
 
@@ -177,14 +177,16 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 			}
 			if (list_size(vectorBooleano) == cantidadPokenest
 					&& list_all_satisfy(vectorBooleano, sonVerdaderos)) {
-				work[i] = work[i] + asignados[i][j];
-				Finish[i] = true;
+				for (j = 0; j < cantidadPokenest; j++) {
+					work[j] = work[j] + asignados[i][j];
+					Finish[i] = true;
+				}
 			}
 
 		}
 	}
 
-	for (i = 0; i < cantidadPokenest; i++) {
+	for (i = 0; i < numeroDeProcesos; i++) {
 		if (Finish[i] == false) {
 			t_entrenador *entrenador = list_get(colaBloqueados, i);
 
@@ -238,6 +240,7 @@ void * deteccionDeadlock(void * datos) {
 	t_mapa * mapa = datos;
 
 	while (1) {
+		reiniciarVuelta:
 		sleepInMiliSegundos(mapa->metadata->tiempoChequeadoDeadlock);
 
 		t_list * listaDeadlock = detectarDeadlock(mapa);
@@ -255,12 +258,14 @@ void * deteccionDeadlock(void * datos) {
 
 				rearmarListaDeadlock(listaDeadlock, mapa);
 
-				peticionesDePokemones(parcial);
+				peticionesDePokemones(parcial, mapa);
 
 				t_entrenador * loser = batallarListaDePkmn(parcial);
 
 				if (loser == NULL) {
 					//TODO: si entro aca se mandaron algun moco...que hago!??
+					log_error(myArchivoDeLog, "Che, en la lista de pokemon me mandaron algun dato erroneo, revisenla.");
+					goto reiniciarVuelta;
 				} else {
 					int null_data = 0;
 					t_data *paquetePerdisteBatalla = pedirPaquete(
@@ -295,7 +300,7 @@ void * deteccionDeadlock(void * datos) {
 	return NULL;
 }
 
-void peticionesDePokemones(t_list * listaDeadlock) {
+void peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 	int i;
 	for (i = 0; i < list_size(listaDeadlock); i++) {
 		t_entrenador * entrenador = list_get(listaDeadlock, i);
@@ -319,6 +324,10 @@ void peticionesDePokemones(t_list * listaDeadlock) {
 			entrenador->mejorPokemon->species = auxSpecies;
 		} else {
 			log_info(myArchivoDeLog, "Error en la recepcion del mejor pokemon");
+			desconectarEntrenador(entrenador->nroDesocket, unMapa,sockets_activos, socketMasGrande);
+			list_destroy(listaDeadlock);
+			listaDeadlock=NULL;
+			return;
 		}
 	}
 

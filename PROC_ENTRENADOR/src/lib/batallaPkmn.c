@@ -84,6 +84,11 @@ t_pokemon* crearPokemon (t_entrenadorFisico * unEntrenador, char * pokemonName, 
 
 
 	t_pokemon * nuevoPokemon = create_pokemon(pokemon_factory, pokemonName, *nivelPkmn);
+	if (nuevoPokemon == NULL)
+	{
+		log_error(myArchivoDeLog, "Mi mejor pkmn es un puntero a NULL (MissingNo). ");
+		finalizarEntrenador(unEntrenador);
+	}
 	log_info(myArchivoDeLog, "Mi mejor pkmn es: %s[%s/%s] Nivel: %d", nuevoPokemon->species, pkmn_type_to_string(nuevoPokemon->type), pkmn_type_to_string(nuevoPokemon->second_type), nuevoPokemon->level );
 	//free(pokemonName);
 	free(nivelPkmn);

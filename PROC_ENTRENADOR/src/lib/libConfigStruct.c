@@ -94,7 +94,7 @@ void leerMetadataDelEntrenador(t_entrenadorFisico * nuevoEntrenador) {
 	nuevoEntrenador->metadata = nuevaMetadataEntrenador;
 	nuevoEntrenador->metadata->hojaDeViaje = NULL;
 
-	nuevaMetadataEntrenador->reintentos = _entrenador_configLeerInt(metadataEntrenador, __nombreEnConfig_Reintentos, nuevoEntrenador);
+	//nuevaMetadataEntrenador->reintentos = _entrenador_configLeerInt(metadataEntrenador, __nombreEnConfig_Reintentos, nuevoEntrenador);
 	nuevaMetadataEntrenador->vidas = _entrenador_configLeerInt(	metadataEntrenador, __nombreEnConfig_Vidas, nuevoEntrenador);
 	nuevaMetadataEntrenador->simbolo = (_entrenador_configLeerString(metadataEntrenador, __nombreEnConfig_Simbolo, nuevoEntrenador))[0];
 

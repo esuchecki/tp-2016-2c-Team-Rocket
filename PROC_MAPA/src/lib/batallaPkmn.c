@@ -63,6 +63,13 @@ t_entrenador * batallarDosEntrenadores(t_entrenador * entrenador1, t_entrenador 
 t_entrenador * batallarListaDePkmn(t_list * listaEntrenadores)
 {
 	log_info(myArchivoDeLog, "Me dieron una lista de entreandores a batallar con sus pkmn.");
+
+	if (listaEntrenadores == NULL)
+	{
+		log_error(myArchivoDeLog, "--> La lista esta vacia.");
+		return NULL;
+	}
+
 	if (listaEntrenadores->elements_count < 2)
 	{
 		log_error(myArchivoDeLog, "--> La lista esta vacia o no hay un minimo de 2 entrenadores ");
