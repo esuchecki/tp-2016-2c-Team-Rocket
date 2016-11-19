@@ -343,14 +343,22 @@ static int teamRocket_mkdir(const char *path, mode_t mode) {
 
 	if (lectura->header == poke_respuestaCreacion) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == 0)
+		int result = (*((int*) lectura->data));
+		free(lectura);
+
+		if (result == operacionExitosa)
 		{
-			free(lectura);
 			return 0;
 		}
+		if (result <0)
+		{
+			//devuelvo el codigo de error.
+			return result;
+		}
+		return -EAGAIN;	//intente nuevamente.
 	}
 	free(lectura);
-	return -ENOENT;
+	return -EAGAIN;	//intente nuevamente.
 }
 ;
 
@@ -370,14 +378,22 @@ static int teamRocket_rmdir(const char *path) {
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaBorrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == 0)
+		int result = (*((int*) lectura->data));
+		free(lectura);
+
+		if (result == operacionExitosa)
 		{
-			free(lectura);
 			return 0;
 		}
+		if (result <0)
+		{
+			//devuelvo el codigo de error.
+			return result;
+		}
+		return -EAGAIN;	//intente nuevamente.
 	}
 	free(lectura);
-	return -ENOENT;
+	return -EAGAIN;	//intente nuevamente.
 
 }
 ;
@@ -426,14 +442,22 @@ static int teamRocket_unlink(const char * path) {
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaBorradoArchivo) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == operacionExitosa)
+		int result = (*((int*) lectura->data));
+		free(lectura);
+
+		if (result == operacionExitosa)
 		{
-			free(lectura);
 			return 0;
 		}
+		if (result <0)
+		{
+			//devuelvo el codigo de error.
+			return result;
+		}
+		return -EAGAIN;	//intente nuevamente.
 	}
 	free(lectura);
-	return -ENOENT;
+	return -EAGAIN;	//intente nuevamente.
 
 }
 ;
@@ -473,14 +497,22 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaRenombrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == 0)
+		int result = (*((int*) lectura->data));
+		free(lectura);
+
+		if (result == operacionExitosa)
 		{
-			free(lectura);
 			return 0;
 		}
+		if (result <0)
+		{
+			//devuelvo el codigo de error.
+			return result;
+		}
+		return -EAGAIN;	//intente nuevamente.
 	}
 	free(lectura);
-	return -ENOENT;
+	return -EAGAIN;	//intente nuevamente.
 }
 ;
 
@@ -505,14 +537,22 @@ static int teamRocket_truncar(const char *path, off_t size) {
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaTruncado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == operacionExitosa)
+		int result = (*((int*) lectura->data));
+		free(lectura);
+
+		if (result == operacionExitosa)
 		{
-			free(lectura);
 			return 0;
 		}
+		if (result <0)
+		{
+			//devuelvo el codigo de error.
+			return result;
+		}
+		return -EAGAIN;	//intente nuevamente.
 	}
 	free(lectura);
-	return -ENOENT;
+	return -EAGAIN;	//intente nuevamente.
 }
 ;
 
@@ -549,14 +589,22 @@ static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
 	t_data * lectura = leer_paquete(socketConexion);
 	if (lectura->header == poke_respuestaUtimensat) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
-		if ((*((int*) lectura->data)) == operacionExitosa)
+		int result = (*((int*) lectura->data));
+		free(lectura);
+
+		if (result == operacionExitosa)
 		{
-			free(lectura);
 			return 0;
 		}
+		if (result <0)
+		{
+			//devuelvo el codigo de error.
+			return result;
+		}
+		return -EAGAIN;	//intente nuevamente.
 	}
 	free(lectura);
-	return -ENOENT;
+	return -EAGAIN;	//intente nuevamente.
 
 }
 ;

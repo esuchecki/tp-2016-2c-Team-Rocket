@@ -27,7 +27,7 @@
 void atender(int socket);
 const char* getRespuestasOSADA(enum respuestasOSADA unNumero) ;
 void eliminarNodoAperturasArchivos (nodo_archivo * arch);
-
+bool existeEsteArchivo(char * path);
 
 
 
@@ -183,9 +183,12 @@ void atenderConexion(int socket_conexion) {
 		int directorio = -1;
 
 		arch = verificarAperturasArchivos(path);
-		pthread_rwlock_wrlock(arch->sem_rw);
+		if (arch != NULL)
+			pthread_rwlock_wrlock(arch->sem_rw);
+		//TODO: bloquear recursos
 		directorio = crearDirectorio(path);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if (arch != NULL)
+			pthread_rwlock_unlock(arch->sem_rw);
 		//printf("Rta= %d\n", directorio);
 
 		paqueteSalida = pedirPaquete(poke_respuestaCreacion, sizeof(int),
@@ -229,15 +232,18 @@ void atenderConexion(int socket_conexion) {
 		uint8_t tipoApertura = *((uint8_t *)paqueteAbrirArchivo->data);
 		free(paqueteAbrirArchivo->data);
 		free(paqueteAbrirArchivo);
+		printf("***]->   abrirArchivo: %s\n", path);
+		printf("\t\tTipoApertura: %s\n", getRespuestasOSADA(tipoApertura));
 //TODO: mutex tabla de archivos.
-		int result = buscarArchivoPorPath(paqueteEntrada->data,false);
-		if(result == archivoNoEncontrado){
-			null_data = archivoNoEncontrado;
-			paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
-			common_send(socket_conexion, paqueteSalida);
-
-			break;
-		}else {
+//		int result = buscarArchivoPorPath(paqueteEntrada->data,false);
+//		if(result == archivoNoEncontrado){
+//			null_data = archivoNoEncontrado;
+//			paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+//
+//			break;
+//		}else {
 			if (tipoApertura == poke_respuestaPorDirectorio)
 			{
 				if (buscarArchivoPorPath(path, false) != rootPath)
@@ -250,6 +256,7 @@ void atenderConexion(int socket_conexion) {
 						paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
 						common_send(socket_conexion, paqueteSalida);
 						free(atributos);
+						printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
 						break;
 					}
 					free(atributos);
@@ -266,6 +273,7 @@ void atenderConexion(int socket_conexion) {
 					paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
 					common_send(socket_conexion, paqueteSalida);
 					free(atributos);
+					printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
 					break;
 				}
 				free(atributos);
@@ -274,23 +282,35 @@ void atenderConexion(int socket_conexion) {
 			//Si ninguno de los anteriores fue (osea ni directorio, ni archivo)
 			//entonces el tipoApertura es = poke_solicitudGetAttr.
 
-			arch = verificarAperturasArchivos(paqueteEntrada->data);
-			if(arch == NULL){
-				arch = malloc(sizeof(nodo_archivo));
-				arch->sem_rw = malloc(sizeof(pthread_rwlock_t));
-				arch->ubicacionEnTablaArchivos = buscarArchivoPorPath(paqueteEntrada->data, false);
-				arch->cantidadDeVecesAbierta++;
-				pthread_rwlock_init(arch->sem_rw,NULL);
-				list_add(tablaArchivosAbiertos,arch);
-			}else{
-				arch->cantidadDeVecesAbierta++;
-			}
+			if (existeEsteArchivo(path))
+			{
+				arch = verificarAperturasArchivos(path);
+				if(arch == NULL){
+					arch = malloc(sizeof(nodo_archivo));
+					arch->sem_rw = malloc(sizeof(pthread_rwlock_t));
+					arch->ubicacionEnTablaArchivos = buscarArchivoPorPath(path, false);
+					arch->cantidadDeVecesAbierta++;
+					pthread_rwlock_init(arch->sem_rw,NULL);
+					list_add(tablaArchivosAbiertos,arch);
+				}else{
+					arch->cantidadDeVecesAbierta++;
+				}
 
-			null_data = operacionExitosa;
-			paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
-			common_send(socket_conexion, paqueteSalida);
+				null_data = operacionExitosa;
+				paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
+				common_send(socket_conexion, paqueteSalida);
+				printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
+			}
+			else
+			{
+				null_data = archivoNoEncontrado;
+				paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
+				common_send(socket_conexion, paqueteSalida);
+				printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				break;
+			}
 			//printf("\t\tRta: %d [bytes]\n", 0);
-		}
+//		}
 		break;
 	case poke_cerrarArchivo:
 		;
@@ -298,6 +318,10 @@ void atenderConexion(int socket_conexion) {
 		uint8_t tipoApertura2 = *((uint8_t *)paqueteCerrarArchivo->data);
 		free(paqueteCerrarArchivo->data);
 		free(paqueteCerrarArchivo);
+
+		printf("***]->   cerrarArchivo: %s\n", path);
+		printf("\t\tTipoCierre: %s\n", getRespuestasOSADA(tipoApertura2));
+
 
 		if (tipoApertura2 == poke_respuestaPorDirectorio)
 		{
@@ -311,6 +335,7 @@ void atenderConexion(int socket_conexion) {
 					paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 					common_send(socket_conexion, paqueteSalida);
 					free(atributos);
+					printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
 					break;
 				}
 				free(atributos);
@@ -327,6 +352,7 @@ void atenderConexion(int socket_conexion) {
 				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
 				free(atributos);
+				printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
 				break;
 			}
 			free(atributos);
@@ -335,29 +361,40 @@ void atenderConexion(int socket_conexion) {
 		//Si ninguno de los anteriores fue (osea ni directorio, ni archivo)
 		//entonces el tipoApertura es = poke_solicitudGetAttr.
 
-
-		//TODO: verificar que estoy cerrando ok.
-		arch = verificarAperturasArchivos(paqueteEntrada->data);
-		if(arch != NULL){
-			if (arch->cantidadDeVecesAbierta > 1)
-			{
-				arch->cantidadDeVecesAbierta--;
+		if (existeEsteArchivo(path))
+		{
+			//TODO: verificar que estoy cerrando ok.
+			arch = verificarAperturasArchivos(paqueteEntrada->data);
+			if(arch != NULL){
+				if (arch->cantidadDeVecesAbierta > 1)
+				{
+					arch->cantidadDeVecesAbierta--;
+				}
+				else
+				{
+					eliminarNodoAperturasArchivos(arch);
+				}
+				null_data = operacionExitosa;
+				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
+				common_send(socket_conexion, paqueteSalida);
+				printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
+				break;
+			}else{
+				null_data = archivoNoEncontrado;
+				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
+				common_send(socket_conexion, paqueteSalida);
+				printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				break;
 			}
-			else
-			{
-				eliminarNodoAperturasArchivos(arch);
-			}
-			null_data = operacionExitosa;
-			paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
-			common_send(socket_conexion, paqueteSalida);
-			break;
-		}else{
+		}
+		else
+		{
 			null_data = archivoNoEncontrado;
 			paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
+			printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
 			break;
 		}
-
 
 
 		break;
@@ -480,9 +517,15 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   truncate: %s, al largo %jd\n", path, (intmax_t)offset);
 
 		arch = verificarAperturasArchivos(path);
-		pthread_rwlock_wrlock(arch->sem_rw);
+		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
+		if (arch != NULL)
+			pthread_rwlock_wrlock(arch->sem_rw);
+
 		int trunco = truncar(path, (long)offset);
-		pthread_rwlock_unlock(arch->sem_rw);
+
+		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
+		if (arch != NULL)
+			pthread_rwlock_unlock(arch->sem_rw);
 
 
 		paqueteSalida = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
@@ -732,14 +775,24 @@ const char* getRespuestasOSADA(enum respuestasOSADA unNumero)
       case archivoNoEncontrado: return "archivoNoEncontrado";
       case noEsUnArchivo: return "noEsUnArchivo";
       case tamanioDeArchivoInsuficiente: return "tamanioDeArchivoInsuficiente";
-      case revisarElLargoDelPath: return "revisarElLargoDelPath";
+      case elNombreDelArchivoEsMuyGrande: return "elNombreDelArchivoEsMuyGrande";
+      case elNombreDelArchivoEsMuyCorto: return "elNombreDelArchivoEsMuyCorto";
       default:
     	  ;
     	  switch ((enum enviosPokedexServidor) unNumero)
     	  {
     	  	  case poke_errorGetAttr: return "poke_errorGetAttr";
     	  	  case poke_errorReadDir: return "poke_errorReadDir";
+    	  	  case poke_respuestaPorArchivo: return "poke_respuestaPorArchivo";
+    	  	  case poke_respuestaPorDirectorio: return "poke_respuestaPorDirectorio";
     	  	  //case aaaa: return "";
+    	  	  default:
+    	  		  ;
+    	  }
+
+    	  switch ((enum enviosPokedexCliente) unNumero)
+    	  {
+    	  	  case poke_solicitudGetAttr: return "poke_solicitudGetAttr";
     	  	  default:
     	  		  ;
     	  }
@@ -750,8 +803,6 @@ const char* getRespuestasOSADA(enum respuestasOSADA unNumero)
 nodo_archivo * verificarAperturasArchivos(char * path){
 	//char * nombreArchivo = malloc(18);
 	int ubicacionArchivo = buscarArchivoPorPath(path, false);
-	if (ubicacionArchivo == archivoNoEncontrado)
-		return NULL;
 
 	bool estaAbierto(void * datos){
 		return (((nodo_archivo *)datos)->ubicacionEnTablaArchivos == ubicacionArchivo);
@@ -762,6 +813,14 @@ nodo_archivo * verificarAperturasArchivos(char * path){
 	pthread_mutex_unlock(&mutex_archivos);
 
 	return archivo;
+}
+
+bool existeEsteArchivo(char * path)
+{
+	int ubicacionArchivo = buscarArchivoPorPath(path, false);
+	if (ubicacionArchivo == archivoNoEncontrado)
+		return false;
+	return true;
 }
 
 void eliminarNodoAperturasArchivos (nodo_archivo * arch)

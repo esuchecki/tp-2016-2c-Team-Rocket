@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 typedef struct {
 	int header;
@@ -80,20 +81,40 @@ enum actividad {
 	noActividad = 5
 };
 
+/*
+enum respuestasOSADA {
+operacionExitosa = 0,
+finDeArchivo = -1,
+archivoInexistenteConDirCorrecto = -2,
+rootPath = -3,
+noHayEspacioLibreTablaArchivos = -4,
+elPathNoCorrespondeAUnDirectorio = -5,
+noHayBloquesLibres = -6,
+bloqueLibre = 0,
+bloqueOcupado = 1,
+archivoNoEncontrado = -8,
+noEsUnArchivo = -9,
+tamanioDeArchivoInsuficiente = -10,
+elNombreDelArchivoEsMuyGrande = -ENAMETOOLONG,		//era -11
+elNombreDelArchivoEsMuyCorto = -13
+};
+*/
+
 enum respuestasOSADA {
 	operacionExitosa = 0,
 	finDeArchivo = -1,
-	archivoInexistenteConDirCorrecto = -2,
-	rootPath = -3,
-	noHayEspacioLibreTablaArchivos = -4,
-	elPathNoCorrespondeAUnDirectorio = -5,
-	noHayBloquesLibres = -6,
+	archivoInexistenteConDirCorrecto = -4,				//uso interno
+	rootPath = -5,
+	noHayEspacioLibreTablaArchivos = -EDQUOT,			//era -4
+	elPathNoCorrespondeAUnDirectorio = -ENOTDIR,		//era -5
+	noHayBloquesLibres = -EFBIG,						//era -6
 	bloqueLibre = 0,
 	bloqueOcupado = 1,
-	archivoNoEncontrado = -8,
-	noEsUnArchivo = -9,
-	tamanioDeArchivoInsuficiente = -10,
-	revisarElLargoDelPath = -11
+	archivoNoEncontrado = -ENOENT,						//era -8.
+	noEsUnArchivo = -EISDIR,							//era -9.
+	tamanioDeArchivoInsuficiente = -ENOMEM,				//era -10
+	elNombreDelArchivoEsMuyGrande = -ENAMETOOLONG,		//era -11
+	elNombreDelArchivoEsMuyCorto = -13
 };
 
 /*

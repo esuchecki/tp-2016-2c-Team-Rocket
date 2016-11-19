@@ -349,12 +349,17 @@ int obtenerEspacioLibreTablaArchivos(){
 	int i = 1;
 	osada_file_state j = REGULAR;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
-	for ( i = 0 ; (j!=DELETED && i<2048); i++ ) {
+	for ( i = 0 ; i<2048; i++ ) {
 	   j = tablaArchivos[i].state;
+
+	   //si encontro un hueco, que me lo de.
+	   //no comparo contra DELETED x si no esta seteado.
+	   if ((j != DIRECTORY) && (j != REGULAR))
+		   break;
 	}
 	int k;
 	if(i<2048){
-		i--;
+		//i--;
 		k = i;
 	} else {
 		k = noHayEspacioLibreTablaArchivos;
@@ -478,23 +483,23 @@ int cambiarNombre(char* path, char* pathNuevo){
 	unsigned char * nombreNuevo = obtenerUltimoElemento(pathNuevo);
 	int longitudCopiar = string_length((char*)nombreNuevo);
 	if (string_length((char*)nombreNuevo) < 1)
-		return archivoNoEncontrado;	//Enrealidad el nuevo nombre es muy corto
+		return elNombreDelArchivoEsMuyCorto;	//Enrealidad el nuevo nombre es muy corto
 
 	//limito el nuevo largo del string al tamaño de osada
-	if (longitudCopiar > (OSADA_FILENAME_LENGTH -1))
-	{
-		//En caso de decidir truncar el nombre usar este codigo:
-		//longitudCopiar = 16;
-		//nombreNuevo[16] = '\0';
+	//if (longitudCopiar > (OSADA_FILENAME_LENGTH -1))
+	if (longitudCopiar > (OSADA_FILENAME_LENGTH))
+		return elNombreDelArchivoEsMuyGrande;	//Enrealidad el nuevo nombre es muy largo
 
-		return archivoNoEncontrado;	//Enrealidad el nuevo nombre es muy largo
-	}
+	if (longitudCopiar == (OSADA_FILENAME_LENGTH))
+		longitudCopiar =OSADA_FILENAME_LENGTH;
+	else
+		longitudCopiar =longitudCopiar+1;
 
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	if(existeDirectorio>archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
 		pthread_mutex_lock(&mutexTablaArchivos);
-		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, (longitudCopiar+1)* sizeof (unsigned char));
+		memcpy(tablaArchivos[existeDirectorio].fname, nombreNuevo, (longitudCopiar)* sizeof (unsigned char));
 		tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
 		pthread_mutex_unlock(&mutexTablaArchivos);
 		resultado = operacionExitosa;
@@ -546,7 +551,7 @@ int checkearPath(char* path){
 	if(existeDirectorio!=rootPath && existeDirectorio==archivoNoEncontrado){
 		char* pathSinArchivo = obtenerPathSinArchivo(path);
 		int existeDirectorioPadre = buscarArchivoPorPath(pathSinArchivo, false);
-		if(existeDirectorioPadre > archivoNoEncontrado){
+		if(existeDirectorioPadre == archivoInexistenteConDirCorrecto || existeDirectorioPadre == rootPath || existeDirectorioPadre > -1){
 			resultado = archivoInexistenteConDirCorrecto;
 		} else {
 			resultado = archivoNoEncontrado;
@@ -625,9 +630,19 @@ int crearArchivo(char* path, long bytes){
 
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres>=totalBloquesNecesarios){
+			char* nombreArchivo = obtenerNombreDelArchivo(path);
+
+			//TODO: Edu, que pasa si el nombre es muy largo? (tenemos que tener un '\0' al final o no?
+			int longitudDelString = 0;
+			longitudDelString = string_length(nombreArchivo);
+			if(longitudDelString<1)
+				return elNombreDelArchivoEsMuyCorto;
+			if (longitudDelString > OSADA_FILENAME_LENGTH )
+				return elNombreDelArchivoEsMuyGrande;
+
 			osada_file* tablaArchivos = obtenerTablaArchivos();
 			osada_block_pointer primerBloqueLibre = obtenerPrimerBloqueLibre();
-			char* nombreArchivo = obtenerNombreDelArchivo(path);
+
 			char* pathPadre = obtenerPathPadre(path);
 			int indicePadre = buscarArchivoPorPath(pathPadre, false);
 			pthread_mutex_lock(&mutexTablaArchivos);
@@ -642,13 +657,8 @@ int crearArchivo(char* path, long bytes){
 				marcarBloques(primerBloqueLibre,totalBloquesNecesarios, true);
 			}
 
-			//TODO: Edu, que pasa si el nombre es muy largo? (tenemos que tener un '\0' al final o no?
-			int longitudDelString = 0;
-			longitudDelString = string_length(nombreArchivo);
-			if (longitudDelString >= OSADA_FILENAME_LENGTH || longitudDelString<1)
-			{
-				return revisarElLargoDelPath;
-			}
+
+
 			pthread_mutex_lock(&mutexTablaArchivos);
 			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, (longitudDelString+1) * sizeof (unsigned char));
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
