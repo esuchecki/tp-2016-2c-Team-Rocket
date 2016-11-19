@@ -34,3 +34,13 @@
 [DEBUG] 10:07:27:215 ./PROC_POKEDEX_SERVIDOR/(3582:3582): Voy a atender conexiones en la ip 127.0.0.1
 [INFO] 10:10:44:604 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/Debug/PROC_POKEDEX_SERVIDOR/(3708:3708): -------------------------------------------------------
 [DEBUG] 10:10:44:606 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/Debug/PROC_POKEDEX_SERVIDOR/(3708:3708): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 07:53:00:325 ./PROC_POKEDEX_SERVIDOR/(6814:6814): -------------------------------------------------------
+[INFO] 07:53:30:197 ./PROC_POKEDEX_SERVIDOR/(6850:6850): -------------------------------------------------------
+[INFO] 07:54:21:83 ./PROC_POKEDEX_SERVIDOR/(6933:6933): -------------------------------------------------------
+[DEBUG] 07:54:21:83 ./PROC_POKEDEX_SERVIDOR/(6933:6933): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 07:56:21:793 ./PROC_POKEDEX_SERVIDOR/(7068:7068): -------------------------------------------------------
+[DEBUG] 07:56:21:793 ./PROC_POKEDEX_SERVIDOR/(7068:7068): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 07:57:42:799 ./PROC_POKEDEX_SERVIDOR/(7476:7476): -------------------------------------------------------
+[DEBUG] 07:57:42:799 ./PROC_POKEDEX_SERVIDOR/(7476:7476): Voy a atender conexiones en la ip 127.0.0.1
+[INFO] 07:58:31:175 ./PROC_POKEDEX_SERVIDOR/(7542:7542): -------------------------------------------------------
+[DEBUG] 07:58:31:175 ./PROC_POKEDEX_SERVIDOR/(7542:7542): Voy a atender conexiones en la ip 127.0.0.1

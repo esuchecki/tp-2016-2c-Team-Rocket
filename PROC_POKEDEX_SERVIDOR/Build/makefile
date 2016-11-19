@@ -29,7 +29,7 @@ all: PROC_POKEDEX_SERVIDOR
 
 dependents:
 	-cd /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build && $(MAKE) all
-	-cd /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build && $(MAKE) all
+	-cd /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/OSADA_FS/Build/ && $(MAKE) all
 
 # Tool invocations
 PROC_POKEDEX_SERVIDOR: $(OBJS) $(USER_OBJS) /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build/liblibTeamRocket.so /home/utnso/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/OSADA_FS/Build/OSADA_FS

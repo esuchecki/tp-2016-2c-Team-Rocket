@@ -20,11 +20,11 @@ int main(int argc,char*argv[]){
 	char * IP;
 	char * Puerto;
 
-	/*
+
 	//Para leer la config como parametro de ejecucion
 	//char * pathConfg = argv[1];
 
-	inicializarLogCliente(argv,true);
+	//inicializarLogCliente(argv,true);
 
 	t_config * config = newConfigType(pathConfigCli);
 	//Consigo la ip
@@ -37,12 +37,12 @@ int main(int argc,char*argv[]){
 	if(Puerto == NULL){
 		exit(EXIT_FAILURE);
 	}
-*/
+
 	inicializarLogCliente(argv,true);
 
 
-	socketConexion = connect_to("localhost","6100");
-	//int socketConexion = connect_to(IP,Puerto);
+	//socketConexion = connect_to("localhost","6100");
+	int socketConexion = connect_to(IP,Puerto);
 
 
 	int null_data = 0;

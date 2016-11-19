@@ -1,0 +1,36 @@
+[INFO] 14:06:46:535 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4179:4179): -------------------------------------------------------
+[INFO] 14:06:46:535 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4179:4179): Voy a leer la metadata del Entrenador.
+[ERROR] 14:06:46:535 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4179:4179): Problemas en _entrenador_newConfigType= //home/utnso/trabajoPractico/test_tp//Entrenadores//Entrenador2//metadata
+[INFO] 14:06:46:536 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4179:4179): voy a finalizar al entrenador
+[INFO] 14:07:17:527 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4260:4260): -------------------------------------------------------
+[INFO] 14:07:17:527 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4260:4260): Voy a leer la metadata del Entrenador.
+[ERROR] 14:07:17:527 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4260:4260): Problemas en _entrenador_newConfigType= //home/utnso/trabajoPractico/test_tp//Entrenadores//Entrenador2//metadata
+[INFO] 14:07:17:527 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4260:4260): voy a finalizar al entrenador
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): -------------------------------------------------------
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a leer la metadata del Entrenador.
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Se valido que no hubiera pokemones consecutivos duplciados.
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Nombre= Entrenador2
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Simbolo= #
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Vidas= 1
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Reintentos= 0
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): ...Hoja de Viaje...
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): 		Mapa= Verde
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): 		Objetivos:
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): 		[,B,P,G]
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): 		Mapa= Azul
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): 		Objetivos:
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): 		[,C]
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Finaliza la lectura de metadata del mapa.
+[INFO] 14:08:25:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a crear el dir de bill
+[INFO] 14:08:25:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a crear el dir de medallas
+[INFO] 14:08:25:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a vaciar el dir de bill
+[INFO] 14:08:25:659 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a vaciar el directorio de medallas
+[INFO] 14:08:25:660 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a iniciar mi aventura!
+[INFO] 14:08:25:660 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Me voy a conectar al mapa: Verde
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Voy a averiguar la IP y Puerto del mapa: Verde
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): IP= 127.0.0.1   | Puerto= 8002
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Inicializando la conexion por socket
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): IP = 127.0.0.1, Puerto= 8002.
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Me conecte por socket, mi socket es: 4
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Intercambio de mensajes Handshake realizado
+[INFO] 14:08:25:661 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_ENTRENADOR/Debug/entrenador/(4337:4337): Conexion Exitosa

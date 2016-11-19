@@ -21,6 +21,8 @@
 #include "../OSADA_FS/src/osada_functions.h"
 
 
+#define pathConfigCli "/home/utnso/tp-2016-2c-Team-Rocket/Build/ip.txt"
+
 int main(int argc, char*argv[]) {
 
 
@@ -30,20 +32,20 @@ int main(int argc, char*argv[]) {
 	char* IP = malloc(15);
 	char* PUERTO = malloc(15);
 	strcpy(IP, "127.0.0.1");
-	strcpy(PUERTO, "6100");
-	/*
+	//strcpy(PUERTO, "6100");
+
 	//Para leer la config como parametro de ejecucion
 		//char * pathConfg = argv[1];
 
 		inicializarLogServidor(argv,true);
 
-		t_config * config = newConfigType(pathConfig);
+		t_config * config = newConfigType(pathConfigCli);
 		//Configo la ip
-		IP = configLeerString(config,"IP");
-		if(IP == NULL){
-			log_error(logServidor,"Fallo cargar la ip");
-			exit(EXIT_FAILURE);
-		}
+//		IP = configLeerString(config,"IP");
+//		if(IP == NULL){
+//			log_error(logServidor,"Fallo cargar la ip");
+//			exit(EXIT_FAILURE);
+//		}
 		//Consigo el puerto
 		PUERTO = configLeerString(config,"PUERTO");
 		if(PUERTO == NULL){
@@ -53,7 +55,7 @@ int main(int argc, char*argv[]) {
 
 
 		log_debug(logServidor,"Voy a atender conexiones en la ip %s",IP);
-		*/
+
 	//atenderConexiones(IP,PUERTO);
 
 	tablaArchivosAbiertos = list_create();
@@ -72,7 +74,7 @@ int main(int argc, char*argv[]) {
 void inicializarLogServidor ( char *argv[],bool consolaOn )
 {
 
-	logServidor = log_create("/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_SERVIDOR/log.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
+	logServidor = log_create("/home/utnso/log_server.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
 
 
 	if (logServidor != NULL)
