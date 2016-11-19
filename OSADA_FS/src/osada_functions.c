@@ -154,12 +154,15 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	int i= 1;
 	osada_file_state j = REGULAR;
 	for ( i = 0 ; (retorno == archivoNoEncontrado && i<2048); i++ ) {
+		pthread_mutex_lock(&mutexTablaArchivos);
 	   j = tablaArchivos[i].state;
+
 	   if(j!=DELETED){
 		   if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
 			   retorno = i;
 		   }
 	   }
+	   pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	return retorno;
 }
@@ -205,8 +208,10 @@ int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
 	bloques[j] = i;
 	while(tablaAsignaciones[i]!= finDeArchivo){
 		j++;
+		pthread_mutex_lock(&mutexTablaAsignaciones);
 		bloques[j] = tablaAsignaciones[i];
 		i = tablaAsignaciones[i];
+		pthread_mutex_unlock(&mutexTablaAsignaciones);
 	}
 	return bloques;
 }
@@ -236,7 +241,9 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 		if ((k == (cantidadDeBloques -1)) && (exedente>0)){
 			int cantidadACopiar = exedente;
 		}
+		pthread_mutex_lock(&mutexBloques);
 		memcpy(archivoConOffset[k], bloquesDeDatos[i], cantidadACopiar * sizeof(unsigned char));
+		pthread_mutex_unlock(&mutexBloques);
 		k++;
 	}
 	return archivoConOffset;
@@ -269,13 +276,17 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 	*tamanioCopiarSockets = 0;	//Por defecto no le copiaron nada
 	osada_block* resultado;
 	if(index>0){
+		pthread_mutex_lock(&mutexTablaArchivos);
 		uint32_t tamanio= tablaArchivos[index].file_size;
+		pthread_mutex_unlock(&mutexTablaArchivos);
 		int cantidadDeBloques = calcularCantidadBloques( tamanio );
 
 		//valido que el offset que me pidieron sea menor al archivo.
 		if ( (tamanio>0) && (tamanio> offset) && (cantidadDeBloques>0) )
 		{
+			pthread_mutex_lock(&mutexBloques);
 			int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
+			pthread_mutex_unlock(&mutexBloques);
 			osada_block* archivoCompleto;
 			archivoCompleto = obtenerArchivo(bloquesArchivo,cantidadDeBloques, tamanio );
 
@@ -288,11 +299,14 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 
 			printf("-->Voy a copiar: size: %d, offset: %jd\n", bytesParaCopiar, (intmax_t) offset);
 			//finalmente lo copio
+			pthread_mutex_lock(&mutexBloques);
 			resultado = malloc(bytesParaCopiar * sizeof(char));
 			memcpy( resultado, ((char*)archivoCompleto)+offset , bytesParaCopiar * sizeof(unsigned char));
 			free(archivoCompleto);
 			free(bloquesArchivo);
 			*tamanioCopiarSockets = bytesParaCopiar;
+			pthread_mutex_unlock(&mutexBloques);
+
 		}
 	}
 	return resultado;
@@ -311,7 +325,9 @@ char** leerDirectorio(char* path){
 	int i,k;
 	k = 0;
 	for ( i = 0 ; i<2048 ; i++ ) {
+		pthread_mutex_lock(&mutexTablaArchivos);
 	   j = tablaArchivos[i].state;
+	   pthread_mutex_unlock(&mutexTablaArchivos);
 	   if(tablaArchivos[i].parent_directory==padre && (j !=DELETED)){
 		   subdirectoriosMax[k]=i;
 		   k++;
@@ -332,10 +348,14 @@ long* obtenerAtributos(char* path){
 	int indiceDirectorio = buscarArchivoPorPath(path, false);
 	if(indiceDirectorio>archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
+		pthread_mutex_lock(&mutexTablaArchivos);
 		atributos[0] = tablaArchivos[indiceDirectorio].state;
 		atributos[1] = tablaArchivos[indiceDirectorio].file_size;
+		pthread_mutex_unlock(&mutexTablaArchivos);
 	} else {
+		pthread_mutex_lock(&mutexTablaArchivos);
 		atributos[0]= archivoNoEncontrado;
+		pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	return atributos;
 }
@@ -351,7 +371,9 @@ int obtenerEspacioLibreTablaArchivos(){
 	osada_file_state j = REGULAR;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	for ( i = 0 ; i<2048; i++ ) {
+		pthread_mutex_lock(&mutexTablaArchivos);
 	   j = tablaArchivos[i].state;
+	   pthread_mutex_unlock(&mutexTablaArchivos);
 
 	   //si encontro un hueco, que me lo de.
 	   //no comparo contra DELETED x si no esta seteado.

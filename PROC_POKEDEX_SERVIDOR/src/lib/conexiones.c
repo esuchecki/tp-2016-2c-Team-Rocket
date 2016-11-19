@@ -59,9 +59,13 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		pthread_rwlock_rdlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_rdlock(arch->sem_rw);
+		}
 		char ** directorios = leerDirectorio(path);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 		int temp = 0;
 		int aux = sizeof(char) * (OSADA_FILENAME_LENGTH + 1);
@@ -120,9 +124,13 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		pthread_rwlock_rdlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_rdlock(arch->sem_rw);
+		}
 		long* atributos = obtenerAtributos(path);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 		switch (atributos[0]) {
 		case REGULAR:
@@ -210,9 +218,13 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		pthread_rwlock_wrlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_wrlock(arch->sem_rw);
+		}
 		int directorioABorrar = borrarDirectorio(path);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 		paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int),
 				&directorioABorrar);
@@ -233,9 +245,13 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		pthread_rwlock_wrlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_wrlock(arch->sem_rw);
+		}
 		int archivoABorrar = borrarArchivo(path);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 		paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
 				&archivoABorrar);
@@ -429,10 +445,13 @@ void atenderConexion(int socket_conexion) {
 		uint32_t tamanioCopiarSockets = 0;
 
 		arch = verificarAperturasArchivos(path);
-		pthread_rwlock_rdlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_rdlock(arch->sem_rw);
+		}
 		osada_block* archivo = obtenerArchivoPorPath(path, size, offset, &tamanioCopiarSockets);
-		pthread_rwlock_unlock(arch->sem_rw);
-
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 		if ( (tamanioCopiarSockets >0) )
 		{
 			paqueteSalida = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
@@ -468,9 +487,13 @@ void atenderConexion(int socket_conexion) {
 		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
 
 		arch = verificarAperturasArchivos(path);
-		pthread_rwlock_wrlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_wrlock(arch->sem_rw);
+		}
 		int resultado = escribir(path, buf, size, offset);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 
 		paqueteSalida = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
@@ -521,9 +544,13 @@ void atenderConexion(int socket_conexion) {
 			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaRenombrado));
 			break;
 		}
-		pthread_rwlock_wrlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_wrlock(arch->sem_rw);
+		}
 		int renombro = cambiarNombre(path, nombre);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 		//int renombro = cambiarNombre( lectura2->data, path);
 		paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
@@ -584,9 +611,13 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		pthread_rwlock_wrlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_wrlock(arch->sem_rw);
+		}
 		int utimensat = establecerUltimaModificacion(path, ultimaFecha);
-		pthread_rwlock_unlock(arch->sem_rw);
+		if(arch != NULL){
+			pthread_rwlock_unlock(arch->sem_rw);
+		}
 
 		paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
 		common_send(socket_conexion, paqueteSalida);
