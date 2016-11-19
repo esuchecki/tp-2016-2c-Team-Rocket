@@ -17,7 +17,7 @@ while :
 do
     clear
    echo "Elija una opcion:"
-    options=("Descargar todo del repositorio ${opts[1]}" "Clonar a otras maquinas ${opts[2]}" "Instalar  ${opts[3]}"  "crearDiscoOsada  ${opts[4]}" "Abrir Pokedex Servidor  ${opts[5]}" "Abrir Pokedex Cliente  ${opts[6]}" "Finalizar Pokedex Cliente  ${opts[7]}"  "Salir")
+    options=("Descargar todo del repositorio ${opts[1]}" "Clonar a otras maquinas ${opts[2]}" "Instalar CATEDRA ${opts[3]}"  "Instalar  TEAM ROCKET ${opts[4]}" "crearDiscoOsada  ${opts[5]}" "Abrir Pokedex Servidor  ${opts[6]}" "Abrir Pokedex Cliente  ${opts[7]}" "Finalizar Pokedex Cliente  ${opts[8]}"  "VAR_ENTORNO ${opts[9]}" "IP_PUERTO POKEDEX ${opts[10]}" "Salir")
     select opt in "${options[@]}"
     do
         case $opt in
@@ -37,42 +37,66 @@ do
 		read -r A
                 break
                 ;;
-            "Instalar  ${opts[3]}")
+            "Instalar CATEDRA ${opts[3]}")
 		choice 3
 		echo "opcion3"
-                sh ./3_instalacion.sh
+                sh ./3_instalarCatedra.sh
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
                 ;;
-            "crearDiscoOsada  ${opts[4]}")
+            "Instalar  TEAM ROCKET ${opts[4]}")
 		choice 4
 		echo "opcion4"
+                sh ./3_instalacionTeamRocket.sh
+		echo "Presione una tecla para continuar..."
+		read -r A
+                break
+                ;;
+            "crearDiscoOsada  ${opts[5]}")
+		choice 5
+		echo "opcion5"
                 sh ./4_crearDiscoOsada.sh
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
                 ;;
-            "Abrir Pokedex Servidor  ${opts[5]}")
-		choice 5
-		echo "opcion5"
+            "Abrir Pokedex Servidor  ${opts[6]}")
+		choice 6
+		echo "opcion6"
                 sh ./5_abrirPokeServer.sh
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
                 ;;
-            "Abrir Pokedex Cliente  ${opts[6]}")
-		choice 5
-		echo "opcion5"
+            "Abrir Pokedex Cliente  ${opts[7]}")
+		choice 7
+		echo "opcion7"
                 sh ./6_pokeCliente.sh
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
                 ;;
-            "Finalizar Pokedex Cliente  ${opts[7]}")
-		choice 5
-		echo "opcion5"
+            "Finalizar Pokedex Cliente  ${opts[8]}")
+		choice 8
+		echo "opcion8"
                 sh ./7_finalizarPokedexCliente.sh
+		echo "Presione una tecla para continuar..."
+		read -r A
+                break
+                ;;
+            "VAR_ENTORNO ${opts[9]}")
+		choice 9
+		echo "opcion9"
+                sh ./8_variableEntorno.sh
+		echo "Presione una tecla para continuar..."
+		read -r A
+                break
+                ;;
+	"IP_PUERTO POKEDEX ${opts[10]}")
+		choice 10
+		echo "opcion10"
+                sh ./9_IP_pokedex.sh
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break

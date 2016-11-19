@@ -12,7 +12,7 @@
 
 
 
-#define pathConfigCli "/home/utnso/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/config_cliente.txt"
+#define pathConfigCli "/home/utnso/tp-2016-2c-Team-Rocket/Build/ip.txt"
 
 /**
  * @NAME: InicializarLogCliente

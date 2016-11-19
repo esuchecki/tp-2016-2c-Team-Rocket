@@ -23,7 +23,7 @@
 #define __estructuraTablaAsignaciones (4)
 #define __estructuraBloqueDatos (5)
 
-#define __pathArchivo "/home/utnso/trabajoPractico/tp-2016-2c-Team-Rocket/OSADA_FS/src/disco.bin"
+#define __pathArchivo "/home/utnso/tp-2016-2c-Team-Rocket/Build/disco.bin"
 
 
 //typedef struct {

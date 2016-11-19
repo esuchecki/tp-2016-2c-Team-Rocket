@@ -1,0 +1,784 @@
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): -------------------------------------------------------
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a leer la metadata del mapa.
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): tiempoChequeadoDeadlock= 50000
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): ModoBatalla= 1
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Algoritmo= SRDF
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Quantum= 3
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Retardo= 2000
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): IP= 127.0.0.1
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Puerto= 8002
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Finaliza la lectura de metadata del mapa.
+[INFO] 01:58:27:726 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a leer las PokeNest y cargarlas
+[INFO] 01:58:31:309 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:58:31:309 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): charmander001.dat
+[INFO] 01:58:31:313 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Se creo una Pokenest: [ C | x=5 | y=5 | cant=1 ]
+[INFO] 01:58:31:313 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:58:31:313 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): zorro001.dat
+[INFO] 01:58:31:321 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Se creo una Pokenest: [ Z | x=17 | y=17 | cant=1 ]
+[INFO] 01:58:31:321 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:58:31:321 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): pikachu001.dat
+[INFO] 01:58:31:329 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Se creo una Pokenest: [ P | x=11 | y=11 | cant=1 ]
+[INFO] 01:58:31:329 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:58:31:329 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): onix001.dat
+[INFO] 01:58:31:337 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Se creo una Pokenest: [ O | x=8 | y=8 | cant=1 ]
+[INFO] 01:58:31:337 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:58:31:337 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): bobic001.dat
+[INFO] 01:58:31:346 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Se creo una Pokenest: [ B | x=2 | y=2 | cant=1 ]
+[INFO] 01:58:31:346 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 01:58:31:346 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): squirtle001.dat
+[INFO] 01:58:31:354 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Se creo una Pokenest: [ S | x=14 | y=14 | cant=1 ]
+[INFO] 01:58:31:354 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5847): Finalizo la carga de PokeNest.
+[DEBUG] 01:58:31:366 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se crea el socket escucha con numero: 4
+
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se Mueve a cola de listos al entrenador: @
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Cola de Listos: @
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se conecto un entrenador: [ @ ]
+[DEBUG] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se creo un entrenador con simbolo: @, y con numero de socket: 5
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 10 
+[DEBUG] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 11;11
+[DEBUG] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 20
+[INFO] 01:58:41:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:1
+[INFO] 01:58:43:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 01:58:43:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:43:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:43:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 2, 1
+[DEBUG] 01:58:43:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 19
+[INFO] 01:58:43:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[INFO] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se Mueve a cola de listos al entrenador: #
+[INFO] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Cola de Listos: @
+[INFO] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Cola de Listos: #
+[INFO] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se conecto un entrenador: [ # ]
+[DEBUG] 01:58:44:413 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5860): Se creo un entrenador con simbolo: #, y con numero de socket: 6
+[DEBUG] 01:58:45:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:45:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:45:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 2, 2
+[DEBUG] 01:58:45:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 18
+[INFO] 01:58:45:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:47:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:47:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:47:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 3, 2
+[DEBUG] 01:58:47:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 17
+[INFO] 01:58:47:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:49:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:49:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:49:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 3, 3
+[DEBUG] 01:58:49:653 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 16
+[INFO] 01:58:49:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:51:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:51:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:51:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 4, 3
+[DEBUG] 01:58:51:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 15
+[INFO] 01:58:51:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:53:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:53:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:53:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 4, 4
+[DEBUG] 01:58:53:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 14
+[INFO] 01:58:53:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:55:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:55:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:55:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 5, 4
+[DEBUG] 01:58:55:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 13
+[INFO] 01:58:55:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:57:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:57:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:57:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 5, 5
+[DEBUG] 01:58:57:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 12
+[INFO] 01:58:57:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:58:59:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:58:59:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:58:59:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 6, 5
+[DEBUG] 01:58:59:654 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 11
+[INFO] 01:58:59:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:01:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:01:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:01:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 6, 6
+[DEBUG] 01:59:01:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 10
+[INFO] 01:59:01:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:03:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:03:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:03:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 7, 6
+[DEBUG] 01:59:03:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 9
+[INFO] 01:59:03:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:05:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:05:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:05:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 7, 7
+[DEBUG] 01:59:05:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 8
+[INFO] 01:59:05:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:07:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:07:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:07:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 8, 7
+[DEBUG] 01:59:07:655 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 7
+[INFO] 01:59:07:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:09:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:09:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:09:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 8, 8
+[DEBUG] 01:59:09:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 6
+[INFO] 01:59:09:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:11:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:11:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:11:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 9, 8
+[DEBUG] 01:59:11:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 5
+[INFO] 01:59:11:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:13:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:13:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:13:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 9, 9
+[DEBUG] 01:59:13:656 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 4
+[INFO] 01:59:13:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:15:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:15:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:15:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 10, 9
+[DEBUG] 01:59:15:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 3
+[INFO] 01:59:15:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:17:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:17:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:17:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 10, 10
+[DEBUG] 01:59:17:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 2
+[INFO] 01:59:17:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:19:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:19:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:19:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 11, 10
+[DEBUG] 01:59:19:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 1
+[INFO] 01:59:19:657 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:31:436 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:31:436 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:31:436 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 11, 11
+[DEBUG] 01:59:31:436 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 0
+[INFO] 01:59:31:436 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): --ESTRUCTURAS HILO DEADLOCK--
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS TOTALES
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS DISPONIBLES
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS ASIGNADOS
+[INFO] 01:59:31:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS REQUERIDOS
+[DEBUG] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 12 
+[DEBUG] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): EL ENTRENADOR @ SOLICITA POKE: P
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se quita de la cola de Listos al entrenador: @
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Listos: #
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se agrega a la cola de bloqueados al entrenador: @
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Listos: #
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Bloqueados: @
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 6
+[DEBUG] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 10 
+[DEBUG] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 2;2
+[DEBUG] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): le asigne al entrenador @, el pokemon: P
+[DEBUG] 01:59:33:437 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): nombre del archivo: ///home/utnso/trabajoPractico/test_tp/prueba_base//Mapas//Verde//PokeNests//pikachu//pikachu001.dat
+[DEBUG] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): ///home/utnso/trabajoPractico/test_tp/prueba_base//Mapas//Verde//PokeNests//pikachu//pikachu001.dat
+[DEBUG] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): entroo...
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Se quita de la cola de Bloqueados al entrenador: @
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Cola de Listos: #
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Se Mueve a cola de listos al entrenador: @
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Cola de Listos: #
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Cola de Listos: @
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Finalizados esta vacía
+[DEBUG] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 2
+[INFO] 01:59:33:438 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:1
+[INFO] 01:59:35:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 01:59:35:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 10 
+[DEBUG] 01:59:35:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 2;2
+[DEBUG] 01:59:35:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 18
+[INFO] 01:59:35:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:1
+[INFO] 01:59:37:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 6
+[DEBUG] 01:59:37:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 01:59:37:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:37:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 2, 1
+[DEBUG] 01:59:37:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 1
+[INFO] 01:59:37:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:39:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 01:59:39:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:39:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 2, 2
+[DEBUG] 01:59:39:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 0
+[INFO] 01:59:39:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 12 
+[DEBUG] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): EL ENTRENADOR # SOLICITA POKE: B
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se quita de la cola de Listos al entrenador: #
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Listos: @
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se agrega a la cola de bloqueados al entrenador: #
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Listos: @
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Bloqueados: #
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 5
+[DEBUG] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:41:439 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 10, 11
+[DEBUG] 01:59:41:440 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 17
+[DEBUG] 01:59:41:440 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): le asigne al entrenador #, el pokemon: B
+[DEBUG] 01:59:41:440 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): nombre del archivo: ///home/utnso/trabajoPractico/test_tp/prueba_base//Mapas//Verde//PokeNests//bobic//bobic001.dat
+[DEBUG] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): ///home/utnso/trabajoPractico/test_tp/prueba_base//Mapas//Verde//PokeNests//bobic//bobic001.dat
+[DEBUG] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): entroo...
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Se quita de la cola de Bloqueados al entrenador: #
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Cola de Listos: @
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Se Mueve a cola de listos al entrenador: #
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Cola de Listos: @
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): Cola de Listos: #
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Bloqueados esta vacía
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): La cola de planificacion de Finalizados esta vacía
+[INFO] 01:59:41:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:43:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:43:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:43:441 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 10, 10
+[DEBUG] 01:59:43:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 16
+[INFO] 01:59:43:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:45:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:45:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:45:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 9, 10
+[DEBUG] 01:59:45:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 15
+[INFO] 01:59:45:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:47:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:47:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:47:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 9, 9
+[DEBUG] 01:59:47:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 14
+[INFO] 01:59:47:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:49:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:49:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:49:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 8, 9
+[DEBUG] 01:59:49:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 13
+[INFO] 01:59:49:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:51:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:51:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:51:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 8, 8
+[DEBUG] 01:59:51:442 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 12
+[INFO] 01:59:51:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:53:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:53:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:53:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 7, 8
+[DEBUG] 01:59:53:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 11
+[INFO] 01:59:53:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:55:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:55:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:55:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 7, 7
+[DEBUG] 01:59:55:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 10
+[INFO] 01:59:55:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:57:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:57:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:57:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 6, 7
+[DEBUG] 01:59:57:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 9
+[INFO] 01:59:57:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 01:59:59:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 01:59:59:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 01:59:59:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 6, 6
+[DEBUG] 01:59:59:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 8
+[INFO] 01:59:59:443 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:01:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:01:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:01:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 5, 6
+[DEBUG] 02:00:01:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 7
+[INFO] 02:00:01:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:03:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:03:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:03:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 5, 5
+[DEBUG] 02:00:03:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 6
+[INFO] 02:00:03:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:05:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:05:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:05:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 4, 5
+[DEBUG] 02:00:05:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 5
+[INFO] 02:00:05:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:07:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:07:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:07:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 4, 4
+[DEBUG] 02:00:07:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 4
+[INFO] 02:00:07:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 3, 4
+[DEBUG] 02:00:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 3
+[INFO] 02:00:09:444 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:11:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:11:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:11:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 3, 3
+[DEBUG] 02:00:11:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 2
+[INFO] 02:00:11:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:13:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:13:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:13:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 2, 3
+[DEBUG] 02:00:13:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 1
+[INFO] 02:00:13:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:15:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 11 
+[DEBUG] 02:00:15:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:15:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: @, 2, 2
+[DEBUG] 02:00:15:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 0
+[INFO] 02:00:15:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 5,con el header 12 
+[DEBUG] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): EL ENTRENADOR @ SOLICITA POKE: B
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se quita de la cola de Listos al entrenador: @
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Listos: #
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Bloqueados esta vacía
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se agrega a la cola de bloqueados al entrenador: @
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Listos: #
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Bloqueados: @
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 6
+[DEBUG] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 10 
+[DEBUG] 02:00:17:445 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): atenderConexion / peticionPokenest / dondeQuedaEstaPokeNest : 11;11
+[ERROR] 02:00:17:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): No se puede entregar recurso por falta de recurso
+[DEBUG] 02:00:17:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 18
+[INFO] 02:00:17:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:1
+[INFO] 02:00:19:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): ESCUCHO AL ENTRENADOR-SOCKET 6
+[DEBUG] 02:00:19:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:19:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:19:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 3, 2
+[DEBUG] 02:00:19:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 17
+[INFO] 02:00:19:446 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 3, 3
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 16
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): --ESTRUCTURAS HILO DEADLOCK--
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS TOTALES
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS DISPONIBLES
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS ASIGNADOS
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS REQUERIDOS
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 1
+[INFO] 02:00:28:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[DEBUG] 02:00:30:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:30:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:30:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 4, 3
+[DEBUG] 02:00:30:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 15
+[INFO] 02:00:30:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:32:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:32:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:32:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 4, 4
+[DEBUG] 02:00:32:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 14
+[INFO] 02:00:32:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:34:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:34:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:34:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 5, 4
+[DEBUG] 02:00:34:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 13
+[INFO] 02:00:34:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:36:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:36:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:36:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 5, 5
+[DEBUG] 02:00:36:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 12
+[INFO] 02:00:36:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:38:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:38:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:38:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 6, 5
+[DEBUG] 02:00:38:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 11
+[INFO] 02:00:38:485 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:40:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:40:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:40:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 6, 6
+[DEBUG] 02:00:40:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 10
+[INFO] 02:00:40:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:42:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:42:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:42:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 7, 6
+[DEBUG] 02:00:42:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 9
+[INFO] 02:00:42:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:44:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:44:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:44:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 7, 7
+[DEBUG] 02:00:44:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 8
+[INFO] 02:00:44:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:46:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:46:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:46:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 8, 7
+[DEBUG] 02:00:46:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 7
+[INFO] 02:00:46:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:48:486 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:48:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:48:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 8, 8
+[DEBUG] 02:00:48:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 6
+[INFO] 02:00:48:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:50:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:50:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:50:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 9, 8
+[DEBUG] 02:00:50:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 5
+[INFO] 02:00:50:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:52:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:52:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:52:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 9, 9
+[DEBUG] 02:00:52:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 4
+[INFO] 02:00:52:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:54:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:54:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:54:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 10, 9
+[DEBUG] 02:00:54:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 3
+[INFO] 02:00:54:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:56:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:56:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:56:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 10, 10
+[DEBUG] 02:00:56:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 2
+[INFO] 02:00:56:487 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:00:58:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:00:58:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:00:58:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 11, 10
+[DEBUG] 02:00:58:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 1
+[INFO] 02:00:58:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:01:00:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 11 
+[DEBUG] 02:01:00:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): movi al entrenador
+[DEBUG] 02:01:00:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): simbolo: #, 11, 11
+[DEBUG] 02:01:00:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): distancia a pokenest = 0
+[INFO] 02:01:00:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): VALOR FLAG:0
+[DEBUG] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Atiendo al socket 6,con el header 12 
+[DEBUG] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): EL ENTRENADOR # SOLICITA POKE: P
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se quita de la cola de Listos al entrenador: #
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Listos esta vacía
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Bloqueados: @
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Se agrega a la cola de bloqueados al entrenador: #
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Listos esta vacía
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Bloqueados: @
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): Cola de Bloqueados: #
+[INFO] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5858): La cola de planificacion de Finalizados esta vacía
+[ERROR] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): No se puede entregar recurso por falta de recurso
+[ERROR] 02:01:02:488 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5859): No se puede entregar recurso por falta de recurso
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): --ESTRUCTURAS HILO DEADLOCK--
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS TOTALES
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS DISPONIBLES
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS ASIGNADOS
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> C -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> Z -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> P -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> O -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> B -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> S -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS REQUERIDOS
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> C -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> Z -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> P -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> O -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 1
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> B -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:01:29:632 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> S -> 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): --ESTRUCTURAS HILO DEADLOCK--
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS TOTALES
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS DISPONIBLES
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS ASIGNADOS
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> C -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> Z -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> P -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> O -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> B -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> S -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS REQUERIDOS
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> C -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> Z -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> P -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> O -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 1
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> B -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:04:54:662 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> S -> 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 1
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): CANTIDAD POKEMONES ENTRENADOR:0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS ASIGNADOS- 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS TOTALES: 1 - RECURSOS ASIGNADOS 0
+[DEBUG] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): RECURSOS DISPONIBLES 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): --ESTRUCTURAS HILO DEADLOCK--
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS TOTALES
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:28:36:474 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ RECURSOS DISPONIBLES
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): C -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): Z -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): P -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): O -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): B -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): S -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS ASIGNADOS
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> C -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> Z -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> P -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> O -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> B -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> S -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): MATRIZ DE RECURSOS REQUERIDOS
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> C -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> C -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> Z -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> Z -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> P -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> P -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> O -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> O -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> B -> 1
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> B -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): @ -> S -> 0
+[INFO] 02:28:36:475 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(5847:5861): # -> S -> 0
+[INFO] 13:59:43:889 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): -------------------------------------------------------
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Voy a leer la metadata del mapa.
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): tiempoChequeadoDeadlock= 5000
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): ModoBatalla= 1
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Algoritmo= SRDF
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Quantum= 3
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Retardo= 20
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): IP= 127.0.0.1
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Puerto= 8002
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Finaliza la lectura de metadata del mapa.
+[INFO] 13:59:43:898 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Voy a leer las PokeNest y cargarlas
+[INFO] 13:59:47:552 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 13:59:47:552 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): charmander001.dat
+[INFO] 13:59:47:557 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): 24,80
+[INFO] 13:59:47:557 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Se creo una Pokenest: [ C | x=5 | y=5 | cant=1 ]
+[INFO] 13:59:47:557 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 13:59:47:557 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): zorro001.dat
+[INFO] 13:59:47:565 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): 24,80
+[ERROR] 13:59:47:565 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): errorSintacticoSemantico. Se quiso crear una Pokenest fuera del mapa o el identificador ya existia o no estaba bien espaciadas. Pokenest: [ Z | x=34 | y=25 | cant=1 ]
+[INFO] 13:59:47:565 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): voy a finalizar la gui
+[INFO] 13:59:47:565 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(3905:3905): Libere de memoria la estructura unMapa->metadata.
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): -------------------------------------------------------
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Voy a leer la metadata del mapa.
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): tiempoChequeadoDeadlock= 5000
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): ModoBatalla= 1
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Algoritmo= SRDF
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Quantum= 3
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Retardo= 20
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): IP= 127.0.0.1
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Puerto= 8002
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Finaliza la lectura de metadata del mapa.
+[INFO] 14:04:52:274 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Voy a leer las PokeNest y cargarlas
+[INFO] 14:04:52:275 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 14:04:52:275 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): charmander001.dat
+[INFO] 14:04:52:279 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Terminal Size: 80 x 24
+[INFO] 14:04:52:279 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Se creo una Pokenest: [ C | x=5 | y=5 | cant=1 ]
+[INFO] 14:04:52:279 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Voy a contar la cantidad de pokemones en una pokenest
+[DEBUG] 14:04:52:279 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): zorro001.dat
+[INFO] 14:04:52:287 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Terminal Size: 80 x 24
+[ERROR] 14:04:52:287 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): errorSintacticoSemantico. Se quiso crear una Pokenest fuera del mapa o el identificador ya existia o no estaba bien espaciadas. Pokenest: [ Z | x=34 | y=25 | cant=1 ]
+[INFO] 14:04:52:287 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): voy a finalizar la gui
+[INFO] 14:04:52:287 /home/utnso/git/tp-2016-2c-Team-Rocket/PROC_MAPA/Debug/mapa/(4084:4084): Libere de memoria la estructura unMapa->metadata.
