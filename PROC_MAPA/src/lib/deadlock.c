@@ -80,32 +80,38 @@ void cargarEstructurasDeadlock(int recursosTotales[], int recursosDisponibles[],
 
 		}
 	}
-	log_info(myArchivoDeLog,"--ESTRUCTURAS HILO DEADLOCK--");
-	log_info(myArchivoDeLog,"MATRIZ RECURSOS TOTALES");
-	for(i=0;i<list_size(mapa->pokeNest); i++){
+	log_info(myArchivoDeLog, "--ESTRUCTURAS HILO DEADLOCK--");
+	log_info(myArchivoDeLog, "MATRIZ RECURSOS TOTALES");
+	for (i = 0; i < list_size(mapa->pokeNest); i++) {
 		t_pokeNest * pokeNest = list_get(mapa->pokeNest, i);
 		recursosTotales[i] = list_size(pokeNest->pokemones);
-		log_info(myArchivoDeLog,"%c -> %d",pokeNest->identificador,recursosTotales[i]);
+		log_info(myArchivoDeLog, "%c -> %d", pokeNest->identificador,
+				recursosTotales[i]);
 	}
-	log_info(myArchivoDeLog,"MATRIZ RECURSOS DISPONIBLES");
-	for(i=0;i<cantidadPokenest;i++){
-		t_pokeNest * pokeNest = list_get(mapa->pokeNest, i);
-		log_info(myArchivoDeLog,"%c -> %d",pokeNest->identificador,recursosDisponibles[i]);
-	}
-	log_info(myArchivoDeLog,"MATRIZ DE RECURSOS ASIGNADOS");
+	log_info(myArchivoDeLog, "MATRIZ RECURSOS DISPONIBLES");
 	for (i = 0; i < cantidadPokenest; i++) {
-			for (j = 0; j < numeroDeProcesos; j++) {
-			t_pokeNest * pokenest = list_get(mapa->pokeNest, i);
-			t_entrenador * entrenadorBloqueado = list_get(colaBloqueados, j);
-			log_info(myArchivoDeLog,"%c -> %c -> %d",entrenadorBloqueado->simbolo,pokenest->identificador,asignados[j][i]);
-		}
+		t_pokeNest * pokeNest = list_get(mapa->pokeNest, i);
+		log_info(myArchivoDeLog, "%c -> %d", pokeNest->identificador,
+				recursosDisponibles[i]);
 	}
-	log_info(myArchivoDeLog,"MATRIZ DE RECURSOS REQUERIDOS");
+	log_info(myArchivoDeLog, "MATRIZ DE RECURSOS ASIGNADOS");
 	for (i = 0; i < cantidadPokenest; i++) {
 		for (j = 0; j < numeroDeProcesos; j++) {
 			t_pokeNest * pokenest = list_get(mapa->pokeNest, i);
 			t_entrenador * entrenadorBloqueado = list_get(colaBloqueados, j);
-			log_info(myArchivoDeLog,"%c -> %c -> %d",entrenadorBloqueado->simbolo,pokenest->identificador,requeridos[j][i]);
+			log_info(myArchivoDeLog, "%c -> %c -> %d",
+					entrenadorBloqueado->simbolo, pokenest->identificador,
+					asignados[j][i]);
+		}
+	}
+	log_info(myArchivoDeLog, "MATRIZ DE RECURSOS REQUERIDOS");
+	for (i = 0; i < cantidadPokenest; i++) {
+		for (j = 0; j < numeroDeProcesos; j++) {
+			t_pokeNest * pokenest = list_get(mapa->pokeNest, i);
+			t_entrenador * entrenadorBloqueado = list_get(colaBloqueados, j);
+			log_info(myArchivoDeLog, "%c -> %c -> %d",
+					entrenadorBloqueado->simbolo, pokenest->identificador,
+					requeridos[j][i]);
 		}
 	}
 }
@@ -147,14 +153,14 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 	}
 
 	for (i = 0; i < numeroDeProcesos; i++) {
-//		for (j = 0; j < cantidadPokenest; j++) {
-//			if (asignados[i][j] != 0) {
+		for (j = 0; j < cantidadPokenest; j++) {
+			if (asignados[i][j] != 0) {
 				Finish[i] = false;
-//				goto vuelta;
-//			} else
-//				Finish[i] = true;
-//		}
-//		vuelta: ;
+				goto vuelta;
+			} else
+				Finish[i] = true;
+		}
+		vuelta: ;
 	}
 
 	for (i = 0; i < numeroDeProcesos; i++) {
@@ -176,6 +182,7 @@ t_list * detectarDeadlock(t_mapa * datosMapa) {
 				for (j = 0; j < cantidadPokenest; j++) {
 					work[j] = work[j] + asignados[i][j];
 					Finish[i] = true;
+					list_clean(vectorBooleano);
 				}
 			}
 
@@ -236,8 +243,8 @@ void * deteccionDeadlock(void * datos) {
 	t_mapa * mapa = datos;
 
 	while (1) {
-		reiniciarVuelta:
-		sleepInMiliSegundos(mapa->metadata->tiempoChequeadoDeadlock);
+		reiniciarVuelta: sleepInMiliSegundos(
+				mapa->metadata->tiempoChequeadoDeadlock);
 
 		t_list * listaDeadlock = detectarDeadlock(mapa);
 		/*
@@ -247,12 +254,14 @@ void * deteccionDeadlock(void * datos) {
 		 list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,1));
 		 log_info(myArchivoDeLog, "---------%s", string_itoa(list_size(listaDeadlock)));*/
 		if ((mapa->metadata->batalla[0] == '1') && (listaDeadlock != NULL)) {
-			loguearListaDeadlock(listaDeadlock);
+
 			parcial = list_create();
 			while (list_size(listaDeadlock) != 0) {
 				log_info(myArchivoDeLog, "Resolucion de deadlock por batalla");
 
 				rearmarListaDeadlock(listaDeadlock, mapa);
+				if(list_size(parcial) == 0) goto final;
+				loguearListaDeadlock(parcial);
 
 				peticionesDePokemones(parcial, mapa);
 
@@ -260,7 +269,8 @@ void * deteccionDeadlock(void * datos) {
 
 				if (loser == NULL) {
 					//TODO: si entro aca se mandaron algun moco...que hago!??
-					log_error(myArchivoDeLog, "Che, en la lista de pokemon me mandaron algun dato erroneo, revisenla.");
+					log_error(myArchivoDeLog,
+							"Che, en la lista de pokemon me mandaron algun dato erroneo, revisenla.");
 					goto reiniciarVuelta;
 				} else {
 					int null_data = 0;
@@ -268,7 +278,6 @@ void * deteccionDeadlock(void * datos) {
 							perdisteBatalla, sizeof(int), &null_data);
 					common_send(loser->nroDesocket, paquetePerdisteBatalla);
 					free(paquetePerdisteBatalla);
-
 
 					desconectarEntrenador(loser->nroDesocket, mapa,
 							sockets_activos, socketMasGrande);
@@ -283,7 +292,10 @@ void * deteccionDeadlock(void * datos) {
 					//		loguearListaDeadlock(parcial);
 
 				}
+
 			}
+			final:
+			;
 			list_destroy(listaDeadlock);
 		}
 	}
@@ -314,9 +326,10 @@ void peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 			entrenador->mejorPokemon->species = auxSpecies;
 		} else {
 			log_info(myArchivoDeLog, "Error en la recepcion del mejor pokemon");
-			desconectarEntrenador(entrenador->nroDesocket, unMapa,sockets_activos, socketMasGrande);
+			desconectarEntrenador(entrenador->nroDesocket, unMapa,
+					sockets_activos, socketMasGrande);
 			list_destroy(listaDeadlock);
-			listaDeadlock=NULL;
+			listaDeadlock = NULL;
 			return;
 		}
 	}
@@ -326,7 +339,7 @@ void peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 void loguearListaDeadlock(t_list *listaDeadlock) {
 	log_info(myArchivoDeLog, "Cantidad lista deadlock = %d",
 			list_size(listaDeadlock));
-	if (list_size(listaDeadlock) > 2) {
+	if (list_size(listaDeadlock) >= 2) {
 		int i;
 		log_info(myArchivoDeLog, "LISTA - DEADLOCK:");
 		for (i = 0; i < list_size(listaDeadlock); i++) {
@@ -348,6 +361,7 @@ void rearmarListaDeadlock(t_list * listaDeadlock, t_mapa *mapa) {
 			listaDeadlock, mapa, entrenador);
 	if (resultado == 0) {
 		log_error(myArchivoDeLog, "No encontre la espera circular");
+		list_remove(parcial,0);
 	} else {
 		log_info(myArchivoDeLog, "ENCONTRE LA ESPERA CIRCULAR");
 	}
@@ -386,7 +400,9 @@ int encontrarEntrenadorQueRetieneRecurso(t_entrenador *entrenadorAux,
 		}
 		t_entrenador * alguno = list_find(listaDeadlock, mismoSimbolo);
 		entrenadorAux = alguno;
-		if (entrenador->simbolo == entrenadorAux->simbolo) {
+		if(entrenadorAux == NULL){
+			return 0;
+		}else if (entrenador->simbolo == entrenadorAux->simbolo) {
 			return 1;
 			//return alguno;
 		} else {
@@ -400,12 +416,11 @@ int encontrarEntrenadorQueRetieneRecurso(t_entrenador *entrenadorAux,
 	return 0;
 }
 
-void removerDeListaSecundaria(){
-	seguir:
-	;
+void removerDeListaSecundaria() {
+	seguir: ;
 	int i;
-	for(i = 0; i < list_size(parcial) ; i++){
-		list_remove(parcial,i);
+	for (i = 0; i < list_size(parcial); i++) {
+		list_remove(parcial, i);
 		goto seguir;
 	}
 }
