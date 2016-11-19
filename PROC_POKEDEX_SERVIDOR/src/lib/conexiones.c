@@ -201,6 +201,15 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   borrarDir: %s\n", path);
 
 		arch = verificarAperturasArchivos(path);
+		if (arch == NULL)
+		{
+			null_data = -EAGAIN;
+			paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
+			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorrado));
+			break;
+		}
+
 		pthread_rwlock_wrlock(arch->sem_rw);
 		int directorioABorrar = borrarDirectorio(path);
 		pthread_rwlock_unlock(arch->sem_rw);
@@ -215,6 +224,15 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   borrarArchivo: %s\n", path);
 
 		arch = verificarAperturasArchivos(path);
+		if (arch == NULL)
+		{
+			null_data = -EAGAIN;
+			paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
+			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorradoArchivo));
+			break;
+		}
+
 		pthread_rwlock_wrlock(arch->sem_rw);
 		int archivoABorrar = borrarArchivo(path);
 		pthread_rwlock_unlock(arch->sem_rw);
@@ -495,6 +513,14 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   renombrarArchivo: \n Path1: %s\n Path2:%s \n", path, nombre);
 
 		arch = verificarAperturasArchivos(path);
+		if (arch == NULL)
+		{
+			null_data = -EAGAIN;
+			paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
+			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaRenombrado));
+			break;
+		}
 		pthread_rwlock_wrlock(arch->sem_rw);
 		int renombro = cambiarNombre(path, nombre);
 		pthread_rwlock_unlock(arch->sem_rw);
@@ -549,6 +575,15 @@ void atenderConexion(int socket_conexion) {
 		printf("***]->   utimensat: %s, a: %s\n", path, asctime(&tiempo));
 
 		arch = verificarAperturasArchivos(path);
+		if (arch == NULL)
+		{
+			null_data = -EAGAIN;
+			paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
+			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaUtimensat));
+			break;
+		}
+
 		pthread_rwlock_wrlock(arch->sem_rw);
 		int utimensat = establecerUltimaModificacion(path, ultimaFecha);
 		pthread_rwlock_unlock(arch->sem_rw);
