@@ -31,11 +31,11 @@ int setup_listen(char * IP, char * Port) {
 		perror("setsockopt");
 		exit(1);
 	}
-	if (setsockopt(socketEscucha, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(yes))
-				== -1) {
-		perror("setsockopt");
-		exit(1);
-	}
+//	if (setsockopt(socketEscucha, SOL_SOCKET, SO_REUSEPORT, &yes, sizeof(yes))
+//				== -1) {
+//		perror("setsockopt");
+//		exit(1);
+//	}
 
 	if (bind(socketEscucha, serverInfo->ai_addr, serverInfo->ai_addrlen) < 0) {
 		printf("Puerto en Time-wait, error del bind");
