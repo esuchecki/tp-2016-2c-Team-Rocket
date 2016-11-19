@@ -93,7 +93,7 @@ void borrarMapa (t_mapa * mapa)
 	}
 	 */
 
-	if (mapa->items != NULL);
+	if (mapa->items != NULL)
 	{
 		if (list_size(mapa->items) >0)
 		{
@@ -475,7 +475,7 @@ void freeForMetadataMapa (t_mapa * unMapa)
 
 void freeForPokeNest (t_mapa * mapa)
 {
-	if (mapa->pokeNest != NULL);
+	if (mapa->pokeNest != NULL)
 	{
 		if (list_size(mapa->pokeNest) <1)
 		{

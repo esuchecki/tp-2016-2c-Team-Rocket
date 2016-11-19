@@ -22,13 +22,13 @@ then
 	echo "ejecuto el pokedex cliente en modo debug"
 	echo "ubicacion_pokedex:  "$POKEDEX
 	echo "***********************************"
-	eval $EXEC  $POKEDEX -d
+	eval $EXEC  $POKEDEX -d -s
 else
    	#print variable on a screen
 	echo "Elegiste ¡¡NO!!, queda abierto en segundo plano"
 	echo "ubicacion_pokedex:  "$POKEDEX
 	echo "***********************************"
-	eval $EXEC  $POKEDEX
+	eval $EXEC  $POKEDEX -s
 fi
 
 
