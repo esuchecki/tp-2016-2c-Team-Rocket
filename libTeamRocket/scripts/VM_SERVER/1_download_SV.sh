@@ -46,7 +46,7 @@ eval "mkdir -p" $BUILD_PATH
 
 #variable de entorno
 cd 
-echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/tp-2016-2c-Team-Rocket/Build" >> ~/.bashrc
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/tp-2016-2c-Team-Rocket/Build
 
 
 #shared library
@@ -68,5 +68,5 @@ make all
 eval "cp -f ~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/PROC_MAPA/Build/mapa " $BUILD_PATH
 
 
-#scp -rpC /home/utnso/tp-2016-2c-Team-Rocket/ utnso@[192.168.0.102]:/home/utnso/
+#scp -rpC /home/utnso/tp-2016-2c-Team-Rocket/ utnso@[192.168.0.102]:/home/utnso/tp-2016-2c-Team-Rocket
 

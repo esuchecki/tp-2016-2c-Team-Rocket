@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #revisar que esto tenga permisos de ejecucion..
-mkdir  /tmp/pokedexPrueba
+mkdir  /mnt/pokedexPrueba
 
 # declare POKEDEX variable
-POKEDEX="/tmp/pokedexPrueba"
+POKEDEX="/mnt/pokedex"
 
 # declare EXEC variable
-EXEC="~/git/tp-2016-2c-Team-Rocket/PROC_POKEDEX_CLIENTE/Debug/PROC_POKEDEX_CLIENTE"
+EXEC="~/tp-2016-2c-Team-Rocket/Build/PROC_POKEDEX_CLIENTE"
 
 
 #limpio pantalla
