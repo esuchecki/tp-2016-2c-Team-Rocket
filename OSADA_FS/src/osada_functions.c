@@ -184,6 +184,7 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indi
 			i++;
 			j++;
 		}
+		free(array);
 		//resultado = padre;
 	} else {
 		resultado = rootPath;
@@ -378,6 +379,7 @@ unsigned char* obtenerUltimoElemento(char* path){
 	} else {
 		ultimo = (unsigned char*) "";
 	}
+	free(array);
 	return ultimo;
 }
 
@@ -406,6 +408,7 @@ char* obtenerPathPadre(char* path){
 	} else {
 		padre = "";
 	}
+	free(array);
 	return padre;
 }
 
@@ -511,6 +514,8 @@ int largoUltimoElementoPath (char* path){
 	char* pathAlReves = string_reverse(path);
 	char** array = string_split(pathAlReves, "/");
 	int largo = string_length(array[0]);
+	free(pathAlReves);
+	free(array);
 	return largo;
 }
 
@@ -519,6 +524,8 @@ char* obtenerPathSinArchivo(char* path){
 	int largo = largoUltimoElementoPath(path);
 	char* pathSinArchivoAlReves = string_substring_from(pathAlReves,largo);
 	char* pathSinArchivo = string_reverse(pathSinArchivoAlReves);
+	free(pathAlReves);
+	free(pathSinArchivoAlReves);
 	return pathSinArchivo;
 }
 
@@ -526,8 +533,10 @@ char* obtenerNombreDelArchivo (char* path){
 	int largoNombre = largoUltimoElementoPath(path);
 	char* pathAlReves = string_reverse(path);
 	char* nombreArchivo = string_substring(pathAlReves, 0, largoNombre);
-	nombreArchivo = string_reverse(nombreArchivo);
-	return nombreArchivo;
+	char* nuevoNombreArchivo = string_reverse(nombreArchivo);
+	free(pathAlReves);
+	free(nombreArchivo);
+	return nuevoNombreArchivo;
 }
 
 /*
