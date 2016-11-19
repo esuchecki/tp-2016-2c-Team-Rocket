@@ -298,8 +298,9 @@ static int teamRocket_read(const char *path, char *buf, size_t size,
 static int teamRocket_write(const char *path, const char *buf, size_t size,	off_t offset, struct fuse_file_info *fi) {
 	char * newPath = malloc(strlen(path) + 1);
 	strcpy(newPath, path);
+	int resultadoTruncar = teamRocket_truncar(newPath, (size+offset));
 
-	if ( teamRocket_truncar(newPath, (size+offset) ) == 0)
+	if ( resultadoTruncar == operacionExitosa)
 	{
 
 		t_data * paquete = pedirPaquete(poke_escribirArchivo, strlen(newPath) + 1,	newPath);
@@ -322,8 +323,9 @@ static int teamRocket_write(const char *path, const char *buf, size_t size,	off_
 	}else
 	{
 		free(newPath);
+		return resultadoTruncar;
 	}
-	return -ENOENT;
+	return -EAGAIN;
 }
 ;
 
