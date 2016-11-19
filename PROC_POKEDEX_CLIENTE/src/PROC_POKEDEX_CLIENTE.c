@@ -42,7 +42,7 @@ int main(int argc,char*argv[]){
 
 
 	//socketConexion = connect_to("localhost","6100");
-	int socketConexion = connect_to(IP,Puerto);
+	socketConexion = connect_to(IP,Puerto);
 
 
 	int null_data = 0;
