@@ -742,8 +742,8 @@ void escucharNuevasConexiones(char* ip, char *puerto) {
 	while (1) {
 		int socket_nueva_conexion = accept(socketEscucha,
 				(struct sockaddr *) &remoteaddr, &addrlen);
-		//pthread_create(&hilos[i], NULL,(void *) atender,(void*) socket_nueva_conexion);;
-		atender(socket_nueva_conexion);
+		pthread_create(&hilos[i], NULL,(void *) atender,(void*) socket_nueva_conexion);;
+		//atender(socket_nueva_conexion);
 		printf("Este es el cliente numero %d", i);
 		i++;
 	}
