@@ -14,9 +14,10 @@ export LD_LIBRARY_PATH
 
 
 #shared library
-cd ~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build/
-make clean
-make all
+#cd ~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build/
+cd ~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/
+sudo make clean
+sudo make install
 eval "cp -f ~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/Build/liblibTeamRocket.so "  $BUILD_PATH
 
 #entrenador
