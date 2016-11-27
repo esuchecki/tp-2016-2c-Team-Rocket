@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <commons/collections/list.h>
+#include <commons/log.h>
 
 typedef struct {
 	int socketEscucha;
@@ -36,6 +37,8 @@ typedef struct {
 
 t_list * tablaArchivosAbiertos;
 
+
+t_log * logServidor;
 
 pthread_mutex_t mutex_mayor;
 pthread_mutex_t mutex_archivos;

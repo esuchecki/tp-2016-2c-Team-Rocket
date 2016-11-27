@@ -85,7 +85,7 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 
 				if (fechaModificacion != -archivoNoEncontrado)
 				{
-					log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
+					//log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
 					convertirSegundosToTimeSpec(&time1, fechaModificacion);
 					stbuf->st_mtim = time1;
 				}
@@ -100,7 +100,7 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 
 				if (fechaModificacion != -archivoNoEncontrado)
 				{
-					log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
+					//log_error(logCliente, "Mira la fechaHora: %s", string_itoa(fechaModificacion ));
 					convertirSegundosToTimeSpec(&time1, fechaModificacion);
 					stbuf->st_mtim = time1;
 				}
@@ -169,8 +169,7 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 static int teamRocket_readDir(const char *path, void *buf,
 		fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
 	//TODO: ver si falta el \0
-	log_error(logCliente, "My socket connection is: %s",
-			string_itoa(socketConexion));
+	//log_error(logCliente, "My socket connection is: %s",	string_itoa(socketConexion));
 
 	/*
 	 char * palabra = malloc(18);
@@ -197,8 +196,7 @@ static int teamRocket_readDir(const char *path, void *buf,
 		int cuantosStringsMePasaron = 0;
 		cuantosStringsMePasaron = (((paquete->tamanio) / sizeof(char))
 				/ (_OSADA_FILENAME_LENGTH + 1));
-		log_debug(logCliente, "Me pasaron x strings: %s",
-				string_itoa(cuantosStringsMePasaron));
+		//log_debug(logCliente, "Me pasaron x strings: %s",	string_itoa(cuantosStringsMePasaron));
 
 		while (temp < cuantosStringsMePasaron) {
 			aux = sizeof(char) * (_OSADA_FILENAME_LENGTH + 1);
@@ -338,7 +336,7 @@ static int teamRocket_mkdir(const char *path, mode_t mode) {
 			newPath);
 	common_send(socketConexion, paquete);
 	t_data * lectura = leer_paquete(socketConexion);
-	log_debug(logCliente, "quiere crear la ruta %s", path);
+	log_info(logCliente, "quiere crear la ruta %s", path);
 
 	free(paquete);
 	free(newPath);
@@ -372,7 +370,7 @@ static int teamRocket_rmdir(const char *path) {
 	t_data * paquete = pedirPaquete(poke_borrarDirectorio, strlen(newPath) + 1,
 			newPath);
 	common_send(socketConexion, paquete);
-	log_debug(logCliente, "quiere borrar la ruta %s", path);
+	log_info(logCliente, "quiere borrar la ruta %s", path);
 
 	free(paquete);
 	free(newPath);
@@ -436,7 +434,7 @@ static int teamRocket_unlink(const char * path) {
 	t_data * paquete = pedirPaquete(poke_borrarArchivo, strlen(newPath) + 1,
 			newPath);
 	common_send(socketConexion, paquete);
-	log_debug(logCliente, "quiere borrar el file %s", path);
+	log_info(logCliente, "quiere borrar el file %s", path);
 
 	free(newPath);
 	free(paquete);
@@ -488,8 +486,7 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 			newName);
 	common_send(socketConexion, paquete2);
 
-	log_debug(logCliente, "quiere renombrar %s con el nombre %s\n", path,
-			newName);
+	log_info(logCliente, "quiere renombrar %s con el nombre %s\n", path, newName);
 
 	free(newPath);
 	free(newName);
@@ -522,15 +519,15 @@ static int teamRocket_truncar(const char *path, off_t size) {
 	char * newPath = malloc(strlen(path) + 1);
 	strcpy(newPath, path);
 
-	log_debug(logCliente, "va a leer el paquete 1 \n");
+	//log_debug(logCliente, "va a leer el paquete 1 \n");
 	t_data * paquete = pedirPaquete(poke_truncar, strlen(newPath) + 1, newPath);
 	common_send(socketConexion, paquete);
-	log_debug(logCliente, "va a leer el paquete 2 \n");
+	//log_debug(logCliente, "va a leer el paquete 2 \n");
 
 	t_data * paquete2 = pedirPaquete(poke_truncar, sizeof(off_t), &size);
 	common_send(socketConexion, paquete2);
 
-	log_debug(logCliente, "quiere truncar %s con el largo %l \n", path, size);
+	log_info(logCliente, "quiere truncar %s con el largo %s \n", path, string_itoa(size));
 
 	free(newPath);
 	free(paquete);
@@ -574,7 +571,7 @@ static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
 	char * newPath = malloc(strlen(path) + 1);
 	strcpy(newPath, path);
 
-	log_debug(logCliente, "va a leer el paquete 1 \n");
+	//log_debug(logCliente, "va a leer el paquete 1 \n");
 	t_data * paquete = pedirPaquete(poke_utimensat, strlen(newPath) + 1, newPath);
 	common_send(socketConexion, paquete);
 
@@ -636,7 +633,7 @@ static int teamRocket_releasedir(const char* path, struct fuse_file_info* fi)
 
 int fcAuxiliarOpen(char * path, int enumRespuesta)
 {
-	log_debug(logCliente, "va a leer el paquete 1 \n");
+	//log_debug(logCliente, "va a leer el paquete 1 \n");
 	t_data * paquete = pedirPaquete(poke_abrirArchivo, strlen(path) + 1, path);
 	common_send(socketConexion, paquete);
 
@@ -675,7 +672,7 @@ return -ENOENT;
 
 int fcAuxiliarClose(char * path, int enumRespuesta)
 {
-	log_debug(logCliente, "va a leer el paquete 1 \n");
+	//log_debug(logCliente, "va a leer el paquete 1 \n");
 	t_data * paquete = pedirPaquete(poke_cerrarArchivo, strlen(path) + 1, path);
 	common_send(socketConexion, paquete);
 

@@ -37,7 +37,7 @@ int main(int argc, char*argv[]) {
 	//Para leer la config como parametro de ejecucion
 		//char * pathConfg = argv[1];
 
-		inicializarLogServidor(argv,true);
+		inicializarLogServidor(argv,false);
 
 		t_config * config = newConfigType(pathConfigCli);
 		//Configo la ip
@@ -74,7 +74,7 @@ int main(int argc, char*argv[]) {
 void inicializarLogServidor ( char *argv[],bool consolaOn )
 {
 
-	logServidor = log_create("/home/utnso/log_server.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
+	logServidor = log_create("/home/utnso/tp-2016-2c-Team-Rocket/Build/log_server.txt" , argv[0], consolaOn, LOG_LEVEL_INFO);
 
 
 	if (logServidor != NULL)

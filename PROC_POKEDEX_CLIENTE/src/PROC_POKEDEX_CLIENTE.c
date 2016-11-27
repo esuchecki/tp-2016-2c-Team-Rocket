@@ -38,7 +38,7 @@ int main(int argc,char*argv[]){
 		exit(EXIT_FAILURE);
 	}
 
-	inicializarLogCliente(argv,true);
+	inicializarLogCliente(argv,false);
 
 
 	//socketConexion = connect_to("localhost","6100");
@@ -68,7 +68,7 @@ int main(int argc,char*argv[]){
 void inicializarLogCliente( char *argv[],bool consolaOn )
 {
 
-	logCliente = log_create("/home/utnso/Escritorio/log.txt" , argv[0], consolaOn, LOG_LEVEL_DEBUG);
+	logCliente = log_create("/home/utnso/tp-2016-2c-Team-Rocket/Build/logCliente.txt" , argv[0], consolaOn, LOG_LEVEL_INFO);
 
 
 	if (logCliente != NULL)

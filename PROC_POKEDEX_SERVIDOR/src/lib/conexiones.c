@@ -34,10 +34,10 @@ bool existeEsteArchivo(char * path);
 void atenderConexion(int socket_conexion) {
 	//Me llega un mensaje del pokedex cliente
 
-	printf("entro a atender conexion\t");
+	//printf("entro a atender conexion\t");
 	t_data *paqueteEntrada = leer_paquete(socket_conexion);
 	t_data *paqueteSalida;
-	printf("|\tLeyo paquete\n");
+	//printf("|\tLeyo paquete\n");
 	char * path = paqueteEntrada->data;
 	size_t size = 0;
 	off_t offset = 0;
@@ -48,14 +48,16 @@ void atenderConexion(int socket_conexion) {
 	switch (paqueteEntrada->header) {
 	case poke_solicitudReadDir:
 		;
-		printf("***]->   readDir de: %s\n", path);
+		//printf("***]->   readDir de: %s\n", path);
+		log_info(logServidor, "***]->   readDir de: %s",path);
 
 		arch = verificarAperturasArchivos(path);
 		if (arch == NULL)
 		{
 			paqueteSalida = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorReadDir));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorReadDir));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_errorReadDir) );
 			break;
 		}
 
@@ -86,11 +88,13 @@ void atenderConexion(int socket_conexion) {
 		{
 			paqueteSalida = pedirPaquete(poke_respuestaReadDir, aux * (temp), buffer);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta, cant de archivos: %d\n", temp);
+			//printf("\t\tRta, cant de archivos: %d\n", temp);
+			log_info(logServidor, "\t\tRta, cant de archivos: %s", string_itoa(temp) );
 		} else {	//No tiene archivos.
 			paqueteSalida = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorReadDir));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorReadDir));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_errorReadDir) );
 		}
 
 		//le pongo un NULL al final.
@@ -112,7 +116,8 @@ void atenderConexion(int socket_conexion) {
 	case poke_solicitudGetAttr:
 		;
 
-		printf("***]->   getAttr de: %s\n", path);
+		//printf("***]->   getAttr de: %s\n", path);
+		log_info(logServidor, "***]->   getAttr de: %s", path );
 
 		arch = verificarAperturasArchivos(path);
 		if (arch == NULL)
@@ -120,7 +125,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = 0;
 			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorGetAttr));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorGetAttr));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_errorGetAttr) );
 			break;
 		}
 
@@ -150,9 +156,12 @@ void atenderConexion(int socket_conexion) {
 			//Lo muestro en pantalla.
 			struct tm tiempo;
 			localtime_r((time_t *)&ultimaFecha, &tiempo);
-			printf("\t\tRta: %s\n", "REGULAR");
-			printf("\t\tTamanio: %ld [bytes]\n", atributos[1]);
-			printf("\t\tFecha Mod: %s", asctime(&tiempo));
+			//printf("\t\tRta: %s\n", "REGULAR");
+			//printf("\t\tTamanio: %ld [bytes]\n", atributos[1]);
+			//printf("\t\tFecha Mod: %s", asctime(&tiempo));
+			log_info(logServidor, "\t\tRta: %s", "REGULAR" );
+			log_info(logServidor, "\t\tTamanio: %s [bytes]", string_itoa(atributos[1]) );
+			log_info(logServidor,"\t\tFecha Mod: %s", asctime(&tiempo) );
 			//size = 0;
 			break;
 		case DIRECTORY:
@@ -165,29 +174,36 @@ void atenderConexion(int socket_conexion) {
 			//Lo muestro en pantalla.
 			struct tm tiempo2;
 			localtime_r((time_t *)&ultimaFecha, &tiempo2);
-			printf("\t\tRta: %s\n", "DIRECTORY");
-			printf("\t\tFecha Mod: %s", asctime(&tiempo2));
+			//printf("\t\tRta: %s\n", "DIRECTORY");
+			//printf("\t\tFecha Mod: %s", asctime(&tiempo2));
+			log_info(logServidor, "\t\tRta: %s", "DIRECTORY" );
+			log_info(logServidor,"\t\tFecha Mod: %s", asctime(&tiempo2) );
+
 			break;
 		case DELETED:
 			;
 			null_data = 0;
 			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", "DELETED");
+			//printf("\t\tRta: %s\n", "DELETED");
+			log_info(logServidor, "\t\tRta: %s", "DELETED" );
 			break;
 		default:
 			;
 			null_data = 0;
 			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorGetAttr));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorGetAttr));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_errorGetAttr) );
 			break;
 		}
 
 		free(atributos);
 		break;
 	case poke_crearDirectorio:
-		printf("***]->   crearDir: %s\n", path);
+		;
+		//printf("***]->   crearDir: %s\n", path);
+		log_info(logServidor, "***]->   crearDir: %s", path );
 		int directorio = -1;
 
 		arch = verificarAperturasArchivos(path);
@@ -202,11 +218,14 @@ void atenderConexion(int socket_conexion) {
 		paqueteSalida = pedirPaquete(poke_respuestaCreacion, sizeof(int),
 				&directorio);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(directorio));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(directorio));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(directorio) );
 		break;
 
 	case poke_borrarDirectorio:
-		printf("***]->   borrarDir: %s\n", path);
+		;
+		//printf("***]->   borrarDir: %s\n", path);
+		log_info(logServidor, "***]->   borrarDir: %s", path );
 
 		arch = verificarAperturasArchivos(path);
 		if (arch == NULL)
@@ -214,7 +233,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = -EAGAIN;
 			paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorrado));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorrado));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaBorrado) );
 			break;
 		}
 
@@ -229,11 +249,14 @@ void atenderConexion(int socket_conexion) {
 		paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int),
 				&directorioABorrar);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(directorioABorrar));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(directorioABorrar));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(directorioABorrar) );
 
 		break;
 	case poke_borrarArchivo:
-		printf("***]->   borrarArchivo: %s\n", path);
+		;
+		//printf("***]->   borrarArchivo: %s\n", path);
+		log_info(logServidor, "***]->   borrarArchivo: %s", path );
 
 		arch = verificarAperturasArchivos(path);
 		if (arch == NULL)
@@ -241,7 +264,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = -EAGAIN;
 			paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorradoArchivo));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorradoArchivo));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaBorradoArchivo) );
 			break;
 		}
 
@@ -256,7 +280,8 @@ void atenderConexion(int socket_conexion) {
 		paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
 				&archivoABorrar);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(archivoABorrar));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoABorrar));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoABorrar) );
 
 		break;
 	case poke_abrirArchivo:
@@ -266,8 +291,13 @@ void atenderConexion(int socket_conexion) {
 		uint8_t tipoApertura = *((uint8_t *)paqueteAbrirArchivo->data);
 		free(paqueteAbrirArchivo->data);
 		free(paqueteAbrirArchivo);
-		printf("***]->   abrirArchivo: %s\n", path);
-		printf("\t\tTipoApertura: %s\n", getRespuestasOSADA(tipoApertura));
+		//printf("***]->   abrirArchivo: %s\n", path);
+		//printf("\t\tTipoApertura: %s\n", getRespuestasOSADA(tipoApertura));
+		log_info(logServidor, "***]->   abrirArchivo: %s", path );
+		log_info(logServidor, "\t\tTipoApertura: %s", getRespuestasOSADA(tipoApertura) );
+
+
+
 //TODO: mutex tabla de archivos.
 //		int result = buscarArchivoPorPath(paqueteEntrada->data,false);
 //		if(result == archivoNoEncontrado){
@@ -290,7 +320,8 @@ void atenderConexion(int socket_conexion) {
 						paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
 						common_send(socket_conexion, paqueteSalida);
 						free(atributos);
-						printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+						//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+						log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 						break;
 					}
 					free(atributos);
@@ -307,7 +338,8 @@ void atenderConexion(int socket_conexion) {
 					paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
 					common_send(socket_conexion, paqueteSalida);
 					free(atributos);
-					printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+					//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+					log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 					break;
 				}
 				free(atributos);
@@ -333,14 +365,16 @@ void atenderConexion(int socket_conexion) {
 				null_data = operacionExitosa;
 				paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
-				printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
+				//printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
+				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(operacionExitosa) );
 			}
 			else
 			{
 				null_data = archivoNoEncontrado;
 				paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
-				printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 				break;
 			}
 			//printf("\t\tRta: %d [bytes]\n", 0);
@@ -353,8 +387,11 @@ void atenderConexion(int socket_conexion) {
 		free(paqueteCerrarArchivo->data);
 		free(paqueteCerrarArchivo);
 
-		printf("***]->   cerrarArchivo: %s\n", path);
-		printf("\t\tTipoCierre: %s\n", getRespuestasOSADA(tipoApertura2));
+		//printf("***]->   cerrarArchivo: %s\n", path);
+		//printf("\t\tTipoCierre: %s\n", getRespuestasOSADA(tipoApertura2));
+		log_info(logServidor, "***]->   cerrarArchivo: %s", path );
+		log_info(logServidor, "\t\tTipoCierre: %s", getRespuestasOSADA(tipoApertura2) );
+
 
 
 		if (tipoApertura2 == poke_respuestaPorDirectorio)
@@ -369,7 +406,8 @@ void atenderConexion(int socket_conexion) {
 					paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 					common_send(socket_conexion, paqueteSalida);
 					free(atributos);
-					printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+					//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+					log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 					break;
 				}
 				free(atributos);
@@ -386,7 +424,8 @@ void atenderConexion(int socket_conexion) {
 				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
 				free(atributos);
-				printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 				break;
 			}
 			free(atributos);
@@ -411,13 +450,15 @@ void atenderConexion(int socket_conexion) {
 				null_data = operacionExitosa;
 				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
-				printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
+				//printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
+				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(operacionExitosa) );
 				break;
 			}else{
 				null_data = archivoNoEncontrado;
 				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
-				printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 				break;
 			}
 		}
@@ -426,7 +467,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = archivoNoEncontrado;
 			paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
 			break;
 		}
 
@@ -439,8 +481,13 @@ void atenderConexion(int socket_conexion) {
 		memcpy(&size, posiciones->data, sizeof(size_t));
 		memcpy(&offset, posiciones->data + sizeof(size_t), sizeof(off_t));
 
-		printf("***]->   read: %s\n", path);
-		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
+		//printf("***]->   read: %s\n", path);
+		//printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
+		log_info(logServidor, "***]->   read: %s", path );
+		char * logearSizeOffset = malloc(100);
+		sprintf(logearSizeOffset, "size: %zu, offset: %jd", size, (intmax_t) offset);
+		log_info(logServidor, "%s", logearSizeOffset );
+		free(logearSizeOffset);
 
 		uint32_t tamanioCopiarSockets = 0;
 
@@ -456,7 +503,8 @@ void atenderConexion(int socket_conexion) {
 		{
 			paqueteSalida = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %d  [bytes]\n", tamanioCopiarSockets);
+			//printf("\t\tRta: %d  [bytes]\n", tamanioCopiarSockets);
+			log_info(logServidor, "\t\tRta: %s  [bytes]", string_itoa(tamanioCopiarSockets) );
 			free(archivo);
 		}
 		else
@@ -464,7 +512,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = 0;
 			paqueteSalida = pedirPaquete(poke_errorEnLectura, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %d [bytes]\n", 0);
+			//printf("\t\tRta: %d [bytes]\n", 0);
+			log_info(logServidor, "\t\tRta: %s  [bytes]", string_itoa(0) );
 		}
 		free(posiciones->data);
 		free(posiciones);
@@ -483,8 +532,13 @@ void atenderConexion(int socket_conexion) {
 		memcpy(&size, posiciones2->data, sizeof(size_t));
 		memcpy(&offset, posiciones2->data + sizeof(size_t), sizeof(off_t));
 
-		printf("***]->   write: %s\n", path);
-		printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
+		//printf("***]->   write: %s\n", path);
+		//printf("size: %zu, offset: %jd\n", size, (intmax_t) offset);
+			char * logearSizeOffset2= malloc(100);
+			sprintf(logearSizeOffset2, "size: %zu, offset: %jd", size, (intmax_t) offset);
+		log_info(logServidor, "***]->   write: %s", path );
+		log_info(logServidor, "%s", logearSizeOffset2 );
+			free(logearSizeOffset2);
 
 		arch = verificarAperturasArchivos(path);
 		if(arch != NULL){
@@ -498,7 +552,8 @@ void atenderConexion(int socket_conexion) {
 
 		paqueteSalida = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(resultado));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(resultado));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(resultado) );
 
 		free(buf);
 		free(paqueteBuffer->data);
@@ -533,7 +588,8 @@ void atenderConexion(int socket_conexion) {
 		//printf("leyo paquete2 \n");
 
 		char* nombre = paquete2->data;
-		printf("***]->   renombrarArchivo: \n Path1: %s\n Path2:%s \n", path, nombre);
+		//printf("***]->   renombrarArchivo: \n Path1: %s\n Path2:%s \n", path, nombre);
+		log_info(logServidor, "***]->   renombrarArchivo: \n Path1: %s\n Path2:%s ", path, nombre );
 
 		arch = verificarAperturasArchivos(path);
 		if (arch == NULL)
@@ -541,7 +597,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = -EAGAIN;
 			paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaRenombrado));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaRenombrado));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaRenombrado) );
 			break;
 		}
 		if(arch != NULL){
@@ -556,7 +613,8 @@ void atenderConexion(int socket_conexion) {
 		paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
 				&renombro);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(renombro));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(renombro));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(renombro) );
 
 		free(nombre);
 		free(paquete2);
@@ -567,7 +625,11 @@ void atenderConexion(int socket_conexion) {
 		t_data *paquete3 = leer_paquete(socket_conexion);
 		offset = *((off_t *) paquete3->data);
 
-		printf("***]->   truncate: %s, al largo %jd\n", path, (intmax_t)offset);
+		//printf("***]->   truncate: %s, al largo %jd\n", path, (intmax_t)offset);
+			char * logearSizeOffset3 = malloc(100);
+			sprintf(logearSizeOffset3, "***]->   truncate: %s, al largo %jd", path, (intmax_t)offset);
+		log_info(logServidor, "%s", logearSizeOffset3 );
+			free(logearSizeOffset3);
 
 		arch = verificarAperturasArchivos(path);
 		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
@@ -583,7 +645,8 @@ void atenderConexion(int socket_conexion) {
 
 		paqueteSalida = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(trunco));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(trunco));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(trunco) );
 
 		free(paquete3->data);
 		free(paquete3);
@@ -599,7 +662,8 @@ void atenderConexion(int socket_conexion) {
 		struct tm tiempo;
 		localtime_r((time_t *)&ultimaFecha, &tiempo);
 
-		printf("***]->   utimensat: %s, a: %s\n", path, asctime(&tiempo));
+		//printf("***]->   utimensat: %s, a: %s\n", path, asctime(&tiempo));
+		log_info(logServidor, "***]->   utimensat: %s, a: %s", path, asctime(&tiempo) );
 
 		arch = verificarAperturasArchivos(path);
 		if (arch == NULL)
@@ -607,7 +671,8 @@ void atenderConexion(int socket_conexion) {
 			null_data = -EAGAIN;
 			paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
-			printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaUtimensat));
+			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaUtimensat));
+			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaUtimensat) );
 			break;
 		}
 
@@ -621,7 +686,8 @@ void atenderConexion(int socket_conexion) {
 
 		paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
 		common_send(socket_conexion, paqueteSalida);
-		printf("\t\tRta: %s\n", getRespuestasOSADA(utimensat));
+		//printf("\t\tRta: %s\n", getRespuestasOSADA(utimensat));
+		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(utimensat) );
 
 		free(paqueteUtimensat->data);
 		free(paqueteUtimensat);
@@ -631,7 +697,8 @@ void atenderConexion(int socket_conexion) {
 		pthread_exit(0);
 		break;
 	}
-	printf("\n************** -- **************\n");
+	//printf("\n************** -- **************\n");
+	log_info(logServidor, "************** -- **************" );
 	free(path);
 	free(paqueteEntrada);
 	free(paqueteSalida);	//No le hago free a la data, porque no le pide malloc a eso.

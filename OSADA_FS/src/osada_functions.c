@@ -297,7 +297,7 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 			else
 				bytesParaCopiar = bytes;
 
-			printf("-->Voy a copiar: size: %d, offset: %jd\n", bytesParaCopiar, (intmax_t) offset);
+			//printf("-->Voy a copiar: size: %d, offset: %jd\n", bytesParaCopiar, (intmax_t) offset);
 			//finalmente lo copio
 			pthread_mutex_lock(&mutexBloques);
 			resultado = malloc(bytesParaCopiar * sizeof(char));

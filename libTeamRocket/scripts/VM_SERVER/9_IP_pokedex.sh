@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Borrarmos el archivo viejo"
+rm -rf /home/utnso/tp-2016-2c-Team-Rocket/Build/ip.txt
+
 echo "Ingrese la IP de la PC"
 read -r IP
 echo "Ingrese el puerto de la PC"

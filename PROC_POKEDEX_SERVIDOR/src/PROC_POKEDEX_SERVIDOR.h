@@ -10,7 +10,7 @@
 
 #include <commons/log.h>
 
-t_log * logServidor;
+
 
 
 /**

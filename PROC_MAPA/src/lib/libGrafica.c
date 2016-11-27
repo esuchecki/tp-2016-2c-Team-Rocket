@@ -300,11 +300,18 @@ int estosObjetosEstanEspaciados(int pos_x1, int pos_y1, int pos_x2, int pos_y2, 
 {
 	//hice |X1-X2|=d1 y |Y1-Y2|=d2
 	//ahora reviso si: d1 > distanciaMinima (idem d2).
-	if ( (distanciaEntreObjetos(pos_x1, pos_x2) > espaciado_x) && (distanciaEntreObjetos(pos_y1, pos_y2) > espaciado_y))
-	{
-		return 1;
-	}
 
+	//Lo unico que cambia entre una operacion y la otra es que chequea si se cumple en simultaneo para el eje X e Y.
+	//Cambia el operador logico (&& o ||)
+	if (__operacionSeparacionPokenest)
+	{
+		if ( (distanciaEntreObjetos(pos_x1, pos_x2) > espaciado_x) && (distanciaEntreObjetos(pos_y1, pos_y2) > espaciado_y))
+			return 1;
+	}else
+	{
+		if ( (distanciaEntreObjetos(pos_x1, pos_x2) > espaciado_x) || (distanciaEntreObjetos(pos_y1, pos_y2) > espaciado_y))
+			return 1;
+	}
 	return 0;
 }
 

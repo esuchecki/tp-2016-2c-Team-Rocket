@@ -16,8 +16,10 @@
 
 #define __ubicacionArchivoDeLogMapa "./logMapa_%s"		//%s = nombre del entrenador
 
-#define __pokeNestSeparacionEnX (2)		// el enunciado dice que 2 pokenest deben estar separadas en el eje x, unas posiciones
-#define __pokeNestSeparacionEnY (2)		// idem para el eje y
+//Nota: esta comparacion se hace con <> (sin =)
+#define __pokeNestSeparacionEnX (1)		// el enunciado dice que 2 pokenest deben estar separadas en el eje x, unas posiciones
+#define __pokeNestSeparacionEnY (1)		// idem para el eje y
+#define __operacionSeparacionPokenest (0)		//Si tiene que estar separada en eje Y y X (a la vez -> 1). Sino 0
 #define __entrenadorPosInicialEnX (1) 	// que posicion de la gui inicia el jugador en el eje x
 #define __entrenadorPosInicialEnY (1)	// idem para el eje y
 
@@ -29,7 +31,7 @@
 
 #define __ubicacionPokemonesPokeNest "%s%03d.dat"	//  1º %s NombrePokeNest | 2º %03d = NNN (Actual) - Muestra 3 enteros con 0s.
 #define __valorInicialPokemonesPokenest (1)
-#define __valorFinalPokemonesPokenest (999)
+#define __valorFinalPokemonesPokenest (5)
 
 
 #define __nombreEnConfig_Deadlock "TiempoChequeoDeadlock"
