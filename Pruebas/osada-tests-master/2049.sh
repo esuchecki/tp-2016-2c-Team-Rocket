@@ -12,5 +12,6 @@ echo "Usando $OSADADIR..."
 
 for i in {1..2050}
 do
-	"date +%F %T" > $OSADADIR/$i
+	date +"%F %T" > $OSADADIR/$i
+	echo "$i"
 done

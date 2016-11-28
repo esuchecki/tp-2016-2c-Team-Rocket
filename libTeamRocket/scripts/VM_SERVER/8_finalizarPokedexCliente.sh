@@ -6,4 +6,6 @@ rm -rd /tmp/pokedex/
 
 #esto de abajo es por si las dudas....
 sudo umount -f /tmp/pokedex/
+sudo umount -l /tmp/pokedex/
 rm -rd /tmp/pokedex/
+

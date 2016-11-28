@@ -137,47 +137,47 @@ int main(void) {
 //	obtenerBloquesArchivo((int)archivos[indice].first_block, cantidadDeBloques);
 //	printf("%d\n", bloquesArchivo);
 
-	borrarArchivo("/1/1/2/asd");
-
-//int	resultado = truncar("/prueba4.txt", 0);
-
-	int indice = buscarArchivoPorPath("/special.mp4", false);
-	//int resultado = truncar("/Pokemons/005.txt", 0);
-	osada_file* archivos = obtenerTablaArchivos();
-	printf("Tamanio Archivo: %d\n", archivos[indice].file_size);
-	printf("Primer Bloque: %d\n", archivos[indice].first_block);
-	//resultado = truncar("/Pokemons/005.txt", 1600);
-	printf("Tamanio Archivo: %d\n", archivos[indice].file_size);
-	printf("Primer Bloque: %d\n", archivos[indice].first_block);
-	int cantidad = calcularCantidadBloques(archivos[indice].file_size);
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	int revisar =1;
-	int i = archivos[indice].first_block;
-	while (tablaAsignaciones[i]!= -1)
-	{
-		i = tablaAsignaciones[i];
-		revisar++;
-	}
-	int* bloques = obtenerBloquesArchivo(archivos[indice].first_block, cantidad);
-	i = 0;
-	//Imprimo todos los bloques que componen el archivo
-	while(i < cantidad){
-		printf("%d\n", bloques[i]);
-		i++;
-	}
-	// Escribo desde el byte 63, 20 bytes
-	char * textoEjemplo = "Hay algo peor que la ejecución de proyectos inadecuados: la ausencia de ellos. En su afán de diferenciarla del miedo, el filósofo alemán Kierkegaard, definía a la angustia, inicialmente, como un temor sin objeto, como un visceral miedo a la nada. De ahí la naturaleza angustiante del hombre. En realidad me pareció oportuno retomar esta ya clásica noción de angustia, porque considero que el panorama científico a nivel nacional es, esencialmente, angustiante. Y lo es porque afrontamos la alborada de un nuevo milenio sin un proyecto rector -serio e idóneo- en materia de ciencia y técnica a nivel nacional. Aunque resulta paradójico o evidencie un acto de necedad supina, lo cierto del caso es que en medio de una crisis en la que se declaman o ponderan proyectos de crecimiento y desarrollo, en nuestra Argentina de fin de siglo la ciencia se cobija a la intemperie. No goza de estímulo real en orden a su promoción y consolidación. No figura en la agenda de prioridades, como de hecho ocurre en los paises que cotidianamente se consignan como modelos. En este contexto crucial, signado por la impronta de espacios vacíos, la universidad se referencia como un foro en donde la conquista del conocimiento es consecuencia de su convicción institucional. Así entonces, el desarrollo de la actividad científica en el sistema universitario debería ser visto como un enorme esfuerzo en respuesta a su rol fundacional, y a la vez, como una estrategia de proyección y servicio que potencia su validez y utilidad sin incentivos, sola, sin respaldo ni eje convocante.";
-	//int resultado = escribir("/README.txt", textoEjemplo, 540,0);
-	uint32_t aux;
-	osada_block* archivo = obtenerArchivoPorPath("/special.mp4",131072,131072, &aux );
-	//osada_block* archivo =  obtenerArchivo(bloques, cantidad, archivos[indice].file_size);
-	int j = 0;
-	char* array = (char*)archivo[0];
-	while(j < 540){
-		printf("%c", array[0 + j]);
-		j++;
-	}
-	printf("\n");
+//	borrarArchivo("/1/1/2/asd");
+//
+////int	resultado = truncar("/prueba4.txt", 0);
+//
+//	int indice = buscarArchivoPorPath("/special.mp4", false);
+//	//int resultado = truncar("/Pokemons/005.txt", 0);
+//	osada_file* archivos = obtenerTablaArchivos();
+//	printf("Tamanio Archivo: %d\n", archivos[indice].file_size);
+//	printf("Primer Bloque: %d\n", archivos[indice].first_block);
+//	//resultado = truncar("/Pokemons/005.txt", 1600);
+//	printf("Tamanio Archivo: %d\n", archivos[indice].file_size);
+//	printf("Primer Bloque: %d\n", archivos[indice].first_block);
+//	int cantidad = calcularCantidadBloques(archivos[indice].file_size);
+//	int* tablaAsignaciones = obtenerTablaAsignaciones();
+//	int revisar =1;
+//	int i = archivos[indice].first_block;
+//	while (tablaAsignaciones[i]!= -1)
+//	{
+//		i = tablaAsignaciones[i];
+//		revisar++;
+//	}
+//	int* bloques = obtenerBloquesArchivo(archivos[indice].first_block, cantidad);
+//	i = 0;
+//	//Imprimo todos los bloques que componen el archivo
+//	while(i < cantidad){
+//		printf("%d\n", bloques[i]);
+//		i++;
+//	}
+//	// Escribo desde el byte 63, 20 bytes
+//	char * textoEjemplo = "Hay algo peor que la ejecución de proyectos inadecuados: la ausencia de ellos. En su afán de diferenciarla del miedo, el filósofo alemán Kierkegaard, definía a la angustia, inicialmente, como un temor sin objeto, como un visceral miedo a la nada. De ahí la naturaleza angustiante del hombre. En realidad me pareció oportuno retomar esta ya clásica noción de angustia, porque considero que el panorama científico a nivel nacional es, esencialmente, angustiante. Y lo es porque afrontamos la alborada de un nuevo milenio sin un proyecto rector -serio e idóneo- en materia de ciencia y técnica a nivel nacional. Aunque resulta paradójico o evidencie un acto de necedad supina, lo cierto del caso es que en medio de una crisis en la que se declaman o ponderan proyectos de crecimiento y desarrollo, en nuestra Argentina de fin de siglo la ciencia se cobija a la intemperie. No goza de estímulo real en orden a su promoción y consolidación. No figura en la agenda de prioridades, como de hecho ocurre en los paises que cotidianamente se consignan como modelos. En este contexto crucial, signado por la impronta de espacios vacíos, la universidad se referencia como un foro en donde la conquista del conocimiento es consecuencia de su convicción institucional. Así entonces, el desarrollo de la actividad científica en el sistema universitario debería ser visto como un enorme esfuerzo en respuesta a su rol fundacional, y a la vez, como una estrategia de proyección y servicio que potencia su validez y utilidad sin incentivos, sola, sin respaldo ni eje convocante.";
+//	//int resultado = escribir("/README.txt", textoEjemplo, 540,0);
+//	uint32_t aux;
+//	osada_block* archivo = obtenerArchivoPorPath("/special.mp4",131072,131072, &aux );
+//	//osada_block* archivo =  obtenerArchivo(bloques, cantidad, archivos[indice].file_size);
+//	int j = 0;
+//	char* array = (char*)archivo[0];
+//	while(j < 540){
+//		printf("%c", array[0 + j]);
+//		j++;
+//	}
+//	printf("\n");
 	// Escribo desde el byte 1000, 35 bytes
 //	resultado = escribir("/Pokemons/008.txt", "otra prueba para verificar que anda", 35,1000);
 //	osada_block* archivo =  obtenerArchivo(bloques, cantidad, archivos[indice].file_size);
@@ -188,5 +188,16 @@ int main(void) {
 //		printf("%c", otroarray[1000 + j]);
 //		j++;
 //	}
+	int indice = buscarArchivoPorPath("/Nuevo", false);
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+	osada_file* archivos = obtenerTablaArchivos();
+	int revisar =1;
+	int i = archivos[indice].first_block;
+	while (tablaAsignaciones[i]!= -1)
+	{
+		i = tablaAsignaciones[i];
+		revisar++;
+	}
+
 	return EXIT_SUCCESS;
 }

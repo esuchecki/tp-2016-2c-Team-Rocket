@@ -145,6 +145,7 @@
 								<option id="gnu.c.link.option.ldflags.1602570184" name="Linker flags" superClass="gnu.c.link.option.ldflags" value="-D_FILE_OFFSET_BITS=64" valueType="string"/>
 								<option id="gnu.c.link.option.libs.583682202" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="commons"/>
+									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="libTeamRocket"/>
 								</option>
 								<option id="gnu.c.link.option.paths.2129798554" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">

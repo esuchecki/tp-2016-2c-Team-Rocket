@@ -39,6 +39,7 @@ enum modosApertura{
 
 pthread_rwlock_t semaforoConcurrenciaArchivo[2048];
 
+
 t_list * tablaArchivosAbiertos;
 
 

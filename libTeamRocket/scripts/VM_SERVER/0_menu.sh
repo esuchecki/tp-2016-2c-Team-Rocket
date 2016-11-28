@@ -24,7 +24,11 @@ do
             "Descargar todo del repositorio ${opts[1]}")
 		choice 1
 		echo "opcion1"
+		echo
+		echo
                 sh ./1_download_SV.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -32,7 +36,11 @@ do
             "Clonar a otras maquinas ${opts[2]}")
 		choice 2
 		echo "opcion2"
+		echo
+		echo
                 sh ./2_clonar_offline.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -40,7 +48,11 @@ do
             "Instalar CATEDRA ${opts[3]}")
 		choice 3
 		echo "opcion3"
+		echo
+		echo
                 sh ./3_instalarCatedra.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -48,7 +60,11 @@ do
             "Instalar  TEAM ROCKET ${opts[4]}")
 		choice 4
 		echo "opcion4"
+		echo
+		echo
                 sh ./4_instalacionTeamRocket.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -56,7 +72,11 @@ do
             "crearDiscoOsada  ${opts[5]}")
 		choice 5
 		echo "opcion5"
+		echo
+		echo
                 sh ./5_crearDiscoOsada.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -64,7 +84,11 @@ do
             "Abrir Pokedex Servidor  ${opts[6]}")
 		choice 6
 		echo "opcion6"
+		echo
+		echo
                 sh ./6_abrirPokeServer.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -72,7 +96,11 @@ do
             "Abrir Pokedex Cliente  ${opts[7]}")
 		choice 7
 		echo "opcion7"
+		echo
+		echo
                 sh ./7_pokeCliente.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -80,7 +108,11 @@ do
             "Finalizar Pokedex Cliente  ${opts[8]}")
 		choice 8
 		echo "opcion8"
+		echo
+		echo
                 sh ./8_finalizarPokedexCliente.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -88,7 +120,11 @@ do
             "VAR_ENTORNO ${opts[9]}")
 		choice 9
 		echo "opcion9"
+		echo
+		echo
                 sh ./9_variableEntorno.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break
@@ -96,7 +132,11 @@ do
 	"IP_PUERTO POKEDEX ${opts[10]}")
 		choice 10
 		echo "opcion10"
+		echo
+		echo
                 sh ./10_IP_pokedex.sh
+		echo
+		echo
 		echo "Presione una tecla para continuar..."
 		read -r A
                 break

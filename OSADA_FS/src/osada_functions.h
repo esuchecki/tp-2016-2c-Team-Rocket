@@ -19,10 +19,11 @@
 #include <pthread.h>
 
 
+
 #define ROOT_INDEX     65535
 
-pthread_mutex_t mutex_bitmap,mutexTablaAsignaciones,mutexTablaArchivos,mutexBloques, mutexNuevoEspacioTablaArchivos;
-
+pthread_mutex_t mutex_bitmap,mutexTablaAsignaciones,mutexTablaArchivos,mutexBloques, mutexNuevoEspacioTablaArchivos, mutexNuevoEspacioLibre;
+pthread_rwlock_t semTablaArchivos;
 
 void establecerTamanio(int tamanio);
 
