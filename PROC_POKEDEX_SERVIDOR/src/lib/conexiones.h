@@ -28,12 +28,16 @@ enum modosApertura{
 	noEstaAbierto = 16
 };
 
-typedef struct {
-	int ubicacionEnTablaArchivos;
-	int modoApertura;
-	int cantidadDeVecesAbierta;
-	pthread_rwlock_t * sem_rw;
-}nodo_archivo;
+
+//typedef struct {
+//	int ubicacionEnTablaArchivos;
+//	int modoApertura;
+//	int cantidadDeVecesAbierta;
+//	pthread_rwlock_t * sem_rw;
+//}nodo_archivo;
+
+
+pthread_rwlock_t semaforoConcurrenciaArchivo[2048];
 
 t_list * tablaArchivosAbiertos;
 
@@ -53,7 +57,9 @@ void establecerConexion(void * data);
 
 void escucharNuevasConexiones(char* ip,char *puerto);
 
-nodo_archivo * verificarAperturasArchivos(char * path);
+//nodo_archivo * verificarAperturasArchivos(char * path);
+
+void inicializarSemaforosTablaArchivos ();
 
 
 #endif /* LIB_CONEXIONES_H_ */

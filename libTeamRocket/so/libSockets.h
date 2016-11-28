@@ -101,10 +101,10 @@ elNombreDelArchivoEsMuyCorto = -13
 */
 
 enum respuestasOSADA {
-	operacionExitosa = 0,
-	finDeArchivo = -1,
+	operacionExitosa = 0,								//era 0
+	finDeArchivo = -1,									//era -1
 	archivoInexistenteConDirCorrecto = -4,				//uso interno
-	rootPath = -5,
+	rootPath = -5,										//era -3
 	noHayEspacioLibreTablaArchivos = -EDQUOT,			//era -4
 	elPathNoCorrespondeAUnDirectorio = -ENOTDIR,		//era -5
 	noHayBloquesLibres = -EFBIG,						//era -6

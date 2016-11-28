@@ -18,7 +18,11 @@
 #include <commons/collections/list.h>
 #include <pthread.h>
 
-pthread_mutex_t mutex_bitmap,mutexTablaAsignaciones,mutexTablaArchivos,mutexBloques;
+
+#define ROOT_INDEX     65535
+
+pthread_mutex_t mutex_bitmap,mutexTablaAsignaciones,mutexTablaArchivos,mutexBloques, mutexNuevoEspacioTablaArchivos;
+
 
 void establecerTamanio(int tamanio);
 
@@ -85,5 +89,8 @@ int truncar(char* path, long bytes);
 uint32_t obtenerUltimaModificacion(char* path);
 
 int establecerUltimaModificacion(char* path, uint32_t fecha);
+
+int liberarEsteBloqueYDecimeCualEsElSiguiente (int unBloque);
+int truncarConSemaforos(char* path, long bytes, void (*fc1) (int), void (*fc2) (int));
 
 #endif /* OSADA_FUNCTIONS_H_ */

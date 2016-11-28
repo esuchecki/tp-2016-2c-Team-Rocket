@@ -65,6 +65,9 @@ int main(int argc, char*argv[]) {
 	pthread_mutex_init(&mutexTablaAsignaciones,NULL);
 	pthread_mutex_init(&mutexTablaArchivos,NULL);
 	pthread_mutex_init(&mutexBloques,NULL);
+	pthread_mutex_init(&mutexNuevoEspacioTablaArchivos,NULL);
+
+	inicializarSemaforosTablaArchivos();
 
 	escucharNuevasConexiones(IP,PUERTO);
 

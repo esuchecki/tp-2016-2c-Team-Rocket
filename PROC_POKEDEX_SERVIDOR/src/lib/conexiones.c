@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "so/tiempos.h"
+#include <commons/string.h>
 //TODO: cambiar estos include de lugar!.
 #include "../OSADA_FS/src/OSADA_Constants.h"
 #include "../OSADA_FS/src/osada-utils/osada.h"
@@ -26,8 +27,11 @@
 
 void atender(int socket);
 const char* getRespuestasOSADA(enum respuestasOSADA unNumero) ;
-void eliminarNodoAperturasArchivos (nodo_archivo * arch);
+//void eliminarNodoAperturasArchivos (nodo_archivo * arch);
+int posicionDelSemaforoConcurrenciaArchivo (char * path);
 bool existeEsteArchivo(char * path);
+void fcEspecial1 (int archivo);
+void fcEspecial2 (int archivo);
 
 
 
@@ -43,7 +47,8 @@ void atenderConexion(int socket_conexion) {
 	off_t offset = 0;
 	uint32_t ultimaFecha;
 	int null_data;
-	nodo_archivo * arch;
+//	nodo_archivo * arch;
+	int ubicacionSemaforo=archivoNoEncontrado;
 
 	switch (paqueteEntrada->header) {
 	case poke_solicitudReadDir:
@@ -51,8 +56,8 @@ void atenderConexion(int socket_conexion) {
 		//printf("***]->   readDir de: %s\n", path);
 		log_info(logServidor, "***]->   readDir de: %s",path);
 
-		arch = verificarAperturasArchivos(path);
-		if (arch == NULL)
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		if (ubicacionSemaforo == archivoNoEncontrado)
 		{
 			paqueteSalida = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
@@ -61,13 +66,35 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		if(arch != NULL){
-			pthread_rwlock_rdlock(arch->sem_rw);
+//		arch = verificarAperturasArchivos(path);
+//		if (arch == NULL)
+//		{
+//			paqueteSalida = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorReadDir));
+//			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_errorReadDir) );
+//			break;
+//		}
+//
+//		if(arch != NULL){
+//			pthread_rwlock_rdlock(arch->sem_rw);
+//		}
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_rdlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
 		}
+
 		char ** directorios = leerDirectorio(path);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
+
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+			//phtread_rw (ubicacionSemaforo);
 		}
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 
 		int temp = 0;
 		int aux = sizeof(char) * (OSADA_FILENAME_LENGTH + 1);
@@ -119,8 +146,9 @@ void atenderConexion(int socket_conexion) {
 		//printf("***]->   getAttr de: %s\n", path);
 		log_info(logServidor, "***]->   getAttr de: %s", path );
 
-		arch = verificarAperturasArchivos(path);
-		if (arch == NULL)
+
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		if (ubicacionSemaforo == archivoNoEncontrado)
 		{
 			null_data = 0;
 			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
@@ -130,13 +158,28 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		if(arch != NULL){
-			pthread_rwlock_rdlock(arch->sem_rw);
-		}
+//		arch = verificarAperturasArchivos(path);
+//		if (arch == NULL)
+//		{
+//			null_data = 0;
+//			paqueteSalida = pedirPaquete(poke_errorGetAttr, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_errorGetAttr));
+//			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_errorGetAttr) );
+//			break;
+//		}
+//
+//		if(arch != NULL){
+//			pthread_rwlock_rdlock(arch->sem_rw);
+//		}
+
+		pthread_rwlock_rdlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
 		long* atributos = obtenerAtributos(path);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
-		}
+		pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 
 		switch (atributos[0]) {
 		case REGULAR:
@@ -206,14 +249,14 @@ void atenderConexion(int socket_conexion) {
 		log_info(logServidor, "***]->   crearDir: %s", path );
 		int directorio = -1;
 
-		arch = verificarAperturasArchivos(path);
-		if (arch != NULL)
-			pthread_rwlock_wrlock(arch->sem_rw);
-		//TODO: bloquear recursos
+//		arch = verificarAperturasArchivos(path);
+//		if (arch != NULL)
+//			pthread_rwlock_wrlock(arch->sem_rw);
+//		//TODO: bloquear recursos
 		directorio = crearDirectorio(path);
-		if (arch != NULL)
-			pthread_rwlock_unlock(arch->sem_rw);
-		//printf("Rta= %d\n", directorio);
+//		if (arch != NULL)
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		//printf("Rta= %d\n", directorio);
 
 		paqueteSalida = pedirPaquete(poke_respuestaCreacion, sizeof(int),
 				&directorio);
@@ -227,10 +270,10 @@ void atenderConexion(int socket_conexion) {
 		//printf("***]->   borrarDir: %s\n", path);
 		log_info(logServidor, "***]->   borrarDir: %s", path );
 
-		arch = verificarAperturasArchivos(path);
-		if (arch == NULL)
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		if (ubicacionSemaforo == archivoNoEncontrado)
 		{
-			null_data = -EAGAIN;
+			null_data = archivoNoEncontrado;
 			paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
 			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorrado));
@@ -238,16 +281,39 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		if(arch != NULL){
-			pthread_rwlock_wrlock(arch->sem_rw);
-		}
-		int directorioABorrar = borrarDirectorio(path);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
+//		arch = verificarAperturasArchivos(path);
+//		if (arch == NULL)
+//		{
+//			null_data = -EAGAIN;
+//			paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorrado));
+//			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaBorrado) );
+//			break;
+//		}
+//
+//		if(arch != NULL){
+//			pthread_rwlock_wrlock(arch->sem_rw);
+//		}
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_wrlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
 		}
 
-		paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int),
-				&directorioABorrar);
+		int directorioABorrar = borrarDirectorio(path);
+
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+		}
+
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
+
+		paqueteSalida = pedirPaquete(poke_respuestaBorrado, sizeof(int),&directorioABorrar);
 		common_send(socket_conexion, paqueteSalida);
 		//printf("\t\tRta: %s\n", getRespuestasOSADA(directorioABorrar));
 		log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(directorioABorrar) );
@@ -258,10 +324,10 @@ void atenderConexion(int socket_conexion) {
 		//printf("***]->   borrarArchivo: %s\n", path);
 		log_info(logServidor, "***]->   borrarArchivo: %s", path );
 
-		arch = verificarAperturasArchivos(path);
-		if (arch == NULL)
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		if (ubicacionSemaforo == archivoNoEncontrado)
 		{
-			null_data = -EAGAIN;
+			null_data = archivoNoEncontrado;
 			paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
 			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorradoArchivo));
@@ -269,13 +335,38 @@ void atenderConexion(int socket_conexion) {
 			break;
 		}
 
-		if(arch != NULL){
-			pthread_rwlock_wrlock(arch->sem_rw);
+//		arch = verificarAperturasArchivos(path);
+//		if (arch == NULL)
+//		{
+//			null_data = -EAGAIN;
+//			paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaBorradoArchivo));
+//			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaBorradoArchivo) );
+//			break;
+//		}
+//
+//		if(arch != NULL){
+//			pthread_rwlock_wrlock(arch->sem_rw);
+//		}
+
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_wrlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
 		}
+
 		int archivoABorrar = borrarArchivo(path);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
+
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
 		}
+
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 
 		paqueteSalida = pedirPaquete(poke_respuestaBorradoArchivo, sizeof(int),
 				&archivoABorrar);
@@ -350,17 +441,17 @@ void atenderConexion(int socket_conexion) {
 
 			if (existeEsteArchivo(path))
 			{
-				arch = verificarAperturasArchivos(path);
-				if(arch == NULL){
-					arch = malloc(sizeof(nodo_archivo));
-					arch->sem_rw = malloc(sizeof(pthread_rwlock_t));
-					arch->ubicacionEnTablaArchivos = buscarArchivoPorPath(path, false);
-					arch->cantidadDeVecesAbierta++;
-					pthread_rwlock_init(arch->sem_rw,NULL);
-					list_add(tablaArchivosAbiertos,arch);
-				}else{
-					arch->cantidadDeVecesAbierta++;
-				}
+//				arch = verificarAperturasArchivos(path);
+//				if(arch == NULL){
+//					arch = malloc(sizeof(nodo_archivo));
+//					arch->sem_rw = malloc(sizeof(pthread_rwlock_t));
+//					arch->ubicacionEnTablaArchivos = buscarArchivoPorPath(path, false);
+//					arch->cantidadDeVecesAbierta++;
+//					pthread_rwlock_init(arch->sem_rw,NULL);
+//					list_add(tablaArchivosAbiertos,arch);
+//				}else{
+//					arch->cantidadDeVecesAbierta++;
+//				}
 
 				null_data = operacionExitosa;
 				paqueteSalida = pedirPaquete(poke_respuestaApertura, sizeof(int), &null_data);
@@ -437,30 +528,30 @@ void atenderConexion(int socket_conexion) {
 		if (existeEsteArchivo(path))
 		{
 			//TODO: verificar que estoy cerrando ok.
-			arch = verificarAperturasArchivos(paqueteEntrada->data);
-			if(arch != NULL){
-				if (arch->cantidadDeVecesAbierta > 1)
-				{
-					arch->cantidadDeVecesAbierta--;
-				}
-				else
-				{
-					eliminarNodoAperturasArchivos(arch);
-				}
+//			arch = verificarAperturasArchivos(paqueteEntrada->data);
+//			if(arch != NULL){
+//				if (arch->cantidadDeVecesAbierta > 1)
+//				{
+//					arch->cantidadDeVecesAbierta--;
+//				}
+//				else
+//				{
+//					eliminarNodoAperturasArchivos(arch);
+//				}
 				null_data = operacionExitosa;
 				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
 				common_send(socket_conexion, paqueteSalida);
 				//printf("\t\tRta: %s\n", getRespuestasOSADA(operacionExitosa));
 				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(operacionExitosa) );
 				break;
-			}else{
-				null_data = archivoNoEncontrado;
-				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
-				common_send(socket_conexion, paqueteSalida);
-				//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
-				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
-				break;
-			}
+//			}else{
+//				null_data = archivoNoEncontrado;
+//				paqueteSalida = pedirPaquete(poke_respuestaClose, sizeof(int), &null_data);
+//				common_send(socket_conexion, paqueteSalida);
+//				//printf("\t\tRta: %s\n", getRespuestasOSADA(archivoNoEncontrado));
+//				log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(archivoNoEncontrado) );
+//				break;
+//			}
 		}
 		else
 		{
@@ -491,14 +582,37 @@ void atenderConexion(int socket_conexion) {
 
 		uint32_t tamanioCopiarSockets = 0;
 
-		arch = verificarAperturasArchivos(path);
-		if(arch != NULL){
-			pthread_rwlock_rdlock(arch->sem_rw);
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		if (ubicacionSemaforo == archivoNoEncontrado)
+		{
+			null_data = 0;
+			paqueteSalida = pedirPaquete(poke_errorEnLectura, sizeof(int), &null_data);
+			common_send(socket_conexion, paqueteSalida);
+			//printf("\t\tRta: %d [bytes]\n", 0);
+			log_info(logServidor, "\t\tRta: %s  [bytes]", string_itoa(0) );
 		}
+
+//		arch = verificarAperturasArchivos(path);
+//		if(arch != NULL){
+//			pthread_rwlock_rdlock(arch->sem_rw);
+//		}
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_rdlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+		}
+
 		osada_block* archivo = obtenerArchivoPorPath(path, size, offset, &tamanioCopiarSockets);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
+
+		if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+		{
+			pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
 		}
+
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 		if ( (tamanioCopiarSockets >0) )
 		{
 			paqueteSalida = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
@@ -540,14 +654,38 @@ void atenderConexion(int socket_conexion) {
 		log_info(logServidor, "%s", logearSizeOffset2 );
 			free(logearSizeOffset2);
 
-		arch = verificarAperturasArchivos(path);
-		if(arch != NULL){
-			pthread_rwlock_wrlock(arch->sem_rw);
+//		arch = verificarAperturasArchivos(path);
+//		if(arch != NULL){
+//			pthread_rwlock_wrlock(arch->sem_rw);
+//		}
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		int resultado;
+		if (ubicacionSemaforo != archivoNoEncontrado)
+		{
+
+			if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+			{
+				pthread_rwlock_wrlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+			}
+
+			resultado = escribir(path, buf, size, offset);
+
+			if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+			{
+				pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+			}
+
+		}else{
+			resultado = archivoNoEncontrado;
 		}
-		int resultado = escribir(path, buf, size, offset);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
-		}
+
+
+
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 
 
 		paqueteSalida = pedirPaquete(poke_respuestaEscritura, sizeof(int) , &resultado);
@@ -591,23 +729,49 @@ void atenderConexion(int socket_conexion) {
 		//printf("***]->   renombrarArchivo: \n Path1: %s\n Path2:%s \n", path, nombre);
 		log_info(logServidor, "***]->   renombrarArchivo: \n Path1: %s\n Path2:%s ", path, nombre );
 
-		arch = verificarAperturasArchivos(path);
-		if (arch == NULL)
+//		arch = verificarAperturasArchivos(path);
+//		if (arch == NULL)
+//		{
+//			null_data = -EAGAIN;
+//			paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaRenombrado));
+//			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaRenombrado) );
+//			break;
+//		}
+//		if(arch != NULL){
+//			pthread_rwlock_wrlock(arch->sem_rw);
+//		}
+
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		int renombro;
+		if (ubicacionSemaforo != archivoNoEncontrado)
 		{
-			null_data = -EAGAIN;
-			paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int), &null_data);
-			common_send(socket_conexion, paqueteSalida);
-			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaRenombrado));
-			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaRenombrado) );
-			break;
+
+			if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+			{
+				pthread_rwlock_wrlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+			}
+
+			renombro = cambiarNombre(path, nombre);
+
+			if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+			{
+				pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+
+			}
+
+		}else{
+			renombro = archivoNoEncontrado;
 		}
-		if(arch != NULL){
-			pthread_rwlock_wrlock(arch->sem_rw);
-		}
-		int renombro = cambiarNombre(path, nombre);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
-		}
+
+
+
+//		int renombro = cambiarNombre(path, nombre);
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 
 		//int renombro = cambiarNombre( lectura2->data, path);
 		paqueteSalida = pedirPaquete(poke_respuestaRenombrado, sizeof(int),
@@ -631,16 +795,18 @@ void atenderConexion(int socket_conexion) {
 		log_info(logServidor, "%s", logearSizeOffset3 );
 			free(logearSizeOffset3);
 
-		arch = verificarAperturasArchivos(path);
-		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
-		if (arch != NULL)
-			pthread_rwlock_wrlock(arch->sem_rw);
+//		arch = verificarAperturasArchivos(path);
+//		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
+//		if (arch != NULL)
+//			pthread_rwlock_wrlock(arch->sem_rw);
 
-		int trunco = truncar(path, (long)offset);
+		//int trunco = truncar(path, (long)offset);
+		int trunco = truncarConSemaforos(path, (long)offset, (void *) fcEspecial1, (void *) fcEspecial2);
 
-		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
-		if (arch != NULL)
-			pthread_rwlock_unlock(arch->sem_rw);
+
+//		//En el caso de que no lo encontro, seguramente el tipo quiere crear el archivo. Entonces no semaforo
+//		if (arch != NULL)
+//			pthread_rwlock_unlock(arch->sem_rw);
 
 
 		paqueteSalida = pedirPaquete(poke_respuestaTruncado, sizeof(int),	&trunco);
@@ -665,24 +831,46 @@ void atenderConexion(int socket_conexion) {
 		//printf("***]->   utimensat: %s, a: %s\n", path, asctime(&tiempo));
 		log_info(logServidor, "***]->   utimensat: %s, a: %s", path, asctime(&tiempo) );
 
-		arch = verificarAperturasArchivos(path);
-		if (arch == NULL)
+//		arch = verificarAperturasArchivos(path);
+//		if (arch == NULL)
+//		{
+//			null_data = -EAGAIN;
+//			paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &null_data);
+//			common_send(socket_conexion, paqueteSalida);
+//			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaUtimensat));
+//			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaUtimensat) );
+//			break;
+//		}
+//
+//		if(arch != NULL){
+//			pthread_rwlock_wrlock(arch->sem_rw);
+//		}
+		ubicacionSemaforo = posicionDelSemaforoConcurrenciaArchivo(path);
+		int utimensat;
+
+		if (ubicacionSemaforo != archivoNoEncontrado)
 		{
-			null_data = -EAGAIN;
-			paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &null_data);
-			common_send(socket_conexion, paqueteSalida);
-			//printf("\t\tRta: %s\n", getRespuestasOSADA(poke_respuestaUtimensat));
-			log_info(logServidor, "\t\tRta: %s", getRespuestasOSADA(poke_respuestaUtimensat) );
-			break;
+
+			if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+			{
+				pthread_rwlock_wrlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+			}
+
+			utimensat = establecerUltimaModificacion(path, ultimaFecha);
+
+			if ((ubicacionSemaforo != rootPath) && (ubicacionSemaforo != ROOT_INDEX))
+			{
+				pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[ubicacionSemaforo]) );
+			}
+
+		}else{
+			utimensat = archivoNoEncontrado;
 		}
 
-		if(arch != NULL){
-			pthread_rwlock_wrlock(arch->sem_rw);
-		}
-		int utimensat = establecerUltimaModificacion(path, ultimaFecha);
-		if(arch != NULL){
-			pthread_rwlock_unlock(arch->sem_rw);
-		}
+
+//		if(arch != NULL){
+//			pthread_rwlock_unlock(arch->sem_rw);
+//		}
 
 		paqueteSalida = pedirPaquete(poke_respuestaUtimensat, sizeof(int), &utimensat);
 		common_send(socket_conexion, paqueteSalida);
@@ -933,21 +1121,21 @@ const char* getRespuestasOSADA(enum respuestasOSADA unNumero)
    }
 }
 
-nodo_archivo * verificarAperturasArchivos(char * path){
-	//char * nombreArchivo = malloc(18);
-	int ubicacionArchivo = buscarArchivoPorPath(path, false);
-
-	bool estaAbierto(void * datos){
-		return (((nodo_archivo *)datos)->ubicacionEnTablaArchivos == ubicacionArchivo);
-	}
-
-	pthread_mutex_lock(&mutex_archivos);
-	nodo_archivo * archivo = list_find(tablaArchivosAbiertos,estaAbierto);
-	pthread_mutex_unlock(&mutex_archivos);
-
-	return archivo;
-}
-
+//nodo_archivo * verificarAperturasArchivos(char * path){
+//	//char * nombreArchivo = malloc(18);
+//	int ubicacionArchivo = buscarArchivoPorPath(path, false);
+//
+//	bool estaAbierto(void * datos){
+//		return (((nodo_archivo *)datos)->ubicacionEnTablaArchivos == ubicacionArchivo);
+//	}
+//
+//	pthread_mutex_lock(&mutex_archivos);
+//	nodo_archivo * archivo = list_find(tablaArchivosAbiertos,estaAbierto);
+//	pthread_mutex_unlock(&mutex_archivos);
+//
+//	return archivo;
+//}
+//
 bool existeEsteArchivo(char * path)
 {
 	int ubicacionArchivo = buscarArchivoPorPath(path, false);
@@ -956,19 +1144,55 @@ bool existeEsteArchivo(char * path)
 	return true;
 }
 
-void eliminarNodoAperturasArchivos (nodo_archivo * arch)
-{
-	pthread_mutex_lock(&mutex_archivos);
+//void eliminarNodoAperturasArchivos (nodo_archivo * arch)
+//{
+//	pthread_mutex_lock(&mutex_archivos);
+//
+//	bool esEste(void * datos){
+//		return (((nodo_archivo *)datos)->ubicacionEnTablaArchivos == arch->ubicacionEnTablaArchivos);
+//	}
+//
+//	pthread_rwlock_destroy(arch->sem_rw);
+//	free(arch->sem_rw);
+//	list_remove_by_condition(tablaArchivosAbiertos,esEste );
+//	free(arch);
+//
+//
+//	pthread_mutex_unlock(&mutex_archivos);
+//}
 
-	bool esEste(void * datos){
-		return (((nodo_archivo *)datos)->ubicacionEnTablaArchivos == arch->ubicacionEnTablaArchivos);
+void inicializarSemaforosTablaArchivos ()
+{
+	int i=0;
+	for (i=0; i< 2048; i++)
+	{
+		pthread_rwlock_init( &(semaforoConcurrenciaArchivo[i]) ,NULL);
+		//semaforoConcurrenciaArchivo[i]
 	}
 
-	pthread_rwlock_destroy(arch->sem_rw);
-	free(arch->sem_rw);
-	list_remove_by_condition(tablaArchivosAbiertos,esEste );
-	free(arch);
+}
+
+int posicionDelSemaforoConcurrenciaArchivo (char * path)
+{
+	int ubicacionArchivo = buscarArchivoPorPath(path, false);
+	return ubicacionArchivo;
+}
+
+void fcEspecial1 (int archivo)
+{
+	if ((archivo != rootPath) && (archivo != ROOT_INDEX))
+	{
+		pthread_rwlock_wrlock( &(semaforoConcurrenciaArchivo[archivo]) );
+
+	}
+}
 
 
-	pthread_mutex_unlock(&mutex_archivos);
+void fcEspecial2 (int archivo)
+{
+	if ((archivo != rootPath) && (archivo != ROOT_INDEX))
+	{
+		pthread_rwlock_unlock( &(semaforoConcurrenciaArchivo[archivo]) );
+
+	}
 }

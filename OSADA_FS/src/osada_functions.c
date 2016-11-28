@@ -16,7 +16,7 @@
 #include <pthread.h>
 //#include <commons/collections/list.h>
 
-#define ROOT_INDEX     65535
+
 
 int TAMANIO_BYTES;
 struct stat osadaStat;
@@ -153,16 +153,18 @@ int buscarArchivoEnFS(char* nombre, int padre){
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	int i= 1;
 	osada_file_state j = REGULAR;
-	for ( i = 0 ; (retorno == archivoNoEncontrado && i<2048); i++ ) {
+	for ( i = 0 ; (retorno == archivoNoEncontrado && i<2048); i++ )
+	{
 		pthread_mutex_lock(&mutexTablaArchivos);
-	   j = tablaArchivos[i].state;
+		j = tablaArchivos[i].state;
 
-	   if(j!=DELETED){
-		   if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
-			   retorno = i;
-		   }
-	   }
-	   pthread_mutex_unlock(&mutexTablaArchivos);
+		if(j!=DELETED)
+		{
+			if((strcmp((char*)tablaArchivos[i].fname, (char*)nombre)==0) && (tablaArchivos[i].parent_directory == padre)){
+				retorno = i;
+			}
+		}
+		pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	return retorno;
 }
@@ -208,10 +210,10 @@ int* obtenerBloquesArchivo(int numeroBloqueInicial, int cantidadDeBloques){
 	bloques[j] = i;
 	while(tablaAsignaciones[i]!= finDeArchivo){
 		j++;
-		pthread_mutex_lock(&mutexTablaAsignaciones);
+		//pthread_mutex_lock(&mutexTablaAsignaciones);
 		bloques[j] = tablaAsignaciones[i];
 		i = tablaAsignaciones[i];
-		pthread_mutex_unlock(&mutexTablaAsignaciones);
+		//pthread_mutex_unlock(&mutexTablaAsignaciones);
 	}
 	return bloques;
 }
@@ -241,9 +243,9 @@ osada_block* obtenerArchivo(int* bloquesQueLoConforman, int cantidadDeBloques, i
 		if ((k == (cantidadDeBloques -1)) && (exedente>0)){
 			int cantidadACopiar = exedente;
 		}
-		pthread_mutex_lock(&mutexBloques);
+		//pthread_mutex_lock(&mutexBloques);
 		memcpy(archivoConOffset[k], bloquesDeDatos[i], cantidadACopiar * sizeof(unsigned char));
-		pthread_mutex_unlock(&mutexBloques);
+		//pthread_mutex_unlock(&mutexBloques);
 		k++;
 	}
 	return archivoConOffset;
@@ -284,9 +286,9 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 		//valido que el offset que me pidieron sea menor al archivo.
 		if ( (tamanio>0) && (tamanio> offset) && (cantidadDeBloques>0) )
 		{
-			pthread_mutex_lock(&mutexBloques);
+			//pthread_mutex_lock(&mutexBloques);
 			int* bloquesArchivo = obtenerBloquesArchivo((int)tablaArchivos[index].first_block, cantidadDeBloques);
-			pthread_mutex_unlock(&mutexBloques);
+			//pthread_mutex_unlock(&mutexBloques);
 			osada_block* archivoCompleto;
 			archivoCompleto = obtenerArchivo(bloquesArchivo,cantidadDeBloques, tamanio );
 
@@ -299,13 +301,13 @@ osada_block* obtenerArchivoPorPath(char* path, size_t bytes, off_t offset, uint3
 
 			//printf("-->Voy a copiar: size: %d, offset: %jd\n", bytesParaCopiar, (intmax_t) offset);
 			//finalmente lo copio
-			pthread_mutex_lock(&mutexBloques);
+			//pthread_mutex_lock(&mutexBloques);
 			resultado = malloc(bytesParaCopiar * sizeof(char));
 			memcpy( resultado, ((char*)archivoCompleto)+offset , bytesParaCopiar * sizeof(unsigned char));
 			free(archivoCompleto);
 			free(bloquesArchivo);
 			*tamanioCopiarSockets = bytesParaCopiar;
-			pthread_mutex_unlock(&mutexBloques);
+			//pthread_mutex_unlock(&mutexBloques);
 
 		}
 	}
@@ -326,22 +328,28 @@ char** leerDirectorio(char* path){
 	k = 0;
 	for ( i = 0 ; i<2048 ; i++ ) {
 		pthread_mutex_lock(&mutexTablaArchivos);
-	   j = tablaArchivos[i].state;
-	   pthread_mutex_unlock(&mutexTablaArchivos);
-	   if(tablaArchivos[i].parent_directory==padre && (j !=DELETED)){
-		   subdirectoriosMax[k]=i;
-		   k++;
-	   }
+		j = tablaArchivos[i].state;
+
+		if(tablaArchivos[i].parent_directory==padre && (j !=DELETED)){
+			subdirectoriosMax[k]=i;
+			k++;
+		}
+		pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	char** subdirectoriosNombres;
 	subdirectoriosNombres = malloc(sizeof(char)*(k+1)*OSADA_FILENAME_LENGTH);
 	for(i=0;i<k;i++){
+		pthread_mutex_lock(&mutexTablaArchivos);
 		subdirectoriosNombres[i] = tablaArchivos[subdirectoriosMax[i]].fname;
+		pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	subdirectoriosNombres[k] = NULL;
 	//La ultima posicion tiene un null
 	return subdirectoriosNombres;
 }
+
+
+
 
 long* obtenerAtributos(char* path){
 	long* atributos = malloc(sizeof(long) * 2);
@@ -353,12 +361,14 @@ long* obtenerAtributos(char* path){
 		atributos[1] = tablaArchivos[indiceDirectorio].file_size;
 		pthread_mutex_unlock(&mutexTablaArchivos);
 	} else {
-		pthread_mutex_lock(&mutexTablaArchivos);
+		//pthread_mutex_lock(&mutexTablaArchivos);
 		atributos[0]= archivoNoEncontrado;
-		pthread_mutex_unlock(&mutexTablaArchivos);
+		//pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	return atributos;
 }
+
+
 
 /*
  * Retorna la primera posicion libre
@@ -446,8 +456,11 @@ char* obtenerPathPadre(char* path){
 int crearDirectorio(char* path){
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	int resultado = archivoNoEncontrado;
+
+	pthread_mutex_lock(&mutexNuevoEspacioTablaArchivos);
 	int espacioLibre = obtenerEspacioLibreTablaArchivos();
 	if(existeDirectorio!=archivoNoEncontrado && espacioLibre!=noHayEspacioLibreTablaArchivos){
+		pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
 		resultado = archivoNoEncontrado;
 	} else {
 		osada_file* tablaArchivos = obtenerTablaArchivos();
@@ -469,7 +482,9 @@ int crearDirectorio(char* path){
 		tablaArchivos[espacioLibre].parent_directory = padre;
 		tablaArchivos[espacioLibre].state = DIRECTORY;
 		pthread_mutex_unlock(&mutexTablaArchivos);
-		resultado = 0;
+
+		pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
+		resultado = operacionExitosa;
 	}
 	return resultado;
 }
@@ -479,19 +494,20 @@ int borrarDirectorio(char* path){
 	int existeDirectorio = buscarArchivoPorPath(path, false);
 	osada_file* tablaArchivos = obtenerTablaArchivos();
 	if(existeDirectorio>archivoNoEncontrado){
+		pthread_mutex_lock(&mutexTablaArchivos);
 		if(tablaArchivos[existeDirectorio].state == 2){
-			pthread_mutex_lock(&mutexTablaArchivos);
 			tablaArchivos[existeDirectorio].file_size = 0;
 			tablaArchivos[existeDirectorio].first_block = -1;
-			memcpy(tablaArchivos[existeDirectorio].fname, "", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
+			memcpy(tablaArchivos[existeDirectorio].fname, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", OSADA_FILENAME_LENGTH * sizeof (unsigned char));
 			tablaArchivos[existeDirectorio].lastmod = (unsigned)time(NULL);
 			tablaArchivos[existeDirectorio].parent_directory = -1;
 			tablaArchivos[existeDirectorio].state = DELETED;
-			pthread_mutex_unlock(&mutexTablaArchivos);
+
 			resultado = 0;
 		} else {
 			resultado = elPathNoCorrespondeAUnDirectorio;
 		}
+		pthread_mutex_unlock(&mutexTablaArchivos);
 	} else {
 		resultado = archivoNoEncontrado;
 	}
@@ -579,10 +595,10 @@ char* obtenerNombreDelArchivo (char* path){
 int checkearPath(char* path){
 	int resultado;
 	int existeDirectorio = buscarArchivoPorPath(path, false);
-	if(existeDirectorio!=rootPath && existeDirectorio==archivoNoEncontrado){
+	if( (existeDirectorio!=rootPath) && (existeDirectorio==archivoNoEncontrado) ){
 		char* pathSinArchivo = obtenerPathSinArchivo(path);
 		int existeDirectorioPadre = buscarArchivoPorPath(pathSinArchivo, false);
-		if(existeDirectorioPadre == archivoInexistenteConDirCorrecto || existeDirectorioPadre == rootPath || existeDirectorioPadre > -1){
+		if((existeDirectorioPadre == archivoInexistenteConDirCorrecto) || (existeDirectorioPadre == rootPath) || (existeDirectorioPadre > -1)){
 			resultado = archivoInexistenteConDirCorrecto;
 		} else {
 			resultado = archivoNoEncontrado;
@@ -592,6 +608,7 @@ int checkearPath(char* path){
 	}
 	return resultado;
 }
+
 
 int obtenerCantidadBloquesLibres(){
 	t_bitarray* bitmap = obtenerBitmap();
@@ -629,9 +646,9 @@ void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 
 	if (yaAsigneUnBloque)
 	{
-		pthread_mutex_lock(&mutex_bitmap);
+		//pthread_mutex_lock(&mutex_bitmap);
 		bitarray_set_bit(bitmap,actual);
-		pthread_mutex_unlock(&mutex_bitmap);
+		//pthread_mutex_unlock(&mutex_bitmap);
 		totalBloques--;
 		//actual = obtenerPrimerBloqueLibre();
 	}
@@ -642,9 +659,9 @@ void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 		tablaAsignaciones[actual] = siguiente;
 		pthread_mutex_unlock(&mutexTablaAsignaciones);
 
-		pthread_mutex_lock(&mutex_bitmap);
+		//pthread_mutex_lock(&mutex_bitmap);
 		bitarray_set_bit(bitmap,siguiente);
-		pthread_mutex_unlock(&mutex_bitmap);
+		//pthread_mutex_unlock(&mutex_bitmap);
 		actual = siguiente;
 		totalBloques--;
 	}
@@ -655,10 +672,13 @@ void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 
 int crearArchivo(char* path, long bytes){
 	int resultado;
+	pthread_mutex_lock(&mutexNuevoEspacioTablaArchivos);
+
 	int espacioLibreTablaArchivos = obtenerEspacioLibreTablaArchivos();
 	if(espacioLibreTablaArchivos!=noHayEspacioLibreTablaArchivos){
 		int totalBloquesNecesarios = calcularCantidadBloques(bytes);
 
+		pthread_mutex_lock(&mutex_bitmap);
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres>=totalBloquesNecesarios){
 			char* nombreArchivo = obtenerNombreDelArchivo(path);
@@ -687,6 +707,7 @@ int crearArchivo(char* path, long bytes){
 				pthread_mutex_unlock(&mutexTablaArchivos);
 				marcarBloques(primerBloqueLibre,totalBloquesNecesarios, true);
 			}
+			pthread_mutex_unlock(&mutex_bitmap);
 
 
 
@@ -696,11 +717,16 @@ int crearArchivo(char* path, long bytes){
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
 			pthread_mutex_unlock(&mutexTablaArchivos);
+
+
+			pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
 			resultado = operacionExitosa;
 		} else {
+			pthread_mutex_unlock(&mutex_bitmap);
 			resultado = noHayBloquesLibres;
 		}
 	} else {
+		pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
 		resultado = noHayEspacioLibreTablaArchivos;
 	}
 	return resultado;
@@ -724,19 +750,41 @@ void liberarBloquesBitmap(int primerBloque){
 	{
 		while(tablaAsignaciones[indice] != finDeArchivo){
 			indice = tablaAsignaciones[indice];
-			pthread_mutex_lock(&mutex_bitmap);
+			//pthread_mutex_lock(&mutex_bitmap);
 			bitarray_clean_bit(bitmap,indice);
-			pthread_mutex_unlock(&mutex_bitmap);
+			//pthread_mutex_unlock(&mutex_bitmap);
 		}
 		pthread_mutex_lock(&mutexTablaAsignaciones);
 		tablaAsignaciones[primerBloque] = finDeArchivo;
 		pthread_mutex_unlock(&mutexTablaAsignaciones);
 
-		pthread_mutex_lock(&mutex_bitmap);
+		//pthread_mutex_lock(&mutex_bitmap);
 		bitarray_clean_bit(bitmap,primerBloque);
-		pthread_mutex_unlock(&mutex_bitmap);
+		//pthread_mutex_unlock(&mutex_bitmap);
 
 	}
+}
+
+int liberarEsteBloqueYDecimeCualEsElSiguiente (int unBloque)
+{
+	t_bitarray* bitmap = obtenerBitmap();
+	int* tablaAsignaciones = obtenerTablaAsignaciones();
+
+	if (unBloque != finDeArchivo)
+	{
+		pthread_mutex_lock(&mutexTablaAsignaciones);
+		int temporal = tablaAsignaciones[unBloque];
+		tablaAsignaciones[unBloque] = finDeArchivo;
+		pthread_mutex_unlock(&mutexTablaAsignaciones);
+
+		//pthread_mutex_lock(&mutex_bitmap);
+		bitarray_clean_bit(bitmap,unBloque);
+		//pthread_mutex_unlock(&mutex_bitmap);
+
+		return temporal;
+	}
+	else
+		return finDeArchivo;
 }
 
 int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
@@ -744,7 +792,9 @@ int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
 	int indice = primerBloque;
 	bloquesNecesarios--; //Empiezo con primerBloque, asi que es 1 menos al total
 	while(bloquesNecesarios > 0){
+		pthread_mutex_lock(&mutexTablaAsignaciones);
 		indice = tablaAsignaciones[indice];
+		pthread_mutex_unlock(&mutexTablaAsignaciones);
 		bloquesNecesarios--;
 	}
 	return indice;
@@ -753,7 +803,10 @@ int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
 int redimencionar(int indiceArchivo, long bytesNecesarios){
 	int resultado;
 	osada_file* tablaArchivos = obtenerTablaArchivos();
+	pthread_mutex_lock(&mutexTablaArchivos);
 	long bytesActuales = tablaArchivos[indiceArchivo].file_size;
+	pthread_mutex_unlock(&mutexTablaArchivos);
+
 	if(bytesActuales == bytesNecesarios){
 		resultado = operacionExitosa; //Nada que hacer
 		pthread_mutex_lock(&mutexTablaArchivos);
@@ -763,9 +816,13 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		int bloquesActuales = calcularCantidadBloques(bytesActuales);
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
 		int bloquesTotalesNecesarios = bloquesNecesarios - bloquesActuales;
+
+		pthread_mutex_lock(&mutex_bitmap);
 		int bloquesLibres = obtenerCantidadBloquesLibres();
 		if(bloquesLibres >= bloquesTotalesNecesarios){
+			pthread_mutex_lock(&mutexTablaArchivos);
 			int primerBloque = tablaArchivos[indiceArchivo].first_block;
+			pthread_mutex_unlock(&mutexTablaArchivos);
 			int ultimoBloqueActual;
 			if(primerBloque == finDeArchivo){
 				primerBloque = obtenerPrimerBloqueLibre();
@@ -778,6 +835,7 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 				ultimoBloqueActual = obtenerUltimoBloqueActual(primerBloque);
 				marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, false);
 			}
+			pthread_mutex_unlock(&mutex_bitmap);
 			//marcarBloques(ultimoBloqueActual,bloquesTotalesNecesarios, true);
 			pthread_mutex_lock(&mutexTablaArchivos);
 			tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
@@ -785,25 +843,29 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 			pthread_mutex_unlock(&mutexTablaArchivos);
 			resultado = operacionExitosa;
 		} else {
+			pthread_mutex_unlock(&mutex_bitmap);
 			resultado = noHayBloquesLibres;
 		}
 	} else if(bytesActuales > bytesNecesarios){ // Achicar
 		int bloquesNecesarios = calcularCantidadBloques(bytesNecesarios);
+		pthread_mutex_lock(&mutexTablaArchivos);
 		int primerBloque = tablaArchivos[indiceArchivo].first_block;
+		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
+		tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
+		pthread_mutex_unlock(&mutexTablaArchivos);
+
 		if(bytesNecesarios == 0){
 			pthread_mutex_lock(&mutexTablaArchivos);
 			tablaArchivos[indiceArchivo].first_block = finDeArchivo; // -1
 			pthread_mutex_unlock(&mutexTablaArchivos);
 		}
+
+		pthread_mutex_lock(&mutex_bitmap);
 		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
 		liberarBloquesBitmap(primerBloqueALiberar);
-		pthread_mutex_lock(&mutexTablaArchivos);
-		tablaArchivos[indiceArchivo].file_size = bytesNecesarios;
-		pthread_mutex_unlock(&mutexTablaArchivos);
+		pthread_mutex_unlock(&mutex_bitmap);
+
 		resultado = operacionExitosa;
-		pthread_mutex_lock(&mutexTablaArchivos);
-		tablaArchivos[indiceArchivo].lastmod = (unsigned)time(NULL);
-		pthread_mutex_unlock(&mutexTablaArchivos);
 	}
 	return resultado;
 }
@@ -816,7 +878,29 @@ int truncar(char* path, long bytes){
 		resultado = crearArchivo(path,bytes);
 	} else if(existeDirectorio > archivoNoEncontrado) {
 		//el archivo existe, se debe redimencionar
+
 		resultado = redimencionar(existeDirectorio,bytes);
+
+	} else {
+		resultado = archivoNoEncontrado;
+	}
+	return resultado;
+}
+
+
+int truncarConSemaforos(char* path, long bytes, void (*fc1) (int), void (*fc2) (int)){
+	int resultado;
+	int existeDirectorio = checkearPath(path);
+	if(existeDirectorio == archivoInexistenteConDirCorrecto){
+		//el archivo no existe pero el path es correcto
+		resultado = crearArchivo(path,bytes);
+	} else if(existeDirectorio > archivoNoEncontrado) {
+		//el archivo existe, se debe redimencionar
+
+		(*fc1)(existeDirectorio);
+		resultado = redimencionar(existeDirectorio,bytes);
+		(*fc2)(existeDirectorio);
+
 	} else {
 		resultado = archivoNoEncontrado;
 	}
@@ -828,21 +912,26 @@ int borrarArchivo(char* path){
 	int existeDirectorio = checkearPath(path);
 	if(existeDirectorio > archivoNoEncontrado){
 		osada_file* tablaArchivos = obtenerTablaArchivos();
+		pthread_mutex_lock(&mutexTablaArchivos);
 		if(tablaArchivos[existeDirectorio].state == REGULAR){
 			int primerBloque = tablaArchivos[existeDirectorio].first_block;
-			liberarBloquesBitmap(primerBloque);
-			pthread_mutex_lock(&mutexTablaArchivos);
 			tablaArchivos[existeDirectorio].state = DELETED;
+			pthread_mutex_lock(&mutex_bitmap);
+			int segundoBloque = liberarEsteBloqueYDecimeCualEsElSiguiente(primerBloque);
 			pthread_mutex_unlock(&mutexTablaArchivos);
+			liberarBloquesBitmap(segundoBloque);
+			pthread_mutex_lock(&mutex_bitmap);
 			resultado = operacionExitosa;
 		} else {
 			resultado = noEsUnArchivo;
+			pthread_mutex_unlock(&mutexTablaArchivos);
 		}
 	} else {
 		resultado = existeDirectorio;
 	}
 	return resultado;
 }
+
 
 int calcularBloqueOffset(int offset){
 	int resultado;
@@ -890,8 +979,12 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 	if(existeDirectorio > archivoNoEncontrado){
 		int total = tamanio + offset;
 		osada_file* tablaArchivos = obtenerTablaArchivos();
+		pthread_mutex_lock(&mutexTablaArchivos);
+
 		if (tablaArchivos[existeDirectorio].file_size >= total){
 			int primerBloque = tablaArchivos[existeDirectorio].first_block;
+			pthread_mutex_unlock(&mutexTablaArchivos);
+
 			int numeroDeBloque = calcularNumeroDeBloque(primerBloque, offset);
 			int bloquesNecesarios = calcularBloqueOffset(offset);
 			int offsetDeBloque = offset - (bloquesNecesarios * OSADA_BLOCK_SIZE);
@@ -903,12 +996,14 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 				totalAEscribir = calcularTotalAEscribir(offsetDeBloque, tamanio);
 				tamanio = tamanio - totalAEscribir;
 				char* arrayDatos = (char*)bloquesDatos[numeroDeBloque];
-				pthread_mutex_lock(&mutexBloques);
+				//pthread_mutex_lock(&mutexBloques);
 				memcpy(&arrayDatos[offsetDeBloque], &buffer[offsetBuffer], sizeof(char) * totalAEscribir);
-				pthread_mutex_unlock(&mutexBloques);
+				//pthread_mutex_unlock(&mutexBloques);
 
 				if(tamanio > 0){
+					pthread_mutex_lock(&mutexTablaAsignaciones);
 					numeroDeBloque = tablaAsignaciones[numeroDeBloque];
+					pthread_mutex_unlock(&mutexTablaAsignaciones);
 					offsetDeBloque = 0;
 				}
 				offsetBuffer += totalAEscribir;
@@ -918,6 +1013,7 @@ int escribir(const char *path, const char *buffer, size_t tamanio,off_t offset){
 			pthread_mutex_unlock(&mutexTablaArchivos);
 			resultado = operacionExitosa;
 		} else {
+			pthread_mutex_unlock(&mutexTablaArchivos);
 			resultado = tamanioDeArchivoInsuficiente;
 		}
 	} else {
