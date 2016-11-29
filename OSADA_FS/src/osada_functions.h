@@ -42,6 +42,8 @@ void abrirArchivo();
 osada_header* obtenerHeader();
 
 t_bitarray* obtenerBitmap();
+//t_bitarray* obtenerBitmapBloquesDeDatos();
+uint32_t offsetBitmapAdminitrativo();
 
 osada_file* obtenerTablaArchivos();
 

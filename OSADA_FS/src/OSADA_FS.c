@@ -21,6 +21,9 @@ int main(void) {
 
 	abrirArchivo();
 	osada_header* header = obtenerHeader();
+	uint32_t hola = offsetBitmapAdminitrativo();
+	uint32_t hola2 = offsetBitmapAdminitrativo();
+	uint32_t hola3 = offsetBitmapAdminitrativo();
 //	char* magicNumber = "Magic Number";
 //	char* magic_number = malloc(8);
 //	magic_number = string_duplicate(header->magic_number);
@@ -188,16 +191,17 @@ int main(void) {
 //		printf("%c", otroarray[1000 + j]);
 //		j++;
 //	}
-	int indice = buscarArchivoPorPath("/Nuevo", false);
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	osada_file* archivos = obtenerTablaArchivos();
-	int revisar =1;
-	int i = archivos[indice].first_block;
-	while (tablaAsignaciones[i]!= -1)
-	{
-		i = tablaAsignaciones[i];
-		revisar++;
-	}
+//	int indice = buscarArchivoPorPath("/Nuevo", false);
+//	int* tablaAsignaciones = obtenerTablaAsignaciones();
+//	osada_file* archivos = obtenerTablaArchivos();
+//	int revisar =1;
+//	int i = archivos[indice].first_block;
+//	while (tablaAsignaciones[i]!= -1)
+//	{
+//		i = tablaAsignaciones[i];
+//		revisar++;
+//	}
+	int resultado = truncar("a", 3);
 
 	return EXIT_SUCCESS;
 }

@@ -107,6 +107,33 @@ t_bitarray* obtenerBitmap(){
 	return bitmap;
 }
 
+//Solo para operar con los bloques de datos...
+//t_bitarray* obtenerBitmapBloquesDeDatos(){
+uint32_t offsetBitmapAdminitrativo(){
+
+	static uint32_t j = 0;
+	static bool j_initialized = false;
+
+	if (!j_initialized) {
+		osada_header* header = obtenerHeader();
+		//int bloquesEnTablaAsignaciones = 0;
+		uint32_t cantidadDeBloquesAdministrativos = (header->fs_blocks - header->data_blocks);
+		//int bloquesEnTablaAsignaciones = cantidadDeBloquesAdministrativos - (header->bitmap_blocks) - 1 - 1024;	//menos header menos tabla archivos
+
+		//esto es para que el osada_dump de ok.
+		uint32_t bloquesEnTablaAsignaciones =0;
+		bloquesEnTablaAsignaciones = OSADA_BLOCK_SIZE - (((header->fs_blocks -1 - header->bitmap_blocks -1024) *4)%OSADA_BLOCK_SIZE);
+		//int offsetEntero = cantidadDeBloquesAdministrativos / 8;
+		//int offsetDecimal = cantidadDeBloquesAdministrativos % 8;
+
+	    //j = (offsetDecimal + offsetEntero);
+		j = cantidadDeBloquesAdministrativos - bloquesEnTablaAsignaciones -1;	//el menos 1 es porque empieza en 0.
+	    j_initialized = true;
+	}
+
+	return j;
+}
+
 osada_file* obtenerTablaArchivos(){
 	inicializarHeader();
 	osada_file* tablaArchivos = (osada_file*)bloques_archivo[1 + header->bitmap_blocks];
@@ -657,26 +684,33 @@ int checkearPath(char* path){
 int obtenerCantidadBloquesLibres(){
 	t_bitarray* bitmap = obtenerBitmap();
 	osada_header* header = obtenerHeader();
-	int totalBlocks = header->data_blocks;
-	int i = 0;
+	uint32_t totalBlocks = header->data_blocks;
+	uint32_t i = 0;
 	int bloquesLibres = 0;
 	while(i<totalBlocks){
-		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
+		pthread_mutex_lock(&mutex_bitmap);
+		//int asd=-1;
+		//int respuesta = bitarray_test_bit(bitmap, asd+i+offsetBitmapAdminitrativo());
+		if(bitarray_test_bit(bitmap, i+offsetBitmapAdminitrativo() ) == bloqueLibre){
 			bloquesLibres++;
 		}
+		pthread_mutex_unlock(&mutex_bitmap);
 		i++;
+
 	}
 	return bloquesLibres;
 }
 
 int obtenerPrimerBloqueLibre(){
 	t_bitarray* bitmap = obtenerBitmap();
-	int i = 0;
+	uint32_t i = 0;
 	int primerBloqueLibre = -1;
 	while(primerBloqueLibre < 0){
-		if(bitarray_test_bit(bitmap,i) == bloqueLibre){
+		pthread_mutex_lock(&mutex_bitmap);
+		if(bitarray_test_bit(bitmap, i+offsetBitmapAdminitrativo() ) == bloqueLibre){
 			primerBloqueLibre = i;
 		}
+		pthread_mutex_unlock(&mutex_bitmap);
 		i++;
 	}
 	return primerBloqueLibre;
@@ -691,7 +725,7 @@ void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 	if (yaAsigneUnBloque)
 	{
 		pthread_mutex_lock(&mutex_bitmap);
-		bitarray_set_bit(bitmap,actual);
+		bitarray_set_bit(bitmap, actual+offsetBitmapAdminitrativo() );
 		pthread_mutex_unlock(&mutex_bitmap);
 		totalBloques--;
 		//actual = obtenerPrimerBloqueLibre();
@@ -704,7 +738,7 @@ void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 		//pthread_mutex_unlock(&mutexTablaAsignaciones);
 
 		pthread_mutex_lock(&mutex_bitmap);
-		bitarray_set_bit(bitmap,siguiente);
+		bitarray_set_bit(bitmap, siguiente+offsetBitmapAdminitrativo() );
 		pthread_mutex_unlock(&mutex_bitmap);
 		actual = siguiente;
 		totalBloques--;
@@ -807,25 +841,32 @@ int obtenerUltimoBloqueActual(int primerBloque){
 }
 
 void liberarBloquesBitmap(int primerBloque){
-	t_bitarray* bitmap = obtenerBitmap();
-	int* tablaAsignaciones = obtenerTablaAsignaciones();
-	int indice = primerBloque;
+	//t_bitarray* bitmap = obtenerBitmap();
+	//int* tablaAsignaciones = obtenerTablaAsignaciones();
+
 
 	if (primerBloque != finDeArchivo)
 	{
-		while(tablaAsignaciones[indice] != finDeArchivo){
-			indice = tablaAsignaciones[indice];
-			pthread_mutex_lock(&mutex_bitmap);
-			bitarray_clean_bit(bitmap,indice);
-			pthread_mutex_unlock(&mutex_bitmap);
-		}
-		//pthread_mutex_lock(&mutexTablaAsignaciones);
-		tablaAsignaciones[primerBloque] = finDeArchivo;
-		//pthread_mutex_unlock(&mutexTablaAsignaciones);
-
-		pthread_mutex_lock(&mutex_bitmap);
-		bitarray_clean_bit(bitmap,primerBloque);
-		pthread_mutex_unlock(&mutex_bitmap);
+		int indice = primerBloque;
+		while(indice != finDeArchivo){
+		indice = liberarEsteBloqueYDecimeCualEsElSiguiente(indice);
+//		pthread_mutex_lock(&mutex_bitmap);
+//		bitarray_clean_bit(bitmap, indice+offsetBitmapAdminitrativo() );
+//		pthread_mutex_unlock(&mutex_bitmap);
+	}
+//		while(tablaAsignaciones[indice] != finDeArchivo){
+//			indice = tablaAsignaciones[indice];
+//			pthread_mutex_lock(&mutex_bitmap);
+//			bitarray_clean_bit(bitmap, indice+offsetBitmapAdminitrativo() );
+//			pthread_mutex_unlock(&mutex_bitmap);
+//		}
+//		//pthread_mutex_lock(&mutexTablaAsignaciones);
+//		tablaAsignaciones[primerBloque] = finDeArchivo;
+//		//pthread_mutex_unlock(&mutexTablaAsignaciones);
+//
+//		pthread_mutex_lock(&mutex_bitmap);
+//		bitarray_clean_bit(bitmap, primerBloque+offsetBitmapAdminitrativo() );
+//		pthread_mutex_unlock(&mutex_bitmap);
 
 	}
 }
@@ -843,7 +884,7 @@ int liberarEsteBloqueYDecimeCualEsElSiguiente (int unBloque)
 		//pthread_mutex_unlock(&mutexTablaAsignaciones);
 
 		pthread_mutex_lock(&mutex_bitmap);
-		bitarray_clean_bit(bitmap,unBloque);
+		bitarray_clean_bit(bitmap, unBloque+offsetBitmapAdminitrativo() );
 		pthread_mutex_unlock(&mutex_bitmap);
 
 		return temporal;
@@ -931,19 +972,21 @@ int redimencionar(int indiceArchivo, long bytesNecesarios){
 		if(bytesNecesarios == 0){
 			//pthread_mutex_lock(&mutexTablaArchivos);
 			tablaArchivos[indiceArchivo].first_block = finDeArchivo; // -1
+			int segundoBloque = liberarEsteBloqueYDecimeCualEsElSiguiente(primerBloque);
+			liberarBloquesBitmap(segundoBloque);
 			//pthread_mutex_unlock(&mutexTablaArchivos);
 		}
-
-		//pthread_mutex_lock(&mutex_bitmap);
-		//este primer bloque a liberar, es el ultimo valido. Le digo que ahora es el fin de archivo y borro los demas..
-		int* tablaAsignaciones = obtenerTablaAsignaciones();
-		int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
-		int segundoBloque = tablaAsignaciones[primerBloqueALiberar];
-		tablaAsignaciones[primerBloqueALiberar] = finDeArchivo;
-		//int segundoBloque = liberarEsteBloqueYDecimeCualEsElSiguiente(primerBloque);
-		liberarBloquesBitmap(segundoBloque);
-		//pthread_mutex_unlock(&mutex_bitmap);
-
+		else {
+			//pthread_mutex_lock(&mutex_bitmap);
+			//este primer bloque a liberar, es el ultimo valido. Le digo que ahora es el fin de archivo y borro los demas..
+			int* tablaAsignaciones = obtenerTablaAsignaciones();
+			int primerBloqueALiberar = obtenerPrimerBloqueALiberar(primerBloque, bloquesNecesarios);
+			int segundoBloque = tablaAsignaciones[primerBloqueALiberar];
+			tablaAsignaciones[primerBloqueALiberar] = finDeArchivo;
+			//int segundoBloque = liberarEsteBloqueYDecimeCualEsElSiguiente(primerBloque);
+			liberarBloquesBitmap(segundoBloque);
+			//pthread_mutex_unlock(&mutex_bitmap);
+		}
 		resultado = operacionExitosa;
 	}
 	return resultado;

@@ -882,6 +882,8 @@ void atenderConexion(int socket_conexion) {
 		break;
 	default:
 		;
+		printf("Se desconecto un cliente. pthread_t = %lu\n", (unsigned long) pthread_self());
+
 		pthread_exit(0);
 		break;
 	}
@@ -1065,7 +1067,7 @@ void escucharNuevasConexiones(char* ip, char *puerto) {
 				(struct sockaddr *) &remoteaddr, &addrlen);
 		pthread_create(&hilos[i], NULL,(void *) atender,(void*) socket_nueva_conexion);;
 		//atender(socket_nueva_conexion);
-		printf("Este es el cliente numero %d", i);
+		printf("Este es el cliente numero %d, pthread_t=%lu \n", i, (unsigned long)hilos[i]);
 		i++;
 	}
 }
