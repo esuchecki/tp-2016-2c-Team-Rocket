@@ -246,21 +246,21 @@ void * deteccionDeadlock(void * datos) {
 		reiniciarVuelta: sleepInMiliSegundos(
 				mapa->metadata->tiempoChequeadoDeadlock);
 
-		t_list * listaDeadlock = detectarDeadlock(mapa);
-		/*
-		 t_list * listaDeadlock = list_create();
-		 sleep(40);
-		 list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,0));
-		 list_add(listaDeadlock, (t_entrenador *) list_get(colaBloqueados,1));
-		 log_info(myArchivoDeLog, "---------%s", string_itoa(list_size(listaDeadlock)));*/
+		t_list * listaDeadlock;
+		devuelta: listaDeadlock = detectarDeadlock(mapa);
+
 		if ((mapa->metadata->batalla[0] == '1') && (listaDeadlock != NULL)) {
 
 			parcial = list_create();
-			while (list_size(listaDeadlock) != 0) {
+			//while (list_size(listaDeadlock) != 0) {
 				log_info(myArchivoDeLog, "Resolucion de deadlock por batalla");
 
 				rearmarListaDeadlock(listaDeadlock, mapa);
+
+				loguearListaDeadlock(parcial);
+
 				if(list_size(parcial) == 0) goto final;
+
 				loguearListaDeadlock(parcial);
 
 				peticionesDePokemones(parcial, mapa);
@@ -287,13 +287,14 @@ void * deteccionDeadlock(void * datos) {
 					removerDeListaSecundaria();
 
 					loguearListaDeadlock(listaDeadlock);
+					goto devuelta;
 					//		rearmarListaDeadlock(listaDeadlock, mapa);
 					//		list_destroy(listaDeadlock);
 					//		loguearListaDeadlock(parcial);
 
 				}
 
-			}
+			//}
 			final:
 			;
 			list_destroy(listaDeadlock);
@@ -348,10 +349,63 @@ void loguearListaDeadlock(t_list *listaDeadlock) {
 		}
 	}
 }
+int revisarInanicion(t_entrenador *entrenador,t_list *listaDeadlock,t_mapa * mapa){
+
+	int i;
+	int flag = 0;
+	t_pokemonEnPokeNest * pokemonQueTieneEntrenador = malloc(sizeof(t_pokemonEnPokeNest));
+
+	char identificadorPoke;
+
+	for(i=0 ; i < list_size(mapa->pokeNest);i++){
+
+		t_pokeNest *pokeNest = list_get(mapa->pokeNest,i);
+
+		bool loQuiereAlguien(void * datos){
+			t_pokemonEnPokeNest * pokemon = datos;
+			return pokemon->capturadoPorEntrenador == entrenador->simbolo;
+		}
+
+		pokemonQueTieneEntrenador = list_find(pokeNest->pokemones,loQuiereAlguien);
+		if ( pokemonQueTieneEntrenador != NULL){
+			identificadorPoke = pokeNest->identificador;
+			break;
+		}
+
+	}
+	for(i = 0; i < list_size(listaDeadlock) ; i++){
+
+		t_entrenador * entrenadorNuevo = list_get(listaDeadlock,i);
+
+		if(entrenadorNuevo->pokemonSolicitado == identificadorPoke){
+			flag = 1;
+			break;
+		}
+	}
+	if(flag == 0){
+		bool mismoEntrenador(void * datos){
+			return ((t_entrenador *)datos)->simbolo == entrenador->simbolo;
+		}
+
+		list_remove_by_condition(listaDeadlock,mismoEntrenador);
+		return 1;
+	}else{
+		return 0;
+	}
+}
 
 void rearmarListaDeadlock(t_list * listaDeadlock, t_mapa *mapa) {
 	t_entrenador * entrenador = list_get(listaDeadlock, 0);
+
+	int inanicion;
+	verificar:
+	inanicion = revisarInanicion(entrenador,listaDeadlock,mapa);
+	if (inanicion == 1){
+		entrenador = list_get(listaDeadlock,0);
+		goto verificar;
+	}
 	t_entrenador * entrenadorAux = malloc(sizeof(t_entrenador));
+
 
 	entrenadorAux = entrenador;
 
