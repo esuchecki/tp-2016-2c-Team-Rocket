@@ -62,6 +62,7 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 			common_send(socketConexion, paquete);
 
 			free(newPath);
+			free(paquete);
 			paquete = leer_paquete(socketConexion);
 			uint32_t fechaModificacion;
 			struct timespec time1;
@@ -89,6 +90,7 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 					convertirSegundosToTimeSpec(&time1, fechaModificacion);
 					stbuf->st_mtim = time1;
 				}
+				free(paquete->data);
 				free(paquete);
 				return res;
 				break;
@@ -104,16 +106,19 @@ static int teamRocket_getAttr(const char *path, struct stat *stbuf) {
 					convertirSegundosToTimeSpec(&time1, fechaModificacion);
 					stbuf->st_mtim = time1;
 				}
+				free(paquete->data);
 				free(paquete);
 				return res;
 				break;
 			case poke_errorGetAttr:
 				res = -ENOENT;
+				free(paquete->data);
 				free(paquete);
 				return res;
 				break;
 			default:
 				;
+				free(paquete->data);
 				free(paquete);
 				return -ENOENT;
 				break;
@@ -184,6 +189,7 @@ static int teamRocket_readDir(const char *path, void *buf,
 	t_data * paquete = pedirPaquete(poke_solicitudReadDir, strlen(newPath) + 1,
 			newPath);
 	common_send(socketConexion, paquete);
+	free(paquete);
 	paquete = leer_paquete(socketConexion);
 
 	free(newPath);
@@ -229,14 +235,17 @@ static int teamRocket_readDir(const char *path, void *buf,
 //			filler(buf,palabra,NULL,0);
 //			break;
 //		}
+		free(paquete->data);
 		free(paquete);
 		return 0;
 
 	} else if (paquete->header == poke_errorReadDir) {
 		//TODO: servidor no encontro nada segun el path enviado, que hago?
+		free(paquete->data);
 		free(paquete);
 		return -ENOENT;
 	}
+	free(paquete->data);
 	free(paquete);
 	return -ENOENT;
 }
@@ -283,9 +292,11 @@ static int teamRocket_read(const char *path, char *buf, size_t size,
 		//memcpy(buf,lectura->data,size);
 		memcpy(buf, lectura->data, lectura->tamanio);
 		int tamanioFinal = lectura->tamanio;
+		free(lectura->data);
 		free(lectura);
 		return tamanioFinal;
 	}
+	free(lectura->data);
 	free(lectura);
 	//En caso de else o recibir "poke_errorEnLectura" devuelve 0.
 	return 0;
@@ -313,10 +324,12 @@ static int teamRocket_write(const char *path, const char *buf, size_t size,	off_
 			//Si no le devolvieron un 0, entonces devuelvo problema.
 			if ((*((int*) lectura->data)) == operacionExitosa)
 			{
+				free(lectura->data);
 				free(lectura);
 				return size;
 			}
 		}
+		free(lectura->data);
 		free(lectura);
 	}else
 	{
@@ -344,6 +357,7 @@ static int teamRocket_mkdir(const char *path, mode_t mode) {
 	if (lectura->header == poke_respuestaCreacion) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		int result = (*((int*) lectura->data));
+		free(lectura->data);
 		free(lectura);
 
 		if (result == operacionExitosa)
@@ -357,6 +371,7 @@ static int teamRocket_mkdir(const char *path, mode_t mode) {
 		}
 		return -EAGAIN;	//intente nuevamente.
 	}
+	free(lectura->data);
 	free(lectura);
 	return -EAGAIN;	//intente nuevamente.
 }
@@ -379,6 +394,7 @@ static int teamRocket_rmdir(const char *path) {
 	if (lectura->header == poke_respuestaBorrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		int result = (*((int*) lectura->data));
+		free(lectura->data);
 		free(lectura);
 
 		if (result == operacionExitosa)
@@ -392,6 +408,7 @@ static int teamRocket_rmdir(const char *path) {
 		}
 		return -EAGAIN;	//intente nuevamente.
 	}
+	free(lectura->data);
 	free(lectura);
 	return -EAGAIN;	//intente nuevamente.
 
@@ -443,6 +460,7 @@ static int teamRocket_unlink(const char * path) {
 	if (lectura->header == poke_respuestaBorradoArchivo) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		int result = (*((int*) lectura->data));
+		free(lectura->data);
 		free(lectura);
 
 		if (result == operacionExitosa)
@@ -456,6 +474,7 @@ static int teamRocket_unlink(const char * path) {
 		}
 		return -EAGAIN;	//intente nuevamente.
 	}
+	free(lectura->data);
 	free(lectura);
 	return -EAGAIN;	//intente nuevamente.
 
@@ -497,6 +516,7 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 	if (lectura->header == poke_respuestaRenombrado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		int result = (*((int*) lectura->data));
+		free(lectura->data);
 		free(lectura);
 
 		if (result == operacionExitosa)
@@ -510,6 +530,7 @@ static int teamRocket_rename(const char *path, const char *nombre) {
 		}
 		return -EAGAIN;	//intente nuevamente.
 	}
+	free(lectura->data);
 	free(lectura);
 	return -EAGAIN;	//intente nuevamente.
 }
@@ -537,6 +558,7 @@ static int teamRocket_truncar(const char *path, off_t size) {
 	if (lectura->header == poke_respuestaTruncado) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		int result = (*((int*) lectura->data));
+		free(lectura->data);
 		free(lectura);
 
 		if (result == operacionExitosa)
@@ -550,6 +572,7 @@ static int teamRocket_truncar(const char *path, off_t size) {
 		}
 		return -EAGAIN;	//intente nuevamente.
 	}
+	free(lectura->data);
 	free(lectura);
 	return -EAGAIN;	//intente nuevamente.
 }
@@ -589,6 +612,7 @@ static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
 	if (lectura->header == poke_respuestaUtimensat) {
 		//Si no le devolvieron un 0, entonces devuelvo problema.
 		int result = (*((int*) lectura->data));
+		free(lectura->data);
 		free(lectura);
 
 		if (result == operacionExitosa)
@@ -602,6 +626,7 @@ static int teamRocket_utimensat(const char* path, const struct timespec ts[2])
 		}
 		return -EAGAIN;	//intente nuevamente.
 	}
+	free(lectura->data);
 	free(lectura);
 	return -EAGAIN;	//intente nuevamente.
 
@@ -656,15 +681,19 @@ int fcAuxiliarOpen(char * path, int enumRespuesta)
 			//paquete = leer_paquete(socketConexion);
 			//if (paquete->header == poke_respuestaPorArchivo)
 			//{
+				free(lectura->data);
 				free(lectura);
 				free(paquete);
+				free(paquete2);
 				return 0;
 			//}
 
 		}
 	}
+	free(lectura->data);
 	free(lectura);
 	free(paquete);
+	free(paquete2);
 //}
 return -ENOENT;
 }
@@ -695,15 +724,19 @@ int fcAuxiliarClose(char * path, int enumRespuesta)
 			//paquete = leer_paquete(socketConexion);
 			//if (paquete->header == poke_respuestaPorArchivo)
 			//{
+				free(lectura->data);
 				free(lectura);
 				free(paquete);
+				free(paquete2);
 				return 0;
 			//}
 
 		}
 	}
+	free(lectura->data);
 	free(lectura);
 	free(paquete);
+	free(paquete2);
 //}
 return -ENOENT;
 }
@@ -817,6 +850,8 @@ void enviarLecturaArchivo(char *path, size_t size, off_t offset) {
 	t_data *paquete = pedirPaquete(poke_leerArchivo, strlen(path) + 1, path);
 	common_send(socketConexion, paquete);
 
+	free(paquete);
+
 	int tamanio = sizeof(size_t) + sizeof(off_t);
 	void*buffer = malloc(tamanio);
 	memcpy(buffer, &size, sizeof(size_t));
@@ -832,10 +867,15 @@ void enviarEscrituraArchivo(const char *buf, size_t size, off_t offset) {
 	t_data *paquete = pedirPaquete(poke_escribirArchivo, size, buf);
 	common_send(socketConexion, paquete);
 
+	free(paquete);
+
 	int tamanio = sizeof(size_t) + sizeof(off_t);
 	void*buffer = malloc(tamanio);
 	memcpy(buffer, &size, sizeof(size_t));
 	memcpy(buffer + sizeof(size_t), &offset, sizeof(off_t));
 	paquete = pedirPaquete(poke_escribirArchivo, tamanio, buffer);
 	common_send(socketConexion, paquete);
+
+	free(buffer);
+	free(paquete);
 }

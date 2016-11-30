@@ -30,17 +30,20 @@ int main(int argc,char*argv[]){
 	//Consigo la ip
 	IP = configLeerString(config,"IP");
 	if(IP == NULL){
+		printf("Error al leer la config de la IP..\n\n");
 		exit(EXIT_FAILURE);
 	}
 	//Consigo el puerto
 	Puerto = configLeerString(config,"PUERTO");
 	if(Puerto == NULL){
+		printf("Error al leer la config del PUERTO.\n\n");
 		exit(EXIT_FAILURE);
 	}
 
 	inicializarLogCliente(argv,false);
 
 
+	printf("Me voy a conectar a: IP=%s, Puerto=%s.\n", IP, Puerto);
 	//socketConexion = connect_to("localhost","6100");
 	socketConexion = connect_to(IP,Puerto);
 
@@ -53,9 +56,9 @@ int main(int argc,char*argv[]){
 
 	paqueteHandshake = leer_paquete(socketConexion);
 	if(paqueteHandshake->header == 71){
-		printf("La conexion con el servidor es un exito");
+		printf("La conexion con el servidor es un exito.\nVoy a iniciar Fuse.\n\n");
 	}else{
-		printf("La conexion con el servidor fallo");
+		printf("La conexion con el servidor fallo.\n\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -64,6 +67,10 @@ int main(int argc,char*argv[]){
 	return iniciarFuse(argc, argv);
 
 }
+
+
+
+
 
 void inicializarLogCliente( char *argv[],bool consolaOn )
 {

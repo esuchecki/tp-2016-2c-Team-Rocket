@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lcommons -llibTeamRocket
+LIBS := -lcommons -llibTeamRocket -lpthread
 

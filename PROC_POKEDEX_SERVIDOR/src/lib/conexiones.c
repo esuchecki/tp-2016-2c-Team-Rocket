@@ -42,6 +42,7 @@ void atenderConexion(int socket_conexion) {
 	t_data *paqueteEntrada = leer_paquete(socket_conexion);
 	t_data *paqueteSalida;
 	//printf("|\tLeyo paquete\n");
+	char * var_itoa;
 	char * path = paqueteEntrada->data;
 	size_t size = 0;
 	off_t offset = 0;
@@ -116,7 +117,9 @@ void atenderConexion(int socket_conexion) {
 			paqueteSalida = pedirPaquete(poke_respuestaReadDir, aux * (temp), buffer);
 			common_send(socket_conexion, paqueteSalida);
 			//printf("\t\tRta, cant de archivos: %d\n", temp);
-			log_info(logServidor, "\t\tRta, cant de archivos: %s", string_itoa(temp) );
+			var_itoa= string_itoa(temp);
+			log_info(logServidor, "\t\tRta, cant de archivos: %s", var_itoa );
+			free(var_itoa);
 		} else {	//No tiene archivos.
 			paqueteSalida = pedirPaquete(poke_errorReadDir, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
@@ -203,7 +206,9 @@ void atenderConexion(int socket_conexion) {
 			//printf("\t\tTamanio: %ld [bytes]\n", atributos[1]);
 			//printf("\t\tFecha Mod: %s", asctime(&tiempo));
 			log_info(logServidor, "\t\tRta: %s", "REGULAR" );
-			log_info(logServidor, "\t\tTamanio: %s [bytes]", string_itoa(atributos[1]) );
+			var_itoa= string_itoa(atributos[1]);
+			log_info(logServidor, "\t\tTamanio: %s [bytes]", var_itoa );
+			free(var_itoa);
 			log_info(logServidor,"\t\tFecha Mod: %s", asctime(&tiempo) );
 			//size = 0;
 			break;
@@ -589,7 +594,7 @@ void atenderConexion(int socket_conexion) {
 			paqueteSalida = pedirPaquete(poke_errorEnLectura, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
 			//printf("\t\tRta: %d [bytes]\n", 0);
-			log_info(logServidor, "\t\tRta: %s  [bytes]", string_itoa(0) );
+			log_info(logServidor, "\t\tRta: %s  [bytes]", &"0" );
 		}
 
 //		arch = verificarAperturasArchivos(path);
@@ -618,7 +623,9 @@ void atenderConexion(int socket_conexion) {
 			paqueteSalida = pedirPaquete(poke_respuestaLectura, tamanioCopiarSockets , archivo);
 			common_send(socket_conexion, paqueteSalida);
 			//printf("\t\tRta: %d  [bytes]\n", tamanioCopiarSockets);
-			log_info(logServidor, "\t\tRta: %s  [bytes]", string_itoa(tamanioCopiarSockets) );
+			var_itoa= string_itoa(tamanioCopiarSockets);
+			log_info(logServidor, "\t\tRta: %s  [bytes]", var_itoa );
+			free(var_itoa);
 			free(archivo);
 		}
 		else
@@ -627,7 +634,7 @@ void atenderConexion(int socket_conexion) {
 			paqueteSalida = pedirPaquete(poke_errorEnLectura, sizeof(int), &null_data);
 			common_send(socket_conexion, paqueteSalida);
 			//printf("\t\tRta: %d [bytes]\n", 0);
-			log_info(logServidor, "\t\tRta: %s  [bytes]", string_itoa(0) );
+			log_info(logServidor, "\t\tRta: %s  [bytes]", &"0" );
 		}
 		free(posiciones->data);
 		free(posiciones);

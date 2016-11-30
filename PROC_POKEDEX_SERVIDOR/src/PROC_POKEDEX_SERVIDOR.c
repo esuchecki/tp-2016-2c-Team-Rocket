@@ -31,30 +31,31 @@ int main(int argc, char*argv[]) {
 
 	char* IP = malloc(15);
 	char* PUERTO = malloc(15);
-	strcpy(IP, "127.0.0.1");
+	//strcpy(IP, "127.0.0.1");
 	//strcpy(PUERTO, "6100");
 
 	//Para leer la config como parametro de ejecucion
-		//char * pathConfg = argv[1];
+	//char * pathConfg = argv[1];
 
-		inicializarLogServidor(argv,false);
+	inicializarLogServidor(argv,false);
 
-		t_config * config = newConfigType(pathConfigCli);
-		//Configo la ip
-//		IP = configLeerString(config,"IP");
-//		if(IP == NULL){
-//			log_error(logServidor,"Fallo cargar la ip");
-//			exit(EXIT_FAILURE);
-//		}
-		//Consigo el puerto
-		PUERTO = configLeerString(config,"PUERTO");
-		if(PUERTO == NULL){
-			log_error(logServidor,"Fallo cargar el puerto");
-			exit(EXIT_FAILURE);
-		}
+	t_config * config = newConfigType(pathConfigCli);
+	//Configo la ip
+	IP = configLeerString(config,"IP");
+	if(IP == NULL){
+		log_error(logServidor,"Fallo cargar la ip");
+		exit(EXIT_FAILURE);
+	}
+	//Consigo el puerto
+	PUERTO = configLeerString(config,"PUERTO");
+	if(PUERTO == NULL){
+		log_error(logServidor,"Fallo cargar el puerto");
+		exit(EXIT_FAILURE);
+	}
 
 
-		log_debug(logServidor,"Voy a atender conexiones en la ip %s",IP);
+	log_info(logServidor,"Voy a atender conexiones en la ip %s",IP);
+	log_info(logServidor,"Voy a atender conexiones en el puerto %s",PUERTO);
 
 	//atenderConexiones(IP,PUERTO);
 
@@ -71,6 +72,7 @@ int main(int argc, char*argv[]) {
 
 	inicializarSemaforosTablaArchivos();
 
+	printf("Mi IP es: %s, Puerto: %s.\n\n", IP, PUERTO);
 	escucharNuevasConexiones(IP,PUERTO);
 
 	return 0;

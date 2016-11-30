@@ -215,6 +215,7 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indi
 		while(array[j]!= NULL){
 			resultado = buscarArchivoEnFS(array[i], padre);
 			padre = resultado;
+			free(array[i]);
 			i++;
 			j++;
 		}
@@ -448,6 +449,7 @@ unsigned char* obtenerUltimoElemento(char* path){
 	if(strcmp("/",path)!= 0){
 		while(array[i]!=NULL){
 			ultimo = array[i];
+			free(array[i]);
 			i++;
 		}
 	} else {
@@ -465,6 +467,7 @@ char* obtenerPathPadre(char* path){
 	char** array = string_split(path, "/");
 	int i = 0;
 	while(array[i]!=NULL){
+		free(array[i]);
 		i++;
 	}
 	char* padre;
@@ -480,7 +483,8 @@ char* obtenerPathPadre(char* path){
 		}
 		padre = string_substring(path, 0, hasta);
 	} else {
-		padre = "";
+		padre = malloc(sizeof(char) * 1);
+		strcpy(padre, "");
 	}
 	free(array);
 	return padre;
@@ -628,6 +632,14 @@ int largoUltimoElementoPath (char* path){
 	char* pathAlReves = string_reverse(path);
 	char** array = string_split(pathAlReves, "/");
 	int largo = string_length(array[0]);
+
+	int i=0;
+	while (array[i] != NULL)
+	{
+		free(array[i]);
+		i++;
+	}
+
 	free(pathAlReves);
 	free(array);
 	return largo;
@@ -669,6 +681,8 @@ int checkearPath(char* path){
 	if( (existeDirectorio!=rootPath) && (existeDirectorio==archivoNoEncontrado) ){
 		char* pathSinArchivo = obtenerPathSinArchivo(path);
 		int existeDirectorioPadre = buscarArchivoPorPath(pathSinArchivo, false);
+		free(pathSinArchivo);
+
 		if((existeDirectorioPadre == archivoInexistenteConDirCorrecto) || (existeDirectorioPadre == rootPath) || (existeDirectorioPadre > -1)){
 			resultado = archivoInexistenteConDirCorrecto;
 		} else {
@@ -698,6 +712,7 @@ int obtenerCantidadBloquesLibres(){
 		i++;
 
 	}
+	bitarray_destroy(bitmap);
 	return bloquesLibres;
 }
 
@@ -713,6 +728,7 @@ int obtenerPrimerBloqueLibre(){
 		pthread_mutex_unlock(&mutex_bitmap);
 		i++;
 	}
+	bitarray_destroy(bitmap);
 	return primerBloqueLibre;
 }
 
@@ -746,6 +762,8 @@ void marcarBloques(int primerBloque, int totalBloques, bool yaAsigneUnBloque){
 	//pthread_mutex_lock(&mutexTablaAsignaciones);
 	tablaAsignaciones[siguiente] = finDeArchivo;
 	//pthread_mutex_unlock(&mutexTablaAsignaciones);
+
+	bitarray_destroy(bitmap);
 }
 
 int crearArchivo(char* path, long bytes){
@@ -756,12 +774,18 @@ int crearArchivo(char* path, long bytes){
 	char* nombreArchivo = obtenerNombreDelArchivo(path);
 	int longitudCopiar = string_length((char*)nombreArchivo);
 	if (string_length((char*)nombreArchivo) < 1)
+	{
+		free(nombreArchivo);
 		return elNombreDelArchivoEsMuyCorto;	//Enrealidad el nuevo nombre es muy corto
+	}
 
 	//limito el nuevo largo del string al tamaño de osada
 	//if (longitudCopiar > (OSADA_FILENAME_LENGTH -1))
 	if (longitudCopiar > (OSADA_FILENAME_LENGTH))
+	{
+		free(nombreArchivo);
 		return elNombreDelArchivoEsMuyGrande;	//Enrealidad el nuevo nombre es muy largo
+	}
 
 	if (longitudCopiar == (OSADA_FILENAME_LENGTH))
 		longitudCopiar =OSADA_FILENAME_LENGTH;
@@ -787,6 +811,8 @@ int crearArchivo(char* path, long bytes){
 
 			char* pathPadre = obtenerPathPadre(path);
 			int indicePadre = buscarArchivoPorPath(pathPadre, false);
+			free(pathPadre);
+
 			//pthread_mutex_lock(&mutexTablaArchivos);
 			pthread_rwlock_wrlock(&semTablaArchivos);
 			tablaArchivos[espacioLibreTablaArchivos].file_size = bytes;
@@ -809,6 +835,7 @@ int crearArchivo(char* path, long bytes){
 			//pthread_mutex_lock(&mutexTablaArchivos);
 			pthread_rwlock_wrlock(&semTablaArchivos);
 			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, longitudCopiar * sizeof (unsigned char));
+			free(nombreArchivo);
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
@@ -887,10 +914,14 @@ int liberarEsteBloqueYDecimeCualEsElSiguiente (int unBloque)
 		bitarray_clean_bit(bitmap, unBloque+offsetBitmapAdminitrativo() );
 		pthread_mutex_unlock(&mutex_bitmap);
 
+		bitarray_destroy(bitmap);
 		return temporal;
 	}
 	else
+	{
+		bitarray_destroy(bitmap);
 		return finDeArchivo;
+	}
 }
 
 int obtenerPrimerBloqueALiberar(int primerBloque, int bloquesNecesarios){
