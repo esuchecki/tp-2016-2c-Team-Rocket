@@ -26,7 +26,7 @@ t_list * detectarDeadlock(t_mapa * datosMapa);
 
 void * deteccionDeadlock(void * datos);
 
-void peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) ;
+int peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) ;
 
 void loguearListaDeadlock(t_list *listaDeadlock);
 
