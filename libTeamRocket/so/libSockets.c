@@ -142,7 +142,9 @@ int common_send(int socket, t_data * paquete) {
 	int resultado;
 
 	envio: resultado = send(socket, buffer, tamanioTotal, MSG_WAITALL);
-	if (resultado != tamanioTotal){
+	if (resultado == 0){
+		return resultado;
+	}else if(resultado > 0 && resultado != tamanioTotal){
 		goto envio;
 	}
 	free(buffer);
