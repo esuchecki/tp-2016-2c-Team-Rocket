@@ -263,7 +263,9 @@ void * deteccionDeadlock(void * datos) {
 
 				loguearListaDeadlock(parcial);
 
-				peticionesDePokemones(parcial, mapa);
+				int resultado = peticionesDePokemones(parcial, mapa);
+
+				if (resultado == 1)goto devuelta;
 
 				t_entrenador * loser = batallarListaDePkmn(parcial);
 
@@ -303,14 +305,19 @@ void * deteccionDeadlock(void * datos) {
 	return NULL;
 }
 
-void peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
+int peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 	int i;
 	for (i = 0; i < list_size(listaDeadlock); i++) {
 		t_entrenador * entrenador = list_get(listaDeadlock, i);
 
 		t_data * paquete = pedirPaquete(dameMejorPokemon, sizeof(int), &i);
 
-		common_send(entrenador->nroDesocket, paquete);
+		int resultado = common_send(entrenador->nroDesocket, paquete);
+
+		if(resultado == 0){
+			desconectarEntrenador(entrenador->nroDesocket,unMapa,sockets_activos,socketMasGrande);
+			return 1;
+		}
 
 		paquete = leer_paquete(entrenador->nroDesocket);
 		if (paquete->header == mejorPokemon) {
@@ -325,16 +332,17 @@ void peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 			memcpy(auxSpecies, buffer + sizeof(t_pokemon), 50 * sizeof(char));
 
 			entrenador->mejorPokemon->species = auxSpecies;
+			return 0;
 		} else {
 			log_info(myArchivoDeLog, "Error en la recepcion del mejor pokemon");
 			desconectarEntrenador(entrenador->nroDesocket, unMapa,
 					sockets_activos, socketMasGrande);
 			list_destroy(listaDeadlock);
 			listaDeadlock = NULL;
-			return;
+			return 1;
 		}
 	}
-
+	return 0;
 }
 
 void loguearListaDeadlock(t_list *listaDeadlock) {
