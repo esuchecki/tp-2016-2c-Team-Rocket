@@ -91,42 +91,69 @@ t_data * leer_paquete(int socket) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
 	int resultado;
 
-	label1: resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
-//	if((resultado != 4) &&){
+//	label1: resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
+//	if((resultado != 4) && (resultado >-1)){
 //		goto label1;
 //	}
-	if (errno == EINTR && resultado ==-1)
-		goto label1;
-	if (resultado == -1)
+//	else
+//	{
+//		paquete_entrante->data = malloc(1);
+//		return paquete_entrante;
+//	}
+//	if (errno == EINTR && resultado ==-1)
+//		goto label1;
+	resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
+	if (resultado <= 0)
 	{
 		paquete_entrante->data = malloc(1);
 		return paquete_entrante;
 	}
 
-	label2: resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
+//	label2: resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
 //	if(resultado != 4){
 //		goto label2;
 //	}
-	if (errno == EINTR && resultado ==-1)
-		goto label2;
-	if (resultado == -1)
+//	if((resultado != 4) && (resultado > -1)){
+//		goto label2;
+//	}
+//	else
+	resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
+	if (resultado <= 0)
 	{
+		paquete_entrante->header = -1;
 		paquete_entrante->data = malloc(1);
 		return paquete_entrante;
 	}
+//	if (errno == EINTR && resultado ==-1)
+//		goto label2;
+//	if (resultado == -1)
+//	{
+//		paquete_entrante->data = malloc(1);
+//		return paquete_entrante;
+//	}
 
 	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
-	label3: resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
+//	label3: resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
 //	if(resultado != paquete_entrante->tamanio){
 //		goto label3;
 //	}
-	if (errno == EINTR && resultado ==-1)
-		goto label3;
-	if (resultado == -1)
+//	if((resultado != paquete_entrante->tamanio) && (resultado > -1)){
+//		goto label3;
+//	}
+//	else
+	resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
+	if (resultado <= 0)
 	{
+		paquete_entrante->header = -1;
 		return paquete_entrante;
 	}
+//	if (errno == EINTR && resultado ==-1)
+//		goto label3;
+//	if (resultado == -1)
+//	{
+//		return paquete_entrante;
+//	}
 
 	return paquete_entrante;
 
@@ -151,6 +178,14 @@ t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc)
 				return NULL;
 			}
 		}
+	}
+
+
+	//con esto handleo el msj de reconexion!! (solo para el entrenador).
+	if(paquete_entrante->header == reconexionEntrenador)
+	{
+		paquete_entrante->data = malloc(1);
+		return paquete_entrante;
 	}
 
 
@@ -183,6 +218,7 @@ t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc)
 				goto label3;
 			else
 			{
+				free(paquete_entrante->data);
 				free(paquete_entrante);
 				return NULL;
 			}
@@ -235,3 +271,8 @@ int common_send(int socket, t_data * paquete) {
 	return resultado;
 }
 
+int enviarMsjEstaConectadoElEntrenador (int socket, void * data)
+{
+	int resultado = send(socket, data, (sizeof(int)), MSG_NOSIGNAL);
+	return resultado;
+}

@@ -21,6 +21,11 @@
 #include <so/libSockets.h>
 #include <time.h>
 
+int seDesconectoElEntrenador(t_entrenador * entrenador);
+
+
+
+
 void inicializar_estructuras_planificador() {
 	sem_init(&entrenador_listo, 1, 0);
 	sem_init(&entrenador_bloqueado, 1, 0);
@@ -60,6 +65,7 @@ void * ejecutarPlanificador(void * datos) {
 		volver01:
 		if (sem_trywait(&mapa_libre) != 0)	//No fue exitoso
 		{
+			//pthread_mutex_unlock(&mutex_noestoyPlanificando);
 			funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void* ) &accionDelMapaAnteSIGUSR2 );
 			sleepInMiliSegundos(mapa->metadata->retardo);
 			goto volver01;
@@ -157,9 +163,14 @@ void quitarDeColaDeListos(t_entrenador * entrenador) {
 void * manejarEntrenadoresBloqueados(void * datos) {
 	t_mapa * mapa = datos;
 	while (1) {
-		sem_wait(&entrenador_bloqueado);
 
+//		if ((sem_trywait(&entrenador_bloqueado))==0)
+		sem_wait(&entrenador_bloqueado);
 		desbloquearEntrenador(mapa);
+//		else
+//		{
+		sleepInMiliSegundos(100);
+//		}
 
 	}
 
@@ -204,7 +215,15 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 		//t_data *capturaPkmn = pedirPaquete(capturastePokemon, (sizeof (char)) * PATH_MAX +1 , directorioPkmn);
 		t_data *capturaPkmn = pedirPaquete(capturastePokemon,
 				(sizeof(char)) * PATH_MAX + 1, pokemon->pokemonNNNdat);
-		common_send(entrenador->nroDesocket, capturaPkmn);
+		int resultado2 = common_send(entrenador->nroDesocket, capturaPkmn);
+		if (resultado2 <= 0)
+		{
+			sem_post(&entrenador_bloqueado);	//reiniciamos el ciclo.
+			return;
+		}
+			//desconectarEntrenador(entrenador->nroDesocket, mapa, sockets_activos, socketMasGrande);
+
+
 		log_debug(myArchivoDeLog, "%s", pokemon->pokemonNNNdat);
 		//free(directorioPkmn);
 		free(capturaPkmn);
@@ -216,7 +235,8 @@ void asignarPokemonAEntrenador(t_mapa *mapa, t_entrenador * entrenador) {
 		sem_post(&entrenador_listo);
 
 	}else{
-		log_error(myArchivoDeLog,"No se puede entregar recurso por falta de recurso");
+		//log_error(myArchivoDeLog,"No se puede entregar recurso por falta de recurso");
+		sem_post(&entrenador_bloqueado);	//reiniciamos el ciclo.
 	}
 
 }
@@ -232,11 +252,33 @@ void desbloquearEntrenador(t_mapa *mapa) {
 
 		pthread_mutex_unlock(&mutex_bloqueados);
 
+		if (seDesconectoElEntrenador(entrenador))
+		{
+			desconectarEntrenador(entrenador->nroDesocket, mapa, sockets_activos, socketMasGrande);
+			break;
+		}
+
 		asignarPokemonAEntrenador(mapa, entrenador);
 
 	}
 
 }
+
+
+int seDesconectoElEntrenador(t_entrenador * entrenador)
+{
+	int data = reconexionEntrenador;
+	//t_data * paquete = pedirPaquete(reconexion,4,&data);
+	//esta funcion es de la common
+	//int resultado;
+	//resultado = send(entrenador->nroDesocket, &data, (sizeof(int)), MSG_WAITALL);
+	data = enviarMsjEstaConectadoElEntrenador (entrenador->nroDesocket, &data);
+	//free(paquete->data);
+	//free(paquete);
+
+	return (data != (sizeof(int)) );	//osea  1 en caso de que se desconecto.
+}
+
 
 void agregarAColaDeBloqueados(t_entrenador * unEntrenador) {
 	pthread_mutex_lock(&mutex_bloqueados);
@@ -284,7 +326,7 @@ void quitarDeColaDeBloqueados(t_entrenador *entrenador) {
 void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 		fd_set sockets_activos, int socketMasGrande) {
 
-	bool seDesconecto(void * data) {
+bool seDesconecto(void * data) {
 		t_entrenador * alguno = data;
 		return alguno->nroDesocket == nroDesocket;
 	}
@@ -317,8 +359,8 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 	}
 
 	//Con esto evitamos que un entrenador NUEVO (que no se agrego a las colas de planificacion), haga lio..
-	if (entrenadorAEliminar != NULL)
-	{
+//	if (entrenadorAEliminar != NULL)
+//	{
 		agregarAColaDeFinalizados(entrenadorAEliminar);
 
 		borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
@@ -328,9 +370,10 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 
 		sem_post(&mapa_libre);
 		sem_post(&entrenador_bloqueado);
-	}
+//	}
 
 	free(entrenadorAEliminar);
+
 }
 
 

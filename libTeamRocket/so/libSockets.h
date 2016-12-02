@@ -34,7 +34,7 @@ enum enviosMapa{
 	ganasteBatalla = 23,
 	perdisteBatalla = 24,
 	ubicacionMedallaMapa = 25,
-	reconexion = 26
+	reconexionEntrenador = 26
 };
 
 enum enviosPokedexCliente{
@@ -172,6 +172,8 @@ int common_send(int socket, t_data * paquete);
 //para el entrenador
 t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc) (void *)) ;
 
+//para el mapa
+int enviarMsjEstaConectadoElEntrenador (int socket, void * data);
 
 
 #endif /* LIBSOCKETS_H_ */

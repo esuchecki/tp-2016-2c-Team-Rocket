@@ -199,17 +199,22 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 	return 0;
 }
 
-t_entrenador * buscarEnColasDePlanificacion(t_entrenador *unEntrenador){
-	bool mismoEntrenador(void * datos){
-		return ((t_entrenador*)datos)->simbolo == unEntrenador->simbolo;
-	}
-
-	t_entrenador *entrenadorExistente = list_find(colaBloqueados,mismoEntrenador);
-	if(entrenadorExistente == NULL){
-		entrenadorExistente = list_find(colaBloqueados,mismoEntrenador);
-	}
-	return entrenadorExistente;
-}
+//t_entrenador * buscarEnColasDePlanificacion(t_entrenador *unEntrenador){
+//	bool mismoEntrenador(void * datos){
+//		return ((t_entrenador*)datos)->simbolo == unEntrenador->simbolo;
+//	}
+//
+//
+//	pthread_mutex_lock(&mutex_bloqueados);
+//	t_entrenador *entrenadorExistente = list_find(colaBloqueados,mismoEntrenador);
+//	pthread_mutex_unlock(&mutex_bloqueados);
+//	if(entrenadorExistente == NULL){
+//		pthread_mutex_lock(&mutex_listos);
+//		entrenadorExistente = list_find(colaListos,mismoEntrenador);
+//		pthread_mutex_unlock(&mutex_listos);
+//	}
+//	return entrenadorExistente;
+//}
 
 void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa) {
 	t_data * paquete = leer_paquete(socket_nueva_conexion);
@@ -224,32 +229,43 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 		if (unEntrenador->simbolo != '\0') {
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
 			if (cargarEntrenador(mapa->items, unEntrenador->simbolo)) {
-				t_entrenador * entrenadorExistente = buscarEnColasDePlanificacion(unEntrenador);
-				if(entrenadorExistente == NULL){
-					return;
-				}else{
-					int data = 0;
-					t_data * paquete = pedirPaquete(reconexion,4,&data);
-					int resultado = common_send(entrenadorExistente->nroDesocket,paquete);
-					if(resultado == 0){
-						log_info(myArchivoDeLog, "Desconecte a %c xq cerro conexion y se va a conectar otro con el mismo simbolo",
-												entrenadorExistente->simbolo);
-						desconectarEntrenador(entrenadorExistente->nroDesocket, mapa,
-								sockets_activos, socketMasGrande);
-					}else{
+
+//				//chequeo si ya estaba conectado. Si todavia estaba conectado desconecto al nuevo, sino al viejo.
+//				t_entrenador * entrenadorExistente = buscarEnColasDePlanificacion(unEntrenador);
+//				if(entrenadorExistente != NULL){
+//
+//					int data = 0;
+//					t_data * paquete = pedirPaquete(reconexion,4,&data);
+//					//esta funcion es de la common
+//					int resultado;
+//					resultado = send(entrenadorExistente->nroDesocket, (char *) &(paquete->header), sizeof(int), MSG_WAITALL);
+//					//free(paquete->data);
+//					free(paquete);
+//
+//
+//					if(resultado != (sizeof(int)) ){
+//						log_info(myArchivoDeLog, "Desconecte a %c xq cerro conexion y se va a conectar otro con el mismo simbolo",
+//												entrenadorExistente->simbolo);
+//						desconectarEntrenador(entrenadorExistente->nroDesocket, mapa,
+//								sockets_activos, socketMasGrande, true);
+//						//return;
+//						goto seguir_entrenadorNuevo;
+//
+//					}
+//				}
+//					else{
 						//recibo lo que me envia por el case de reconexion
-						t_data * paquete = leer_paquete(entrenadorExistente->nroDesocket);
-						free(paquete);
+//						t_data * paquete = leer_paquete(entrenadorExistente->nroDesocket);
+//						free(paquete);
 						log_info(myArchivoDeLog, "Desconecte a %c xq no lo pude cargar",
 								unEntrenador->simbolo);
 						log_error(myArchivoDeLog,
 								"No se pudo conectar, fallo el handshake\n");
 
-						desconectarEntrenador(socket_nueva_conexion, mapa,
-								sockets_activos, socketMasGrande);
+						desconectarEntrenador(socket_nueva_conexion, mapa, sockets_activos, socketMasGrande);
 						return;
-					}
-				}
+//					}
+
 
 				//TODO: le tengo que avisar al entrenador que hizo algo mal??
 			}
@@ -298,7 +314,7 @@ int atenderConexiones(void * data) {
 
 
 	while (1) {
-		sleepInMiliSegundos(1);
+		sleepInMiliSegundos(100);
 
 		pthread_mutex_lock(&mutex_sock);
 		sockets_para_revisar = sockets_activos;

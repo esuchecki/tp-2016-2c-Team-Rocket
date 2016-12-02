@@ -315,7 +315,8 @@ int peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 		int resultado = common_send(entrenador->nroDesocket, paquete);
 
 		if(resultado == 0){
-			desconectarEntrenador(entrenador->nroDesocket,unMapa,sockets_activos,socketMasGrande);
+			//Los desconecta el hilo bloqueados.
+			//desconectarEntrenador(entrenador->nroDesocket,unMapa,sockets_activos,socketMasGrande);
 			return 1;
 		}
 
@@ -335,8 +336,8 @@ int peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 			return 0;
 		} else {
 			log_info(myArchivoDeLog, "Error en la recepcion del mejor pokemon");
-			desconectarEntrenador(entrenador->nroDesocket, unMapa,
-					sockets_activos, socketMasGrande);
+			//Los desconecta el hilo bloqueados.
+			//desconectarEntrenador(entrenador->nroDesocket, unMapa, sockets_activos, socketMasGrande);
 			list_destroy(listaDeadlock);
 			listaDeadlock = NULL;
 			return 1;

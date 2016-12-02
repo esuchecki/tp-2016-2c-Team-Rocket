@@ -581,7 +581,7 @@ void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		time_t tiempoAuxPN) {
 	t_data *info;
-	volverARecibir:
+	//volverARecibir:
 	info = leer_paqueteConSignalHandler(socketConexion, unEntrenador, (void *) &leerPaqueteSignalEntrenador);
 	//trate una senial y me pide que aborte la ejecucion.
 	if (info == NULL)
@@ -638,11 +638,12 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 	case ubicacionMedallaMapa: break; //este mensaje quedo desestimado.
 	case reconexion:
 		;
-		int null_data = 0;
-		t_data * paquete2 = pedirPaquete(44,sizeof(int),&null_data);
-		common_send(socketConexion,paquete2);
-		free(paquete2);
-		goto volverARecibir;
+		recibirRespuesta(socketConexion, unEntrenador, tiempoAuxPN);	//vuelve a chequear a ver que le responden!
+//		int null_data = 0;
+//		t_data * paquete2 = pedirPaquete(44,sizeof(int),&null_data);
+//		common_send(socketConexion,paquete2);
+//		free(paquete2);
+//		goto volverARecibir;
 		break;
 	default:
 		;
