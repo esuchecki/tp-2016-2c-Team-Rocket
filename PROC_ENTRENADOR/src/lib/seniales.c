@@ -67,7 +67,7 @@ void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador,
 	}
 
 	//Resto vidas
-	if (_SIGTERM_flag > 1)
+	if (_SIGTERM_flag > 0)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGTERM.**" );
 		fcSIGTERM(unEntrenador, false);
@@ -76,7 +76,7 @@ void funcionesQueQuieroEjecutarSegunLaSenial (t_entrenadorFisico * unEntrenador,
 
 
 	//sumar vidas al entrenador
-	if (_SIGUSR1_flag > 1)
+	if (_SIGUSR1_flag > 0)
 	{
 		log_warning(myArchivoDeLog,"**Voy a tratar la senial SIGUSR1.**" );
 		fcSIGUSR1(unEntrenador);

@@ -43,7 +43,8 @@ bool estoyEnEstadoDeReiniciarHojaDeViaje (t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fueVicitimaDeDeadlock);
 
-
+int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador, int socket);
+int __variableFeaParaSaberElSocket;		//Si es -1, no se cerro el socket.
 
 
 //----------------------------------------------------//
@@ -204,32 +205,32 @@ int queHago(t_estadoEntrenador* estado) {
 	int distanciaY = estado->p_posY - estado->e_posY;
 	if ( (distanciaX ==0 ) || ((estado->ultimoMov == 'X') && (distanciaY != 0) )){
 		if (distanciaY < 0) {
-			respuesta = 2;
+			respuesta = moverArriba;
 		} else if (distanciaY > 0) {
-			respuesta = 4;
+			respuesta = moverAbajo;
 		} else if (distanciaX < 0) {
-			respuesta = 1;
+			respuesta = moverDerecha;
 		} else if (distanciaX > 0) {
-			respuesta = 3;
+			respuesta = moverIzquierda;
 		} else {
 			respuesta = 0;
 		}
-	} else if ((distanciaY !=0) || ((estado->ultimoMov == 'Y') && (distanciaX !=0))) {
+	} else if ((distanciaY ==0) || ((estado->ultimoMov == 'Y') && (distanciaX !=0))) {
 		if (distanciaX < 0) {
-			respuesta = 3;
+			respuesta = moverIzquierda;
 		} else if (distanciaX > 0) {
-			respuesta = 1;
+			respuesta = moverDerecha;
 		} else if (distanciaY < 0) {
-			respuesta = 2;
+			respuesta = moverArriba;
 		} else if (distanciaY > 0) {
-			respuesta = 4;
+			respuesta = moverAbajo;
 		} else {
 			respuesta = 0;
 		}
 	}else if ((distanciaX == 0) && (distanciaY ==0))
 	{
 		//estoy en la pokenest
-		respuesta = 0;
+		respuesta = destino;
 	} else {
 		//TODO:en este caso estoy en el primer movimiento... tomo este por defecto, ver cual tomar
 		respuesta = 1;
@@ -330,7 +331,8 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 		}
 
 	}
-	close(socketConexion);
+	if (__variableFeaParaSaberElSocket == -1)
+		close(socketConexion);
 	puts("Me desconecto del mapa actual.");
 }
 
@@ -353,21 +355,70 @@ void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
 
 }
 void reintentar(t_entrenadorFisico * unEntrenador) {
-	char reintentar;
+	char reintentar='\0';
 	log_info(myArchivoDeLog, "****> Me quede sin vidas. Reintentar?");
-	puts ("No le quedan mas vidas disponibles..");
-	printf("Desea reintentar?S/N \n");
-	scanf("%c", &reintentar);
+	close(__variableFeaParaSaberElSocket);	//lo desconecto del mapa para que pueda seguir planificando.
+
+	printf ("No le quedan mas vidas disponibles..\n");
+	//puts ("Desea reintentar? [S/N]: ");
+	printf("Desea reintentar? [S/N]: ");
+
+
+//	 int ch; /* temporary storage for character */
+//
+//	while (1) {
+//		ch = fgetc(stdin); /* read char from fp, this removes it from the stream */
+//
+//		if (ch == EOF)  /* break if we reached END-OF-FILE */
+//			break;
+//
+//		if (ch == '\n') /* break if we reached a newline, because */
+//			break;      /* we have succesfully read a line */
+//	}
+
+
+//	log_destroy(myArchivoDeLog);
+//	myArchivoDeLog = log_create(string_from_format(__ubicacionArchivoDeLogEntrenador, unEntrenador->directorioPokeDex),	&"entrenador", false, LOG_LEVEL_INFO);
+	//fflush(myArchivoDeLog->file);	//evito problemas.
+	//fflush( NULL );
+//	char buf[80];
+//	fflush (stdout);
+//	fgets (buf, 80, stdin);
+//	scanf ("%*[^\n]");
+//	scanf ("%*[^\n]");
+//	//fflush(stdin);
+//	//reintentar=getc(stdin);
+//	 char * inputString = malloc(100 * sizeof(char));
+//	 scanf("%s", inputString);
+//	 printf("%s", inputString);
+//	 string_trim_left(&inputString);
+//	 reintentar = inputString[0];
+//	 free (inputString);
+//	int c;
+//	//Este codigo es para evitar que http://stackoverflow.com/questions/7898215/how-to-clear-input-buffer-in-c
+//	while ((c = getchar()) != '\n' && c != EOF) {
+//		reintentar = c;
+//	}
+	//puts ("");
+	scanf(" %c", &reintentar);
+	//scanf(" %c%*c",&reintentar);
+	//reintentar=getch();
+	//reintentar = buf[0];
 	if (reintentar == 'S' || reintentar == 's')
 	{
+		printf("\nElejiste: %c \n", reintentar);
 		unEntrenador->misEstadisticas.cant_reintentos ++;
 		unEntrenador->metadata->vidas = 1;	//le dejo una vida! :D
 		borrarDirectorioDeBill(unEntrenador);
 		borrarDirectorioDeMedallas(unEntrenador);
 		setearEstadoDelEntrenador(unEntrenador, setearmeEnReiniciarHojaDeViaje);
+		//goto reset_signal;
 	}
 	else	//Si no quiere reintentar lo finalizo.
+	{
+		printf("\nElejiste: %c \n", reintentar);
 		finalizarEntrenador(unEntrenador);
+	}
 }
 
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiVictimaDeDeadlock) {
@@ -515,7 +566,14 @@ void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 
 void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		time_t tiempoAuxPN) {
-	t_data *info = leer_paquete(socketConexion);
+
+
+	t_data *info = leer_paqueteConSignalHandler(socketConexion, unEntrenador, (void *) &leerPaqueteSignalEntrenador);
+	//trate una senial y me pide que aborte la ejecucion.
+	if (info == NULL)
+		return;
+
+
 	switch (info->header) {
 	case otorgarTurno:
 		;
@@ -601,3 +659,24 @@ void copiarseMedallasDelMapaActual(t_entrenadorFisico * unEntrenador, char * nom
 	free(directorioDeMedallasDelEntrenador);
 	free(formato);
 	}
+
+
+
+
+
+//-1 pude tratar bien la senial, 0 algun problema
+int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador, int socket)
+{
+	//trato la interrupcion
+	__variableFeaParaSaberElSocket = socket;
+	funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador, (void*) &accionDelEntrenadorAnteSIGUSR1, (void*) &accionDelEntrenadorAnteSIGTERM);
+
+	//chequeo si me desconecte
+	if ( estoyEnEstadoDeReiniciarHojaDeViaje(unEntrenador) )
+	{	return 0;		}
+
+
+	//como no me desconecte, volvemos todo a la normalidad.
+	__variableFeaParaSaberElSocket = -1;
+	return -1;
+}
