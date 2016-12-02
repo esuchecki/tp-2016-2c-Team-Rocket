@@ -169,7 +169,7 @@ int common_send(int socket, t_data * paquete);
 
 
 //para el entrenador
-t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc) (void *, void *)) ;
+t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc) (void *)) ;
 
 
 

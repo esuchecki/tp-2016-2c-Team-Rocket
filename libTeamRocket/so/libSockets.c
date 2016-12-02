@@ -133,50 +133,63 @@ t_data * leer_paquete(int socket) {
 }
 
 
-t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc) (void *, void *)) {
+t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc) (void *)) {
 	t_data * paquete_entrante = malloc(sizeof(t_data));
 	int resultado;
 
 	label1: resultado = recv(socket, &paquete_entrante->header, sizeof(int),MSG_WAITALL);
-	if (errno == EINTR && resultado ==-1)
+	if (resultado ==-1)
 	{
-		if ((*fc) (unEntrenador, (void *) &socket))	//Si pude tratar bien la senial, vuelvo a leer el msj.
-			goto label1;
-		else
+		int errsv = errno;
+		if (errsv == EINTR)
 		{
-			free(paquete_entrante);
-			return NULL;
+			if ((*fc) (unEntrenador))	//Si pude tratar bien la senial, vuelvo a leer el msj.
+				goto label1;
+			else
+			{
+				free(paquete_entrante);
+				return NULL;
+			}
 		}
 	}
 
 
 	label2: resultado = recv(socket, &paquete_entrante->tamanio, sizeof(int), MSG_WAITALL);
-	if (errno == EINTR && resultado ==-1)
-	{
-		if ((*fc) (unEntrenador, (void *) &socket))	//Si pude tratar bien la senial, vuelvo a leer el msj.
-			goto label2;
-		else
+	if (resultado ==-1)
 		{
-			free(paquete_entrante);
-			return NULL;
+			int errsv = errno;
+			if (errsv == EINTR)
+			{
+				if ((*fc) (unEntrenador))	//Si pude tratar bien la senial, vuelvo a leer el msj.
+					goto label2;
+				else
+				{
+					free(paquete_entrante);
+					return NULL;
+				}
+			}
 		}
-	}
 
 	paquete_entrante->data = malloc(paquete_entrante->tamanio);
 
 
 	label3: resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
 	if (errno == EINTR && resultado ==-1)
-	{
-		if ((*fc) (unEntrenador, (void *) &socket))	//Si pude tratar bien la senial, vuelvo a leer el msj.
-			goto label3;
-		else
-		{
-			free(paquete_entrante->data);
-			free(paquete_entrante);
-			return NULL;
-		}
-	}
+		if (resultado ==-1)
+			{
+				int errsv = errno;
+				if (errsv == EINTR)
+				{
+					if ((*fc) (unEntrenador))	//Si pude tratar bien la senial, vuelvo a leer el msj.
+						goto label3;
+					else
+					{
+						free(paquete_entrante->data);
+						free(paquete_entrante);
+						return NULL;
+					}
+				}
+			}
 
 	return paquete_entrante;
 

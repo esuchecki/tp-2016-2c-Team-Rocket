@@ -13,13 +13,22 @@ void inicializarSenialesEntrenador (t_entrenadorFisico * unEntrenador)
 	_SIGTERM_flag = 0;	//reseteo el flag.
 	_SIGUSR1_flag = 0;	//reseteo el flag.
 
-	if (signal( SIGUSR1, tratarLaSenialRecibida ) == SIG_ERR)
-	{
+
+	struct sigaction sa;
+
+	sa.sa_handler = tratarLaSenialRecibida;
+	sa.sa_flags = 0; // or SA_RESTART
+	sigemptyset(&sa.sa_mask);
+
+	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
+	//if (signal( SIGUSR1, tratarLaSenialRecibida ) == SIG_ERR)
+	//{
 		log_error(myArchivoDeLog, "error al setear la senial SIGUSR1");
 		finalizarEntrenador(unEntrenador);
 	}
-	if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
-	{
+	if (sigaction(SIGTERM, &sa, NULL) == -1) {
+	//if (signal( SIGTERM, tratarLaSenialRecibida)==SIG_ERR)
+	//{
 		log_error(myArchivoDeLog, "error al setear la senial SIGTERM");
 		finalizarEntrenador(unEntrenador);
 	}

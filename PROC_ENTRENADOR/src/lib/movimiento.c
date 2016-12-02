@@ -1,5 +1,6 @@
 #include "movimiento.h"
 #include "so/tiempos.h"
+#include <stdio.h>
 
 
 enum tipoDeEstadoEntrenador {
@@ -43,7 +44,7 @@ bool estoyEnEstadoDeReiniciarHojaDeViaje (t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGUSR1(t_entrenadorFisico * unEntrenador);
 void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fueVicitimaDeDeadlock);
 
-int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador, int socket);
+int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador);
 int __variableFeaParaSaberElSocket;		//Si es -1, no se cerro el socket.
 
 
@@ -95,6 +96,7 @@ void setearEstadoDelEntrenador(t_entrenadorFisico * unEntrenador, enum tipoDeEst
 		unEntrenador->moverseEnMapa = NULL;
 		setearEstadoDelEntrenador(unEntrenador, inicializar_estado);
 		unEntrenador->moverseEnMapa->indexMapaActual = aux;
+		__variableFeaParaSaberElSocket =-1;
 		break;
 	case setearmeEnReiniciarMapaActual:
 
@@ -323,6 +325,7 @@ void inicializarSocketEntrenador(t_entrenadorFisico * nuevoEntrenador,
 		if(info->header == 50){
 			log_info(myArchivoDeLog,"Intercambio de mensajes Handshake realizado");
 			log_info(myArchivoDeLog,"Conexion Exitosa");
+			__variableFeaParaSaberElSocket = socketConexion;
 			jugarEnElMapa(nuevoEntrenador, info, socketConexion);
 		}else{
 			log_info(myArchivoDeLog,"No se pudo conectar, cierre forzoso");
@@ -355,15 +358,26 @@ void actualizarTiempoBloqueado(t_entrenadorFisico * unEntrenador,
 
 }
 void reintentar(t_entrenadorFisico * unEntrenador) {
-	char reintentar='\0';
+	char reintentar;
 	log_info(myArchivoDeLog, "****> Me quede sin vidas. Reintentar?");
 	close(__variableFeaParaSaberElSocket);	//lo desconecto del mapa para que pueda seguir planificando.
 
 	printf ("No le quedan mas vidas disponibles..\n");
 	//puts ("Desea reintentar? [S/N]: ");
-	printf("Desea reintentar? [S/N]: ");
+	//printf("Desea reintentar? [S/N]: ");
+	printf("Desea reintentar? Enter S or N: \n");
+	scanf(" %c", &reintentar);
 
-
+//	FILE *tty = fopen("/dev/tty", "r");
+//	if (!tty) {
+//	    perror("/dev/tty");
+//	    exit(1);
+//	}
+//	char c;
+//	fgets(&c, sizeof(c), tty);
+//
+//	fclose(tty);
+//	reintentar =c;
 //	 int ch; /* temporary storage for character */
 //
 //	while (1) {
@@ -400,7 +414,7 @@ void reintentar(t_entrenadorFisico * unEntrenador) {
 //		reintentar = c;
 //	}
 	//puts ("");
-	scanf(" %c", &reintentar);
+	//scanf(" %c", &reintentar);
 	//scanf(" %c%*c",&reintentar);
 	//reintentar=getch();
 	//reintentar = buf[0];
@@ -665,10 +679,10 @@ void copiarseMedallasDelMapaActual(t_entrenadorFisico * unEntrenador, char * nom
 
 
 //-1 pude tratar bien la senial, 0 algun problema
-int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador, int socket)
+int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador)
 {
 	//trato la interrupcion
-	__variableFeaParaSaberElSocket = socket;
+	//__variableFeaParaSaberElSocket = *socket;
 	funcionesQueQuieroEjecutarSegunLaSenial(unEntrenador, (void*) &accionDelEntrenadorAnteSIGUSR1, (void*) &accionDelEntrenadorAnteSIGTERM);
 
 	//chequeo si me desconecte
@@ -677,6 +691,6 @@ int leerPaqueteSignalEntrenador (t_entrenadorFisico * unEntrenador, int socket)
 
 
 	//como no me desconecte, volvemos todo a la normalidad.
-	__variableFeaParaSaberElSocket = -1;
+	//__variableFeaParaSaberElSocket = -1;
 	return -1;
 }
