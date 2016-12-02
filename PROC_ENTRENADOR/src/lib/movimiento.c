@@ -580,9 +580,9 @@ void logicaDeGuardarLaPosDeUnaPokenest(t_entrenadorFisico * unEntrenador,
 
 void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		time_t tiempoAuxPN) {
-
-
-	t_data *info = leer_paqueteConSignalHandler(socketConexion, unEntrenador, (void *) &leerPaqueteSignalEntrenador);
+	t_data *info;
+	volverARecibir:
+	info = leer_paqueteConSignalHandler(socketConexion, unEntrenador, (void *) &leerPaqueteSignalEntrenador);
 	//trate una senial y me pide que aborte la ejecucion.
 	if (info == NULL)
 		return;
@@ -636,6 +636,14 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		accionDelEntrenadorAnteSIGTERM(unEntrenador, true);	//con esto ejecuta la logica!.
 		break;
 	case ubicacionMedallaMapa: break; //este mensaje quedo desestimado.
+	case reconexion:
+		;
+		int null_data = 0;
+		t_data * paquete2 = pedirPaquete(44,sizeof(int),&null_data);
+		common_send(socketConexion,paquete2);
+		free(paquete2);
+		goto volverARecibir;
+		break;
 	default:
 		;
 		log_error (myArchivoDeLog, "llegue a default en el switch case de recibirRespuesta.");

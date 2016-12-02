@@ -33,7 +33,8 @@ enum enviosMapa{
 	dameMejorPokemon = 22,
 	ganasteBatalla = 23,
 	perdisteBatalla = 24,
-	ubicacionMedallaMapa = 25
+	ubicacionMedallaMapa = 25,
+	reconexion = 26
 };
 
 enum enviosPokedexCliente{
