@@ -55,8 +55,24 @@ void * ejecutarPlanificador(void * datos) {
 	t_mapa *mapa = datos;
 
 	while (1) {
-		sem_wait(&mapa_libre);
-		sem_wait(&entrenador_listo);
+
+		//Si no hay semaforo entonces cheuqeo la actualizaciones de seniales.
+		volver01:
+		if (sem_trywait(&mapa_libre) != 0)	//No fue exitoso
+		{
+			funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void* ) &accionDelMapaAnteSIGUSR2 );
+			sleepInMiliSegundos(mapa->metadata->retardo);
+			goto volver01;
+		}
+		//sem_wait(&mapa_libre);
+		//sem_wait(&entrenador_listo);
+		volver02:
+		if (sem_trywait(&entrenador_listo) != 0)	//No fue exitoso
+		{
+			funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void* ) &accionDelMapaAnteSIGUSR2 );
+			sleepInMiliSegundos(mapa->metadata->retardo);
+			goto volver02;
+		}
 
 		pthread_mutex_lock(&mutex_algoritmo);
 
@@ -300,16 +316,19 @@ void desconectarEntrenador(int nroDesocket, t_mapa * mapa,
 		}
 	}
 
-	agregarAColaDeFinalizados(entrenadorAEliminar);
+	//Con esto evitamos que un entrenador NUEVO (que no se agrego a las colas de planificacion), haga lio..
+	if (entrenadorAEliminar != NULL)
+	{
+		agregarAColaDeFinalizados(entrenadorAEliminar);
 
-	borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
-	sem_post(&semaforoGraficar);
+		borrarEntrenadorDelMapa(mapa, entrenadorAEliminar->simbolo);
+		sem_post(&semaforoGraficar);
 
-	//liberarRecursos(entrenadorAEliminar);
+		//liberarRecursos(entrenadorAEliminar);
 
-	sem_post(&mapa_libre);
-	sem_post(&entrenador_bloqueado);
-
+		sem_post(&mapa_libre);
+		sem_post(&entrenador_bloqueado);
+	}
 
 	free(entrenadorAEliminar);
 }

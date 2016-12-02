@@ -1,8 +1,8 @@
 #Tiempo Chequeo Deadlock
-TiempoChequeoDeadlock=30000
+TiempoChequeoDeadlock=60000
 
 #Modo Batalla ON-OFF
-Batalla=1
+Batalla=0
 
 #Algoritmos RR o SRDF
 algoritmo=SRDF
@@ -11,7 +11,7 @@ algoritmo=SRDF
 quantum=3
 
 #Retardo entre accion y accion en pantalla..
-retardo=1000
+retardo=200
 
 #Ip del servidor del mapa
 IP=127.0.0.1

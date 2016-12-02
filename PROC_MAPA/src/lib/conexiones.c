@@ -207,7 +207,7 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 		t_entrenador *unEntrenador = generarEntrenador(socket_nueva_conexion,
 				paquete->data);
 
-		agregarAColaDeListos(unEntrenador);
+
 
 		if (unEntrenador->simbolo != '\0') {
 			//Mando mover al entrenador. Si hace algo raro, lo desconecto.
@@ -233,6 +233,8 @@ void handshake(int socket_nueva_conexion, fd_set sockets_activos, t_mapa * mapa)
 		t_data * paquete = pedirPaquete(50, sizeof(int), &null_data);
 
 		common_send(socket_nueva_conexion, paquete);
+
+		agregarAColaDeListos(unEntrenador);
 
 		sem_post(&semaforoGraficar);
 		sem_post(&entrenador_listo);
