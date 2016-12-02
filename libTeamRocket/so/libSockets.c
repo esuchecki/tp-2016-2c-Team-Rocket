@@ -174,22 +174,20 @@ t_data * leer_paqueteConSignalHandler(int socket, void * unEntrenador, int (*fc)
 
 
 	label3: resultado = recv(socket, paquete_entrante->data, paquete_entrante->tamanio,	MSG_WAITALL);
-	if (errno == EINTR && resultado ==-1)
-		if (resultado ==-1)
+	if (resultado ==-1)
+	{
+		int errsv = errno;
+		if (errsv == EINTR)
+		{
+			if ((*fc) (unEntrenador))	//Si pude tratar bien la senial, vuelvo a leer el msj.
+				goto label3;
+			else
 			{
-				int errsv = errno;
-				if (errsv == EINTR)
-				{
-					if ((*fc) (unEntrenador))	//Si pude tratar bien la senial, vuelvo a leer el msj.
-						goto label3;
-					else
-					{
-						free(paquete_entrante->data);
-						free(paquete_entrante);
-						return NULL;
-					}
-				}
+				free(paquete_entrante);
+				return NULL;
 			}
+		}
+	}
 
 	return paquete_entrante;
 
