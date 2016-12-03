@@ -464,6 +464,10 @@ void accionDelEntrenadorAnteSIGTERM(t_entrenadorFisico * unEntrenador, bool fuiV
 	//Si no tengo vidas, me muero!.
 	if (unEntrenador->metadata->vidas == 0) {
 		unEntrenador->misEstadisticas.cant_muertes ++;
+
+		if(fuiVictimaDeDeadlock)
+			borrarDirectorioDeBill(unEntrenador);
+
 		reintentar(unEntrenador);
 	} else if ( (unEntrenador->metadata->vidas > 0) && fuiVictimaDeDeadlock) {
 		unEntrenador->misEstadisticas.cant_muertes++;
