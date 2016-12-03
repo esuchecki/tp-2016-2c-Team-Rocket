@@ -636,7 +636,7 @@ void recibirRespuesta(int socketConexion, t_entrenadorFisico * unEntrenador,
 		accionDelEntrenadorAnteSIGTERM(unEntrenador, true);	//con esto ejecuta la logica!.
 		break;
 	case ubicacionMedallaMapa: break; //este mensaje quedo desestimado.
-	case reconexion:
+	case reconexionEntrenador:
 		;
 		recibirRespuesta(socketConexion, unEntrenador, tiempoAuxPN);	//vuelve a chequear a ver que le responden!
 //		int null_data = 0;

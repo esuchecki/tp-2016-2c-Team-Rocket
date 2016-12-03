@@ -333,7 +333,7 @@ int peticionesDePokemones(t_list * listaDeadlock, t_mapa * unMapa) {
 			memcpy(auxSpecies, buffer + sizeof(t_pokemon), 50 * sizeof(char));
 
 			entrenador->mejorPokemon->species = auxSpecies;
-			return 0;
+
 		} else {
 			log_info(myArchivoDeLog, "Error en la recepcion del mejor pokemon");
 			//Los desconecta el hilo bloqueados.
