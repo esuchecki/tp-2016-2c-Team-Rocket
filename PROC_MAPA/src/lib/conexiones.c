@@ -301,7 +301,8 @@ int atenderConexiones(void * data) {
 
 	fd_set sockets_para_revisar;
 
-	socketEscucha = setup_listen("localhost", mapa->metadata->puerto);
+	//socketEscucha = setup_listen("localhost", mapa->metadata->puerto);
+	socketEscucha = setup_listen(mapa->metadata->ip, mapa->metadata->puerto);
 
 	log_debug(myArchivoDeLog, "Se crea el socket escucha con numero: %d\n",
 			socketEscucha);
