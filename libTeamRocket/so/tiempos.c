@@ -54,7 +54,7 @@ void sleepInMiliSegundosRevisarSenial(unsigned long ms, short int * _SIGUSR2_fla
 
 	do
 	{
-		if ( clock_nanosleep(CLOCK_MONOTONIC,0, &retardo, &retardo ) == 0 || errno != EINTR || *_SIGUSR2_flag == 0)
+		if ( clock_nanosleep(CLOCK_MONOTONIC,0, &retardo, &retardo ) == 0 || errno != EINTR || *_SIGUSR2_flag != 0)
 			break;
 	} while ( 1 );
 	return;

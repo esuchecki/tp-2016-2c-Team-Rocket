@@ -405,8 +405,8 @@ int consumirQuantum(int i, int quantum) {
 			entrenador->instruccionesEjecutadas);
 
 	//Valido si llego una senial en el medio.
-	if (_SIGUSR2_flag ==1)
-		goto salirDeQuantum;
+//	if (_SIGUSR2_flag ==1)
+//		goto salirDeQuantum;
 
 
 	if (quantum <= entrenador->instruccionesEjecutadas) {
