@@ -243,8 +243,9 @@ void * deteccionDeadlock(void * datos) {
 	t_mapa * mapa = datos;
 
 	while (1) {
-		reiniciarVuelta: sleepInMiliSegundos(
-				mapa->metadata->tiempoChequeadoDeadlock);
+		reiniciarVuelta:
+		//sleepInMiliSegundos(mapa->metadata->tiempoChequeadoDeadlock);
+		sleepInMiliSegundosRevisarSenial(mapa->metadata->tiempoChequeadoDeadlock,&_SIGUSR2_flag);
 
 		t_list * listaDeadlock;
 		devuelta: listaDeadlock = detectarDeadlock(mapa);

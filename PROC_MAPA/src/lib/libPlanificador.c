@@ -67,7 +67,8 @@ void * ejecutarPlanificador(void * datos) {
 		{
 			//pthread_mutex_unlock(&mutex_noestoyPlanificando);
 			funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void* ) &accionDelMapaAnteSIGUSR2 );
-			sleepInMiliSegundos(mapa->metadata->retardo);
+			//sleepInMiliSegundos(mapa->metadata->retardo);
+			sleepInMiliSegundosRevisarSenial(mapa->metadata->retardo, &_SIGUSR2_flag);
 			goto volver01;
 		}
 		//sem_wait(&mapa_libre);
@@ -76,7 +77,8 @@ void * ejecutarPlanificador(void * datos) {
 		if (sem_trywait(&entrenador_listo) != 0)	//No fue exitoso
 		{
 			funcionesQueQuieroEjecutarSegunLaSenial(mapa, (void* ) &accionDelMapaAnteSIGUSR2 );
-			sleepInMiliSegundos(mapa->metadata->retardo);
+			//sleepInMiliSegundos(mapa->metadata->retardo);
+			sleepInMiliSegundosRevisarSenial(mapa->metadata->retardo, &_SIGUSR2_flag);
 			goto volver02;
 		}
 
@@ -401,7 +403,14 @@ int consumirQuantum(int i, int quantum) {
 
 	log_debug(myArchivoDeLog, "cantidad de instrucciones ejecutadas: %d",
 			entrenador->instruccionesEjecutadas);
+
+	//Valido si llego una senial en el medio.
+	if (_SIGUSR2_flag ==1)
+		goto salirDeQuantum;
+
+
 	if (quantum <= entrenador->instruccionesEjecutadas) {
+		salirDeQuantum:
 			log_debug(myArchivoDeLog,
 					"El entrenador %c es encolado nuevamente por fin de quantum",
 					entrenador->simbolo);

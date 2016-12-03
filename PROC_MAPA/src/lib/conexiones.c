@@ -184,8 +184,9 @@ int atenderConexion(int i, t_mapa * mapa,fd_set sockets_activos) {
 		return 0;
 	}
 
-	sleepInMiliSegundos(mapa->metadata->retardo);
+	sleepInMiliSegundosRevisarSenial(mapa->metadata->retardo, &_SIGUSR2_flag);
 	sem_post(&semaforoGraficar);
+
 
 	//Valido si llego una senial en el medio.
 	if (_SIGUSR2_flag ==1)

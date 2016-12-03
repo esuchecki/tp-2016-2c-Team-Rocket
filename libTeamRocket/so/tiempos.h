@@ -33,4 +33,7 @@ void convertirMilisegundosToTimeSpec(void *timespec, unsigned long ms, bool tiem
 void convertirSegundosToTimeSpec(void *ts, uint32_t ms);
 
 
+void sleepInMiliSegundosRevisarSenial(unsigned long ms, short int * _SIGUSR2_flag);
+
+
 #endif /* SO_TIEMPOS_H_ */
