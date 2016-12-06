@@ -103,7 +103,7 @@ void abrirArchivo(){
 
 t_bitarray* obtenerBitmap(){
 	osada_header* header = obtenerHeader();
-	t_bitarray* bitmap = bitarray_create( (char *) bloques_archivo[1],header->bitmap_blocks);
+	t_bitarray* bitmap = bitarray_create_with_mode( (char *) bloques_archivo[1],header->bitmap_blocks, MSB_FIRST);
 	return bitmap;
 }
 
@@ -116,18 +116,7 @@ uint32_t offsetBitmapAdminitrativo(){
 
 	if (!j_initialized) {
 		osada_header* header = obtenerHeader();
-		//int bloquesEnTablaAsignaciones = 0;
-		uint32_t cantidadDeBloquesAdministrativos = (header->fs_blocks - header->data_blocks);
-		//int bloquesEnTablaAsignaciones = cantidadDeBloquesAdministrativos - (header->bitmap_blocks) - 1 - 1024;	//menos header menos tabla archivos
-
-		//esto es para que el osada_dump de ok.
-		uint32_t bloquesEnTablaAsignaciones =0;
-		bloquesEnTablaAsignaciones = OSADA_BLOCK_SIZE - (((header->fs_blocks -1 - header->bitmap_blocks -1024) *4)%OSADA_BLOCK_SIZE);
-		//int offsetEntero = cantidadDeBloquesAdministrativos / 8;
-		//int offsetDecimal = cantidadDeBloquesAdministrativos % 8;
-
-	    //j = (offsetDecimal + offsetEntero);
-		j = cantidadDeBloquesAdministrativos - bloquesEnTablaAsignaciones -1;	//el menos 1 es porque empieza en 0.
+		j = (header->fs_blocks - header->data_blocks);
 	    j_initialized = true;
 	}
 
