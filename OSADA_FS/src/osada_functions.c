@@ -837,7 +837,6 @@ int crearArchivo(char* path, long bytes){
 			//pthread_mutex_lock(&mutexTablaArchivos);
 			pthread_rwlock_wrlock(&semTablaArchivos);
 			memcpy(tablaArchivos[espacioLibreTablaArchivos].fname, nombreArchivo, longitudCopiar * sizeof (unsigned char));
-			free(nombreArchivo);
 			tablaArchivos[espacioLibreTablaArchivos].lastmod = (unsigned)time(NULL);
 			tablaArchivos[espacioLibreTablaArchivos].parent_directory = indicePadre;
 			tablaArchivos[espacioLibreTablaArchivos].state = REGULAR;
@@ -857,6 +856,7 @@ int crearArchivo(char* path, long bytes){
 		resultado = noHayEspacioLibreTablaArchivos;
 	}
 	pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
+	free(nombreArchivo);
 	return resultado;
 }
 
