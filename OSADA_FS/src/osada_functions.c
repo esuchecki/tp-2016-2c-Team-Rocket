@@ -208,6 +208,8 @@ int buscarArchivoPorPath(char* path, bool quieroElAnteUltimo){ //retorna el indi
 			i++;
 			j++;
 		}
+		if (quieroElAnteUltimo)
+			free(array[j]);
 		free(array);
 		//resultado = padre;
 	} else {
@@ -438,7 +440,8 @@ unsigned char* obtenerUltimoElemento(char* path){
 	if(strcmp("/",path)!= 0){
 		while(array[i]!=NULL){
 			ultimo = array[i];
-			free(array[i]);
+			if (i>0)
+				free(array[i-1]);
 			i++;
 		}
 	} else {
@@ -502,6 +505,7 @@ int crearDirectorio(char* path){
 		if (string_length((char*)nombreNuevo) < 1)
 		{
 			pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
+			free(nombreNuevo);
 			return elNombreDelArchivoEsMuyCorto;	//Enrealidad el nuevo nombre es muy corto
 		}
 
@@ -510,6 +514,7 @@ int crearDirectorio(char* path){
 		if (longitudCopiar > (OSADA_FILENAME_LENGTH))
 		{
 			pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
+			free(nombreNuevo);
 			return elNombreDelArchivoEsMuyGrande;	//Enrealidad el nuevo nombre es muy largo
 		}
 
@@ -543,6 +548,7 @@ int crearDirectorio(char* path){
 		pthread_rwlock_unlock(&semTablaArchivos);
 
 
+		free(nombreNuevo);
 		resultado = operacionExitosa;
 	}
 	pthread_mutex_unlock(&mutexNuevoEspacioTablaArchivos);
@@ -586,12 +592,18 @@ int cambiarNombre(char* path, char* pathNuevo){
 	unsigned char * nombreNuevo = obtenerUltimoElemento(pathNuevo);
 	int longitudCopiar = string_length((char*)nombreNuevo);
 	if (string_length((char*)nombreNuevo) < 1)
+	{
+		free(nombreNuevo);
 		return elNombreDelArchivoEsMuyCorto;	//Enrealidad el nuevo nombre es muy corto
+	}
 
 	//limito el nuevo largo del string al tamaño de osada
 	//if (longitudCopiar > (OSADA_FILENAME_LENGTH -1))
 	if (longitudCopiar > (OSADA_FILENAME_LENGTH))
+	{
+		free(nombreNuevo);
 		return elNombreDelArchivoEsMuyGrande;	//Enrealidad el nuevo nombre es muy largo
+	}
 
 	if (longitudCopiar == (OSADA_FILENAME_LENGTH))
 		longitudCopiar =OSADA_FILENAME_LENGTH;
@@ -611,6 +623,7 @@ int cambiarNombre(char* path, char* pathNuevo){
 	} else {
 		resultado = archivoNoEncontrado;
 	}
+	free(nombreNuevo);
 	return resultado;
 }
 
