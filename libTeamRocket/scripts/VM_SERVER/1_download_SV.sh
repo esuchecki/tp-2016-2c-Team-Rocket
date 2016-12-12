@@ -40,4 +40,9 @@ git clone https://github.com/sisoputnfrba/so-nivel-gui-library
 #git clone https://github.com/sisoputnfrba/tp-2016-2c-Team-Rocket
 
 
+#creamos Build folder
+eval "mkdir -p" $BUILD_PATH
+eval "mkdir -p" $BUILD_PATH/scripts/
+eval "cp -rf ~/tp-2016-2c-Team-Rocket/tp-2016-2c-Team-Rocket/libTeamRocket/scripts/VM_SERVER/* " $BUILD_PATH/scripts/
+
 
